@@ -1,0 +1,48 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: test-runner-deployment
+spec:
+  template:
+    spec:
+      image: summerwind/actions-runner-dind
+      dockerdWithinRunnerContainer: true
+      organization: zephyrproject-rtos
+      labels:
+      - test-runner
+      containers:
+      - name: runner
+        resources:
+          limits:
+            cpu: "16.0"
+            memory: "32Gi"
+          requests:
+            cpu: "15.0"
+            memory: "24Gi"
+      nodeSelector:
+        InstanceType: spot
+      tolerations:
+      - key: "spotInstance"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+---
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: HorizontalRunnerAutoscaler
+metadata:
+  name: test-runner-deployment-autoscaler
+spec:
+  # Runners in the targeted RunnerDeployment won't be scaled down
+  # for 5 minutes instead of the default 10 minutes now
+  scaleDownDelaySecondsAfterScaleOut: 300
+  scaleTargetRef:
+    kind: RunnerDeployment
+    name: test-runner-deployment
+  minReplicas: 1
+  maxReplicas: 100
+  metrics:
+  - type: PercentageRunnersBusy
+    scaleUpThreshold: '0.75'
+    scaleDownThreshold: '0.3'
+    scaleUpAdjustment: 4
+    scaleDownAdjustment: 2
