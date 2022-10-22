@@ -57,6 +57,16 @@ module "eks_blueprints" {
   cluster_name    = local.name
   cluster_version = local.cluster_version
 
+  # AWS identity mapping
+  map_users = [
+    {
+      userarn  = "arn:aws:iam::724087766192:user/terraform-cloud"
+      username = "terraform-cloud"
+      groups   = ["system:masters"]
+    }
+  ]
+
+  # Network configurations
   vpc_id             = module.vpc.vpc_id
   private_subnet_ids = module.vpc.private_subnets
 
@@ -93,6 +103,7 @@ module "eks_blueprints" {
     }
   }
 
+  # Node group configurations
   managed_node_groups = {
     # On-demand general-purpose instances with 8 vCPUs and 16GiB memory 
     od_8vcpu_16mem = {
