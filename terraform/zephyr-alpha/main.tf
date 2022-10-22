@@ -216,7 +216,7 @@ module "eks_blueprints" {
     spot_16vcpu_32mem = {
       node_group_name = "mng-spot-16vcpu-32mem"
       capacity_type   = "SPOT"
-      instance_types  = ["c6a.4xlarge"]
+      instance_types  = ["c5a.4xlarge"]
 
       # Node Group network configuration
       subnet_type = "private" # public or private - Default uses the private subnets used in control plane if you don't pass the "subnet_ids"
