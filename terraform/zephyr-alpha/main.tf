@@ -331,6 +331,28 @@ module "vpc" {
   tags = local.tags
 }
 
+# VPC S3 endpoint
+resource "aws_vpc_endpoint" "s3" {
+  vpc_endpoint_type = "Gateway"
+  vpc_id            = module.vpc.vpc_id
+  service_name      = "com.amazonaws.us-east-2.s3"
+  route_table_ids   = setunion(module.vpc.public_route_table_ids, module.vpc.private_route_table_ids)
+}
+
+# VPC ECR endpoint
+resource "aws_vpc_endpoint" "ecr" {
+  vpc_endpoint_type  = "Interface"
+  vpc_id             = module.vpc.vpc_id
+  service_name       = "com.amazonaws.us-east-2.ecr.dkr"
+  subnet_ids         = module.vpc.private_subnets
+  security_group_ids = [
+    module.vpc.default_security_group_id,
+    module.eks_blueprints.cluster_security_group_id,
+    module.eks_blueprints.cluster_primary_security_group_id,
+    module.eks_blueprints.worker_node_security_group_id
+  ]
+}
+
 #---------------------------------------------------------------
 # Custom IAM roles for Node Groups
 #---------------------------------------------------------------
