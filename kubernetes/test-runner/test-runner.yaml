@@ -5,7 +5,7 @@ metadata:
 spec:
   template:
     spec:
-      image: summerwind/actions-runner-dind
+      image: public.ecr.aws/e9a9g6w7/ci-zephyr-runner:latest
       dockerdWithinRunnerContainer: true
       organization: zephyrproject-rtos
       labels:
@@ -44,5 +44,5 @@ spec:
   - type: PercentageRunnersBusy
     scaleUpThreshold: '0.75'
     scaleDownThreshold: '0.3'
-    scaleUpAdjustment: 4
-    scaleDownAdjustment: 2
+    scaleUpAdjustment: 10
+    scaleDownAdjustment: 5
