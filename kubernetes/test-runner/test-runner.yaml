@@ -44,5 +44,5 @@ spec:
   - type: PercentageRunnersBusy
     scaleUpThreshold: '0.75'
     scaleDownThreshold: '0.3'
-    scaleUpAdjustment: 4
-    scaleDownAdjustment: 2
+    scaleUpAdjustment: 10
+    scaleDownAdjustment: 5
