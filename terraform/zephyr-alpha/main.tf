@@ -395,7 +395,7 @@ resource "kubernetes_storage_class" "efs_sc" {
     name = "efs"
   }
 
-  storage_provisioner = "ebs.csi.aws.com"
+  storage_provisioner = "efs.csi.aws.com"
   reclaim_policy      = "Delete"
 
   parameters = {
