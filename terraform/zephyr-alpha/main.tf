@@ -296,7 +296,7 @@ module "eks_blueprints_kubernetes_addons" {
 }
 
 #---------------------------------------------------------------
-# Supporting Resources
+# Virtual Private Network (VPC)
 #---------------------------------------------------------------
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
@@ -354,6 +354,40 @@ resource "aws_vpc_endpoint" "ecr" {
     module.eks_blueprints.cluster_primary_security_group_id,
     module.eks_blueprints.worker_node_security_group_id
   ]
+}
+
+#---------------------------------------------------------------
+# Elastic File System (EFS)
+#---------------------------------------------------------------
+resource "aws_efs_file_system" "efs" {
+  creation_token = "efs"
+  encrypted      = true
+
+  tags = local.tags
+}
+
+resource "aws_efs_mount_target" "efs_mt" {
+  count = length(module.vpc.private_subnets)
+
+  file_system_id  = aws_efs_file_system.efs.id
+  subnet_id       = module.vpc.private_subnets[count.index]
+  security_groups = [aws_security_group.efs.id]
+}
+
+resource "aws_security_group" "efs" {
+  name        = "${local.name}-efs"
+  description = "Allow inbound NFS traffic from private subnets of the VPC"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    description = "Allow NFS 2049/tcp"
+    cidr_blocks = module.vpc.private_subnets_cidr_blocks
+    from_port   = 2049
+    to_port     = 2049
+    protocol    = "tcp"
+  }
+
+  tags = local.tags
 }
 
 #---------------------------------------------------------------
