@@ -267,8 +267,11 @@ module "eks_blueprints_kubernetes_addons" {
   eks_oidc_provider    = module.eks_blueprints.oidc_provider
   eks_cluster_version  = module.eks_blueprints.eks_cluster_version
 
-  enable_metrics_server     = true
-  enable_cluster_autoscaler = true
+  enable_amazon_eks_aws_ebs_csi_driver = true
+  enable_aws_efs_csi_driver            = true
+  enable_metrics_server                = true
+  enable_cluster_autoscaler            = true
+
   cluster_autoscaler_helm_config = {
     set = [
       {
