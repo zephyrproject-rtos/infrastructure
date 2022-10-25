@@ -272,6 +272,15 @@ module "eks_blueprints_kubernetes_addons" {
   enable_metrics_server                = true
   enable_cluster_autoscaler            = true
 
+  aws_efs_csi_driver_helm_config = {
+    set = [
+      {
+        name = "controller.deleteAccessPointRootDir"
+        value = "true"
+      }
+    ]
+  }
+
   cluster_autoscaler_helm_config = {
     set = [
       {
