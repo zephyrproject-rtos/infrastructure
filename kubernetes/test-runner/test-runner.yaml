@@ -18,6 +18,10 @@ spec:
           requests:
             cpu: "7.5"
             memory: "12Gi"
+        volumeMounts:
+        - mountPath: "/repo-cache"
+          name: runner-repo-cache
+          readOnly: true
       - name: docker
         image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-arc-dind:latest
         resources:
@@ -27,6 +31,14 @@ spec:
           requests:
             cpu: "7.5"
             memory: "12Gi"
+        volumeMounts:
+        - mountPath: "/repo-cache"
+          name: runner-repo-cache
+          readOnly: true
+      volumes:
+      - name: runner-repo-cache
+        persistentVolumeClaim:
+          claimName: runner-repo-cache-pvc
       nodeSelector:
         InstanceType: spot
       tolerations:

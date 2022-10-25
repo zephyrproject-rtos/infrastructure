@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: runner-repo-cache-pvc
+spec:
+  accessModes:
+  - ReadWriteMany
+  storageClassName: efs
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: runner-repo-cache-sync
+spec:
+  schedule: "0 23 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: worker
+            image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-repo-cache-sync:latest
+            volumeMounts:
+            - mountPath: "/repo-cache"
+              name: runner-repo-cache
+          volumes:
+          - name: runner-repo-cache
+            persistentVolumeClaim:
+              claimName: runner-repo-cache-pvc
+          restartPolicy: OnFailure
