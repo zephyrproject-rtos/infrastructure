@@ -322,7 +322,7 @@ module "eks_blueprints_kubernetes_addons" {
 
   # Actions Runner Controller (ARC) Configurations
   actions_runner_controller_helm_config = {
-    version = "0.26.0"
+    version = "0.21.1"
     set = [
       {
         name  = "authSecret.github_app_id"
