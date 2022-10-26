@@ -282,6 +282,7 @@ module "eks_blueprints_kubernetes_addons" {
   enable_amazon_eks_aws_ebs_csi_driver = true
   enable_aws_efs_csi_driver            = true
 
+  # Cluster Autoscaler Configurations
   cluster_autoscaler_helm_config = {
     set = [
       {
@@ -302,11 +303,13 @@ module "eks_blueprints_kubernetes_addons" {
     ]
   }
 
+  # NGINX Ingress Controller Configurations
   ingress_nginx_helm_config = {
     version = "4.0.17"
     values  = [templatefile("${path.module}/nginx-values.yaml", {})]
   }
 
+  # AWS EFS CSI Driver Configurations
   aws_efs_csi_driver_helm_config = {
     set = [
       {
