@@ -281,6 +281,7 @@ module "eks_blueprints_kubernetes_addons" {
   enable_cert_manager                  = true
   enable_amazon_eks_aws_ebs_csi_driver = true
   enable_aws_efs_csi_driver            = true
+  enable_actions_runner_controller     = true
 
   # Cluster Autoscaler Configurations
   cluster_autoscaler_helm_config = {
@@ -315,6 +316,31 @@ module "eks_blueprints_kubernetes_addons" {
       {
         name = "controller.deleteAccessPointRootDir"
         value = "true"
+      }
+    ]
+  }
+
+  # Actions Runner Controller (ARC) Configurations
+  actions_runner_controller_helm_config = {
+    version = "0.26.0"
+    set = [
+      {
+        name  = "authSecret.github_app_id"
+        value = var.actions_runner_controller_github_app_id
+      },
+      {
+        name  = "authSecret.github_app_installation_id"
+        value = var.actions_runner_controller_github_app_installation_id
+      },
+      {
+        name  = "githubWebhookServer.enabled"
+        value = "true"
+      }
+    ]
+    set_sensitive = [
+      {
+        name  = "authSecret.github_app_private_key"
+        value = var.actions_runner_controller_github_app_private_key
       }
     ]
   }
