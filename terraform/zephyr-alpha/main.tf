@@ -63,6 +63,11 @@ module "eks_blueprints" {
       userarn  = "arn:aws:iam::724087766192:user/terraform-cloud"
       username = "terraform-cloud"
       groups   = ["system:masters"]
+    },
+    {
+      userarn  = "arn:aws:iam::724087766192:user/stephanosio"
+      username = "stephanosio"
+      groups   = ["system:masters"]
     }
   ]
 
