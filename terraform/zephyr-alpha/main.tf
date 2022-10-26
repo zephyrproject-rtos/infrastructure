@@ -325,6 +325,10 @@ module "eks_blueprints_kubernetes_addons" {
     version = "0.21.1"
     set = [
       {
+        name  = "authSecret.create"
+        value = "true"
+      },
+      {
         name  = "authSecret.github_app_id"
         value = var.actions_runner_controller_github_app_id
       },
