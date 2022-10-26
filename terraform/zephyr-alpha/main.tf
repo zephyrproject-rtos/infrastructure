@@ -267,19 +267,12 @@ module "eks_blueprints_kubernetes_addons" {
   eks_oidc_provider    = module.eks_blueprints.oidc_provider
   eks_cluster_version  = module.eks_blueprints.eks_cluster_version
 
-  enable_amazon_eks_aws_ebs_csi_driver = true
-  enable_aws_efs_csi_driver            = true
   enable_metrics_server                = true
   enable_cluster_autoscaler            = true
-
-  aws_efs_csi_driver_helm_config = {
-    set = [
-      {
-        name = "controller.deleteAccessPointRootDir"
-        value = "true"
-      }
-    ]
-  }
+  enable_amazon_eks_coredns            = true
+  enable_amazon_eks_kube_proxy         = true
+  enable_amazon_eks_aws_ebs_csi_driver = true
+  enable_aws_efs_csi_driver            = true
 
   cluster_autoscaler_helm_config = {
     set = [
@@ -297,6 +290,15 @@ module "eks_blueprints_kubernetes_addons" {
                   10:
                     - .*
                 EOT
+      }
+    ]
+  }
+
+  aws_efs_csi_driver_helm_config = {
+    set = [
+      {
+        name = "controller.deleteAccessPointRootDir"
+        value = "true"
       }
     ]
   }
