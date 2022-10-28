@@ -515,3 +515,20 @@ resource "aws_iam_instance_profile" "managed_ng" {
 
   tags = local.tags
 }
+
+#---------------------------------------------------------------
+# Custom Kubernetes Resources
+#---------------------------------------------------------------
+
+# Let's Encrypt Certificate Issuers
+resource "kubectl_manifest" "cert_manager_letsencrypt_production" {
+  yaml_body  = templatefile("./letsencrypt-production-clusterissuer.yaml", {})
+  wait       = true
+  depends_on = [module.eks_blueprints_kubernetes_addons]
+}
+
+resource "kubectl_manifest" "cert_manager_letsencrypt_staging" {
+  yaml_body  = templatefile("./letsencrypt-staging-clusterissuer.yaml", {})
+  wait       = true
+  depends_on = [module.eks_blueprints_kubernetes_addons]
+}
