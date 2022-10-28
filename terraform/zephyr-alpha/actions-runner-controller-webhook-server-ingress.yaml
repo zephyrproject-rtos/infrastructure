@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: actions-runner-controller-github-webhook-server
+  namespace: actions-runner-system
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    cert-manager.io/cluster-issuer: cert-manager-letsencrypt-production
+spec:
+  rules:
+  - host: webhook.arc-alpha.ci.zephyrproject.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: actions-runner-controller-github-webhook-server
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - webhook.arc-alpha.ci.zephyrproject.io
+    secretName: actions-runner-controller-github-webhook-server-tls

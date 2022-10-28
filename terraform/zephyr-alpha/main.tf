@@ -532,3 +532,13 @@ resource "kubectl_manifest" "cert_manager_letsencrypt_staging" {
   wait       = true
   depends_on = [module.eks_blueprints_kubernetes_addons]
 }
+
+# Actions Runner Controller Webhook Server Ingress
+resource "kubectl_manifest" "actions_runner_controller_webhook_server_ingress" {
+  yaml_body  = templatefile("./actions-runner-controller-webhook-server-ingress.yaml", {})
+  wait       = true
+  depends_on = [
+    module.eks_blueprints_kubernetes_addons,
+    kubectl_manifest.cert_manager_letsencrypt_production
+    ]
+}
