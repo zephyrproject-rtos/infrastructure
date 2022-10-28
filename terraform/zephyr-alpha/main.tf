@@ -519,12 +519,18 @@ resource "aws_iam_instance_profile" "managed_ng" {
 }
 
 #---------------------------------------------------------------
-# Custom Kubernetes Resources
+# Actions Runner Controller (ARC)
 #---------------------------------------------------------------
+resource "helm_release" "actions_runner_controller_webhook_server_ingress" {
+  name      = "actions-runner-controller-webhook-server-ingress"
+  chart     = "./actions-runner-controller-webhook-server-ingress"
+  version   = "0.1.0"
 
-# Actions Runner Controller Webhook Server Ingress
-resource "kubectl_manifest" "actions_runner_controller_webhook_server_ingress" {
-  yaml_body  = templatefile("./actions-runner-controller-webhook-server-ingress.yaml", {})
-  wait       = true
+  set {
+    name  = "ingressHost"
+    value = var.actions_runner_controller_webhook_server_host
+    type  = "string"
+  }
+
   depends_on = [module.eks_blueprints_kubernetes_addons]
 }

@@ -22,3 +22,9 @@ variable "actions_runner_controller_github_app_private_key" {
   sensitive   = true
   default     = ""
 }
+
+variable "actions_runner_controller_webhook_server_host" {
+  description = "Webhook server host for Actions Runner Controller"
+  type        = string
+  default     = "webhook.arc-alpha.ci.zephyrproject.io"
+}
