@@ -60,10 +60,10 @@ spec:
   # Runners in the targeted RunnerDeployment won't be scaled down
   # for 5 minutes instead of the default 10 minutes now
   scaleDownDelaySecondsAfterScaleOut: 300
-  scaleUpTriggers:
-  - githubEvent:
-      workflowJob: {}
-    duration: "15m"
+  # scaleUpTriggers:
+  # - githubEvent:
+  #     workflowJob: {}
+  #   duration: "15m"
   metrics:
   - type: PercentageRunnersBusy
     scaleUpThreshold: '0.75'
