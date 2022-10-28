@@ -309,6 +309,9 @@ module "eks_blueprints_kubernetes_addons" {
     ]
   }
 
+  # Cert Manager Configurations
+  cert_manager_letsencrypt_ingress_class = "nginx"
+
   # NGINX Ingress Controller Configurations
   ingress_nginx_helm_config = {
     version = "4.0.17"
@@ -519,25 +522,9 @@ resource "aws_iam_instance_profile" "managed_ng" {
 # Custom Kubernetes Resources
 #---------------------------------------------------------------
 
-# Let's Encrypt Certificate Issuers
-resource "kubectl_manifest" "cert_manager_letsencrypt_production" {
-  yaml_body  = templatefile("./letsencrypt-production-clusterissuer.yaml", {})
-  wait       = true
-  depends_on = [module.eks_blueprints_kubernetes_addons]
-}
-
-resource "kubectl_manifest" "cert_manager_letsencrypt_staging" {
-  yaml_body  = templatefile("./letsencrypt-staging-clusterissuer.yaml", {})
-  wait       = true
-  depends_on = [module.eks_blueprints_kubernetes_addons]
-}
-
 # Actions Runner Controller Webhook Server Ingress
 resource "kubectl_manifest" "actions_runner_controller_webhook_server_ingress" {
   yaml_body  = templatefile("./actions-runner-controller-webhook-server-ingress.yaml", {})
   wait       = true
-  depends_on = [
-    module.eks_blueprints_kubernetes_addons,
-    kubectl_manifest.cert_manager_letsencrypt_production
-    ]
+  depends_on = [module.eks_blueprints_kubernetes_addons]
 }
