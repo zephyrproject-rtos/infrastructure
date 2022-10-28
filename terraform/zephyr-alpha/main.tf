@@ -1,5 +1,5 @@
 provider "aws" {
-  region = local.region
+  region = var.aws_region
 }
 
 provider "kubernetes" {
@@ -41,7 +41,6 @@ data "aws_availability_zones" "available" {}
 
 locals {
   name   = "zephyr-alpha"
-  region = "us-east-2"
 
   cluster_version = "1.23"
 
@@ -401,7 +400,7 @@ module "vpc" {
 resource "aws_vpc_endpoint" "s3" {
   vpc_endpoint_type = "Gateway"
   vpc_id            = module.vpc.vpc_id
-  service_name      = "com.amazonaws.us-east-2.s3"
+  service_name      = "com.amazonaws.${var.aws_region}.s3"
   route_table_ids   = setunion(module.vpc.public_route_table_ids, module.vpc.private_route_table_ids)
 }
 
@@ -409,7 +408,7 @@ resource "aws_vpc_endpoint" "s3" {
 resource "aws_vpc_endpoint" "ecr" {
   vpc_endpoint_type  = "Interface"
   vpc_id             = module.vpc.vpc_id
-  service_name       = "com.amazonaws.us-east-2.ecr.dkr"
+  service_name       = "com.amazonaws.${var.aws_region}.ecr.dkr"
   subnet_ids         = module.vpc.private_subnets
   security_group_ids = [
     module.vpc.default_security_group_id,

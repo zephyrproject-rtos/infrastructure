@@ -1,3 +1,9 @@
+variable "aws_region" {
+  description = "AWS Region"
+  type        = string
+  default     = "us-east-2"
+}
+
 variable "actions_runner_controller_github_app_id" {
   description = "GitHub app ID for Actions Runner Controller"
   type        = string
