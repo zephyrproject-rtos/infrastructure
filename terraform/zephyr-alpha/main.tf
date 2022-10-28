@@ -1,5 +1,5 @@
 provider "aws" {
-  region = local.region
+  region = var.aws_region
 }
 
 provider "kubernetes" {
@@ -41,7 +41,6 @@ data "aws_availability_zones" "available" {}
 
 locals {
   name   = "zephyr-alpha"
-  region = "us-east-2"
 
   cluster_version = "1.23"
 
@@ -310,6 +309,9 @@ module "eks_blueprints_kubernetes_addons" {
     ]
   }
 
+  # Cert Manager Configurations
+  cert_manager_letsencrypt_ingress_class = "nginx"
+
   # NGINX Ingress Controller Configurations
   ingress_nginx_helm_config = {
     version = "4.0.17"
@@ -401,7 +403,7 @@ module "vpc" {
 resource "aws_vpc_endpoint" "s3" {
   vpc_endpoint_type = "Gateway"
   vpc_id            = module.vpc.vpc_id
-  service_name      = "com.amazonaws.us-east-2.s3"
+  service_name      = "com.amazonaws.${var.aws_region}.s3"
   route_table_ids   = setunion(module.vpc.public_route_table_ids, module.vpc.private_route_table_ids)
 }
 
@@ -409,7 +411,7 @@ resource "aws_vpc_endpoint" "s3" {
 resource "aws_vpc_endpoint" "ecr" {
   vpc_endpoint_type  = "Interface"
   vpc_id             = module.vpc.vpc_id
-  service_name       = "com.amazonaws.us-east-2.ecr.dkr"
+  service_name       = "com.amazonaws.${var.aws_region}.ecr.dkr"
   subnet_ids         = module.vpc.private_subnets
   security_group_ids = [
     module.vpc.default_security_group_id,
@@ -517,28 +519,18 @@ resource "aws_iam_instance_profile" "managed_ng" {
 }
 
 #---------------------------------------------------------------
-# Custom Kubernetes Resources
+# Actions Runner Controller (ARC)
 #---------------------------------------------------------------
+resource "helm_release" "actions_runner_controller_webhook_server_ingress" {
+  name      = "actions-runner-controller-webhook-server-ingress"
+  chart     = "./actions-runner-controller-webhook-server-ingress"
+  version   = "0.1.0"
 
-# Let's Encrypt Certificate Issuers
-resource "kubectl_manifest" "cert_manager_letsencrypt_production" {
-  yaml_body  = templatefile("./letsencrypt-production-clusterissuer.yaml", {})
-  wait       = true
+  set {
+    name  = "ingressHost"
+    value = var.actions_runner_controller_webhook_server_host
+    type  = "string"
+  }
+
   depends_on = [module.eks_blueprints_kubernetes_addons]
-}
-
-resource "kubectl_manifest" "cert_manager_letsencrypt_staging" {
-  yaml_body  = templatefile("./letsencrypt-staging-clusterissuer.yaml", {})
-  wait       = true
-  depends_on = [module.eks_blueprints_kubernetes_addons]
-}
-
-# Actions Runner Controller Webhook Server Ingress
-resource "kubectl_manifest" "actions_runner_controller_webhook_server_ingress" {
-  yaml_body  = templatefile("./actions-runner-controller-webhook-server-ingress.yaml", {})
-  wait       = true
-  depends_on = [
-    module.eks_blueprints_kubernetes_addons,
-    kubectl_manifest.cert_manager_letsencrypt_production
-    ]
 }
