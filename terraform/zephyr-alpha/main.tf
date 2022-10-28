@@ -8,6 +8,12 @@ provider "kubernetes" {
   token                  = data.aws_eks_cluster_auth.this.token
 }
 
+provider "kubectl" {
+  host                   = module.eks_blueprints.eks_cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks_blueprints.eks_cluster_certificate_authority_data)
+  token                  = data.aws_eks_cluster_auth.this.token
+}
+
 provider "helm" {
   kubernetes {
     host                   = module.eks_blueprints.eks_cluster_endpoint
@@ -508,4 +514,31 @@ resource "aws_iam_instance_profile" "managed_ng" {
   }
 
   tags = local.tags
+}
+
+#---------------------------------------------------------------
+# Custom Kubernetes Resources
+#---------------------------------------------------------------
+
+# Let's Encrypt Certificate Issuers
+resource "kubectl_manifest" "cert_manager_letsencrypt_production" {
+  yaml_body  = templatefile("./letsencrypt-production-clusterissuer.yaml", {})
+  wait       = true
+  depends_on = [module.eks_blueprints_kubernetes_addons]
+}
+
+resource "kubectl_manifest" "cert_manager_letsencrypt_staging" {
+  yaml_body  = templatefile("./letsencrypt-staging-clusterissuer.yaml", {})
+  wait       = true
+  depends_on = [module.eks_blueprints_kubernetes_addons]
+}
+
+# Actions Runner Controller Webhook Server Ingress
+resource "kubectl_manifest" "actions_runner_controller_webhook_server_ingress" {
+  yaml_body  = templatefile("./actions-runner-controller-webhook-server-ingress.yaml", {})
+  wait       = true
+  depends_on = [
+    module.eks_blueprints_kubernetes_addons,
+    kubectl_manifest.cert_manager_letsencrypt_production
+    ]
 }
