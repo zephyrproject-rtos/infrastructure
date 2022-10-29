@@ -320,7 +320,7 @@ module "eks_blueprints_kubernetes_addons" {
   # NGINX Ingress Controller Configurations
   ingress_nginx_helm_config = {
     version = "4.0.17"
-    values  = [templatefile("${path.module}/nginx-values.yaml", {})]
+    values  = [templatefile("${path.module}/helm_values/nginx-values.yaml", {})]
   }
 
   # AWS EFS CSI Driver Configurations
