@@ -22,6 +22,10 @@ provider "helm" {
   }
 }
 
+provider "github" {
+  owner = var.github_organization
+}
+
 data "aws_eks_cluster_auth" "this" {
   name = module.eks_blueprints.eks_cluster_id
 }
@@ -545,4 +549,16 @@ resource "helm_release" "actions_runner_controller_webhook_server_ingress" {
   }
 
   depends_on = [module.eks_blueprints_kubernetes_addons]
+}
+
+resource "github_organization_webhook" "actions_runner_controller_github_webhook" {
+  configuration {
+    url          = "https://${var.actions_runner_controller_webhook_server_host}/"
+    content_type = "json"
+    secret       = var.actions_runner_controller_webhook_server_secret
+    insecure_ssl = false
+  }
+
+  active = true
+  events = ["workflow_job"]
 }

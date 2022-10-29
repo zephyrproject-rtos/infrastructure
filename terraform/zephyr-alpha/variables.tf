@@ -4,6 +4,12 @@ variable "aws_region" {
   default     = "us-east-2"
 }
 
+variable "github_organization" {
+  description = "GitHub organization name"
+  type        = string
+  default     = "zephyrproject-rtos"
+}
+
 variable "actions_runner_controller_github_app_id" {
   description = "GitHub app ID for Actions Runner Controller"
   type        = string
