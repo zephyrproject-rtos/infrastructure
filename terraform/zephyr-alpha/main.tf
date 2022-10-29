@@ -563,3 +563,32 @@ resource "github_organization_webhook" "actions_runner_controller_github_webhook
   active = true
   events = ["workflow_job"]
 }
+
+#---------------------------------------------------------------
+# eks-admin Administrator Service Account
+#---------------------------------------------------------------
+
+resource "kubernetes_service_account" "eks_admin" {
+  metadata {
+    name      = "eks-admin"
+    namespace = "kube-system"
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "eks_admin" {
+  metadata {
+    name = "eks-admin"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = "eks-admin"
+    namespace = "kube-system"
+  }
+
+  depends_on = [kubernetes_service_account.eks_admin]
+}
