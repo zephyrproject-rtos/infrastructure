@@ -367,6 +367,11 @@ module "eks_blueprints_kubernetes_addons" {
     ]
   }
 
+  # Kubernetes Dashboard Configurations
+  kubernetes_dashboard_helm_config = {
+    version = "5.7.0"
+  }
+
   # Kube Prometheus Stack Configurations
   kube_prometheus_stack_helm_config = {
     set_sensitive = [
