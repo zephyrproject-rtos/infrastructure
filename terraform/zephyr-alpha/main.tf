@@ -22,6 +22,10 @@ provider "helm" {
   }
 }
 
+provider "github" {
+  owner = var.github_organization
+}
+
 data "aws_eks_cluster_auth" "this" {
   name = module.eks_blueprints.eks_cluster_id
 }
