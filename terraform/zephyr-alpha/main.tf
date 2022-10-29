@@ -300,6 +300,8 @@ module "eks_blueprints_kubernetes_addons" {
 
   # Cluster Autoscaler Configurations
   cluster_autoscaler_helm_config = {
+    version = "9.21.0"
+
     set = [
       {
         name  = "extraArgs.expander"
