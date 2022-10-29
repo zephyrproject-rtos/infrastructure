@@ -293,6 +293,11 @@ module "eks_blueprints_kubernetes_addons" {
   enable_kube_prometheus_stack         = true
   enable_actions_runner_controller     = true
 
+  # Metrics Server Configurations
+  metrics_server_helm_config = {
+    version = "3.8.2"
+  }
+
   # Cluster Autoscaler Configurations
   cluster_autoscaler_helm_config = {
     set = [
