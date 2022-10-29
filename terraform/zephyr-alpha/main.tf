@@ -345,6 +345,10 @@ module "eks_blueprints_kubernetes_addons" {
   # Cert Manager Configurations
   cert_manager_letsencrypt_ingress_class = "nginx"
 
+  cert_manager_helm_config = {
+    version = "v1.9.1"
+  }
+
   # NGINX Ingress Controller Configurations
   ingress_nginx_helm_config = {
     version = "4.0.17"
