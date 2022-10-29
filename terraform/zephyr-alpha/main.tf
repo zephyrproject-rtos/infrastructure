@@ -290,6 +290,7 @@ module "eks_blueprints_kubernetes_addons" {
   enable_cert_manager                  = true
   enable_amazon_eks_aws_ebs_csi_driver = true
   enable_aws_efs_csi_driver            = true
+  enable_kubernetes_dashboard          = true
   enable_actions_runner_controller     = true
 
   # Cluster Autoscaler Configurations
@@ -561,4 +562,33 @@ resource "github_organization_webhook" "actions_runner_controller_github_webhook
 
   active = true
   events = ["workflow_job"]
+}
+
+#---------------------------------------------------------------
+# eks-admin Administrator Service Account
+#---------------------------------------------------------------
+
+resource "kubernetes_service_account" "eks_admin" {
+  metadata {
+    name      = "eks-admin"
+    namespace = "kube-system"
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "eks_admin" {
+  metadata {
+    name = "eks-admin"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = "eks-admin"
+    namespace = "kube-system"
+  }
+
+  depends_on = [kubernetes_service_account.eks_admin]
 }
