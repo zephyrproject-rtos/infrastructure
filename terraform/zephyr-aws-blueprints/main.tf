@@ -65,18 +65,7 @@ module "eks_blueprints" {
   cluster_version = local.cluster_version
 
   # AWS identity mapping
-  map_users = [
-    {
-      userarn  = "arn:aws:iam::724087766192:user/terraform-cloud"
-      username = "terraform-cloud"
-      groups   = ["system:masters"]
-    },
-    {
-      userarn  = "arn:aws:iam::724087766192:user/stephanosio"
-      username = "stephanosio"
-      groups   = ["system:masters"]
-    }
-  ]
+  map_users = var.aws_auth_map_users
 
   # Network configurations
   vpc_id             = module.vpc.vpc_id
@@ -156,9 +145,9 @@ module "eks_blueprints" {
       }
 
       # Node Group scaling configuration
-      desired_size = 1
-      max_size     = 10
-      min_size     = 1
+      desired_size = var.mng_od_8vcpu_16mem_desired_size
+      max_size     = var.mng_od_8vcpu_16mem_max_size
+      min_size     = var.mng_od_8vcpu_16mem_min_size
 
       # Block device configuration
       block_device_mappings = [
@@ -201,8 +190,9 @@ module "eks_blueprints" {
 
       # NOTE: If we want the node group to scale-down to zero nodes,
       # we need to use a custom launch template and define some additional tags for the ASGs
-      max_size = 100
-      min_size = 0
+      desired_size = var.mng_spot_4vcpu_8mem_desired_size
+      max_size     = var.mng_spot_4vcpu_8mem_max_size
+      min_size     = var.mng_spot_4vcpu_8mem_min_size
 
       # Block device configuration
       block_device_mappings = [
@@ -244,8 +234,9 @@ module "eks_blueprints" {
 
       # NOTE: If we want the node group to scale-down to zero nodes,
       # we need to use a custom launch template and define some additional tags for the ASGs
-      max_size = 100
-      min_size = 0
+      desired_size = var.mng_spot_16vcpu_32mem_desired_size
+      max_size     = var.mng_spot_16vcpu_32mem_max_size
+      min_size     = var.mng_spot_16vcpu_32mem_min_size
 
       # Block device configuration
       block_device_mappings = [
