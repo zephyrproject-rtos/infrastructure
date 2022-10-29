@@ -290,6 +290,7 @@ module "eks_blueprints_kubernetes_addons" {
   enable_cert_manager                  = true
   enable_amazon_eks_aws_ebs_csi_driver = true
   enable_aws_efs_csi_driver            = true
+  enable_kubernetes_dashboard          = true
   enable_actions_runner_controller     = true
 
   # Cluster Autoscaler Configurations
