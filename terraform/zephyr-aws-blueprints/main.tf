@@ -582,7 +582,7 @@ resource "aws_iam_instance_profile" "managed_ng" {
 #---------------------------------------------------------------
 resource "helm_release" "actions_runner_controller_webhook_server_ingress" {
   name      = "actions-runner-controller-webhook-server-ingress"
-  chart     = "./actions-runner-controller-webhook-server-ingress"
+  chart     = "${path.module}/actions-runner-controller-webhook-server-ingress"
   version   = "0.1.0"
 
   set {
