@@ -327,6 +327,7 @@ module "eks_blueprints_kubernetes_addons" {
   aws_for_fluentbit_cw_log_group_retention = 30
 
   aws_for_fluentbit_helm_config = {
+    version   = "0.1.18"
     namespace = "fluentbit"
 
     values = [templatefile("${path.module}/helm_values/fluentbit-values.yaml", {
