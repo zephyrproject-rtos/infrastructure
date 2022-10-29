@@ -28,3 +28,10 @@ variable "actions_runner_controller_webhook_server_host" {
   type        = string
   default     = "webhook.arc-alpha.ci.zephyrproject.io"
 }
+
+variable "actions_runner_controller_webhook_server_secret" {
+  description = "Webhook server secret for Actions Runner Controller"
+  type        = string
+  sensitive   = true
+  default     = "testwebhookserversecret1234"
+}

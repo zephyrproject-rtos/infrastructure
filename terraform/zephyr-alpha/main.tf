@@ -347,12 +347,24 @@ module "eks_blueprints_kubernetes_addons" {
       {
         name  = "githubWebhookServer.enabled"
         value = "true"
+      },
+      {
+        name  = "githubWebhookServer.secret.enabled"
+        value = "true"
+      },
+      {
+        name  = "githubWebhookServer.secret.create"
+        value = "true"
       }
     ]
     set_sensitive = [
       {
         name  = "authSecret.github_app_private_key"
         value = var.actions_runner_controller_github_app_private_key
+      },
+      {
+        name  = "githubWebhookServer.secret.github_webhook_secret_token"
+        value = var.actions_runner_controller_webhook_server_secret
       }
     ]
   }
