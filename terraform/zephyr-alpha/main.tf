@@ -285,6 +285,7 @@ module "eks_blueprints_kubernetes_addons" {
   enable_cluster_autoscaler            = true
   enable_amazon_eks_coredns            = true
   enable_amazon_eks_kube_proxy         = true
+  enable_aws_for_fluentbit             = true
   enable_aws_load_balancer_controller  = true
   enable_ingress_nginx                 = true
   enable_cert_manager                  = true
@@ -314,13 +315,28 @@ module "eks_blueprints_kubernetes_addons" {
     ]
   }
 
+  # Fluentbit Configurations
+  aws_for_fluentbit_create_cw_log_group = true
+  aws_for_fluentbit_cw_log_group_name = "/${local.name}/fluentbit"
+  aws_for_fluentbit_cw_log_group_retention = 30
+
+  aws_for_fluentbit_helm_config = {
+    namespace = "fluentbit"
+
+    values = [templatefile("${path.module}/helm_values/fluentbit-values.yaml", {
+      aws_region           = var.aws_region
+      log_group_name       = "/${local.name}/fluentbit"
+      service_account_name = "aws-for-fluent-bit-sa"
+    })]
+  }
+
   # Cert Manager Configurations
   cert_manager_letsencrypt_ingress_class = "nginx"
 
   # NGINX Ingress Controller Configurations
   ingress_nginx_helm_config = {
     version = "4.0.17"
-    values  = [templatefile("${path.module}/nginx-values.yaml", {})]
+    values  = [templatefile("${path.module}/helm_values/nginx-values.yaml", {})]
   }
 
   # AWS EFS CSI Driver Configurations
