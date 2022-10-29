@@ -357,6 +357,8 @@ module "eks_blueprints_kubernetes_addons" {
 
   # AWS EFS CSI Driver Configurations
   aws_efs_csi_driver_helm_config = {
+    version = "2.2.6"
+
     set = [
       {
         name = "controller.deleteAccessPointRootDir"
