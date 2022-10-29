@@ -337,6 +337,11 @@ module "eks_blueprints_kubernetes_addons" {
     })]
   }
 
+  # AWS Load Balancer Controller Configurations
+  aws_load_balancer_controller_helm_config = {
+    version = "1.4.3"
+  }
+
   # Cert Manager Configurations
   cert_manager_letsencrypt_ingress_class = "nginx"
 
