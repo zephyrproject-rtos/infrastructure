@@ -44,15 +44,13 @@ data "aws_ami" "amazonlinux2eks" {
 data "aws_availability_zones" "available" {}
 
 locals {
-  name   = "zephyr-alpha"
-
   cluster_version = "1.23"
 
   vpc_cidr = "10.0.0.0/16"
   azs      = slice(data.aws_availability_zones.available.names, 0, 3)
 
   tags = {
-    Blueprint  = local.name
+    Blueprint  = var.cluster_name
     GithubRepo = "github.com/zephyrproject-rtos/infrastructure-private"
   }
 }
@@ -63,7 +61,7 @@ locals {
 module "eks_blueprints" {
   source = "./terraform-aws-eks-blueprints"
 
-  cluster_name    = local.name
+  cluster_name    = var.cluster_name
   cluster_version = local.cluster_version
 
   # AWS identity mapping
@@ -318,7 +316,7 @@ module "eks_blueprints_kubernetes_addons" {
 
   # Fluentbit Configurations
   aws_for_fluentbit_create_cw_log_group = true
-  aws_for_fluentbit_cw_log_group_name = "/${local.name}/fluentbit"
+  aws_for_fluentbit_cw_log_group_name = "/${var.cluster_name}/fluentbit"
   aws_for_fluentbit_cw_log_group_retention = 30
 
   aws_for_fluentbit_helm_config = {
@@ -326,7 +324,7 @@ module "eks_blueprints_kubernetes_addons" {
 
     values = [templatefile("${path.module}/helm_values/fluentbit-values.yaml", {
       aws_region           = var.aws_region
-      log_group_name       = "/${local.name}/fluentbit"
+      log_group_name       = "/${var.cluster_name}/fluentbit"
       service_account_name = "aws-for-fluent-bit-sa"
     })]
   }
@@ -411,7 +409,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 3.0"
 
-  name = local.name
+  name = var.cluster_name
   cidr = local.vpc_cidr
 
   azs             = local.azs
@@ -424,20 +422,20 @@ module "vpc" {
 
   # Manage so we can name
   manage_default_network_acl    = true
-  default_network_acl_tags      = { Name = "${local.name}-default" }
+  default_network_acl_tags      = { Name = "${var.cluster_name}-default" }
   manage_default_route_table    = true
-  default_route_table_tags      = { Name = "${local.name}-default" }
+  default_route_table_tags      = { Name = "${var.cluster_name}-default" }
   manage_default_security_group = true
-  default_security_group_tags   = { Name = "${local.name}-default" }
+  default_security_group_tags   = { Name = "${var.cluster_name}-default" }
 
   public_subnet_tags = {
-    "kubernetes.io/cluster/${local.name}" = "shared"
-    "kubernetes.io/role/elb"              = 1
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    "kubernetes.io/role/elb"                    = 1
   }
 
   private_subnet_tags = {
-    "kubernetes.io/cluster/${local.name}" = "shared"
-    "kubernetes.io/role/internal-elb"     = 1
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"           = 1
   }
 
   tags = local.tags
@@ -484,7 +482,7 @@ resource "aws_efs_mount_target" "efs_mt" {
 }
 
 resource "aws_security_group" "efs" {
-  name        = "${local.name}-efs"
+  name        = "${var.cluster_name}-efs"
   description = "Allow inbound NFS traffic from private subnets of the VPC"
   vpc_id      = module.vpc.vpc_id
 
