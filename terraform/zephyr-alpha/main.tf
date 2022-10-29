@@ -292,6 +292,7 @@ module "eks_blueprints_kubernetes_addons" {
   enable_amazon_eks_aws_ebs_csi_driver = true
   enable_aws_efs_csi_driver            = true
   enable_kubernetes_dashboard          = true
+  enable_kube_prometheus_stack         = true
   enable_actions_runner_controller     = true
 
   # Cluster Autoscaler Configurations
@@ -345,6 +346,16 @@ module "eks_blueprints_kubernetes_addons" {
       {
         name = "controller.deleteAccessPointRootDir"
         value = "true"
+      }
+    ]
+  }
+
+  # Kube Prometheus Stack Configurations
+  kube_prometheus_stack_helm_config = {
+    set_sensitive = [
+      {
+        name  = "grafana.adminPassword"
+        value = var.kube_prometheus_stack_grafana_password
       }
     ]
   }
