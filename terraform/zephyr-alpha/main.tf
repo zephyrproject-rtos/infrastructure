@@ -51,7 +51,7 @@ locals {
 
   tags = {
     Blueprint  = var.cluster_name
-    GithubRepo = "github.com/zephyrproject-rtos/infrastructure-private"
+    GithubRepo = "github.com/zephyrproject-rtos/infrastructure-private/terraform/zephyr-alpha"
   }
 }
 
