@@ -374,6 +374,8 @@ module "eks_blueprints_kubernetes_addons" {
 
   # Kube Prometheus Stack Configurations
   kube_prometheus_stack_helm_config = {
+    version = "36.0.3"
+
     set_sensitive = [
       {
         name  = "grafana.adminPassword"
