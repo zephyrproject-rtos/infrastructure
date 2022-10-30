@@ -634,3 +634,18 @@ resource "kubernetes_cluster_role_binding" "eks_admin" {
 
   depends_on = [kubernetes_service_account.eks_admin]
 }
+
+#---------------------------------------------------------------
+# runner-repo-cache Kubernetes Deployment
+#---------------------------------------------------------------
+
+data "kubectl_path_documents" "zephyr_runner_repo_cache_manifests" {
+  pattern = "../../kubernetes/runner-repo-cache/*.yaml"
+}
+
+resource "kubectl_manifest" "zephyr_runner_repo_cache_manifest" {
+  count      = var.enable_zephyr_runner_repo_cache ? length(data.kubectl_path_documents.zephyr_runner_repo_cache_manifests.documents) : 0
+  yaml_body  = element(data.kubectl_path_documents.zephyr_runner_repo_cache_manifests.documents, count.index)
+  wait       = true
+  depends_on = [module.eks_blueprints_kubernetes_addons]
+}
