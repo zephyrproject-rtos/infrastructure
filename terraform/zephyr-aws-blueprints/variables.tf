@@ -119,3 +119,15 @@ variable "enable_zephyr_runner_repo_cache" {
   type        = bool
   default     = false
 }
+
+variable "enable_zephyr_runner_linux_x64_xlarge" {
+  description = "Enable Zephyr Runner linux-x64-xlarge"
+  type        = bool
+  default     = false
+}
+
+variable "enable_zephyr_runner_linux_x64_4xlarge" {
+  description = "Enable Zephyr Runner linux-x64-4xlarge"
+  type        = bool
+  default     = false
+}

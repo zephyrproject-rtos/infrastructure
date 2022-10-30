@@ -41,4 +41,7 @@ module "zephyr_aws_blueprints" {
   actions_runner_controller_webhook_server_secret = var.actions_runner_controller_webhook_server_secret
 
   enable_zephyr_runner_repo_cache = true
+
+  enable_zephyr_runner_linux_x64_xlarge = true
+  enable_zephyr_runner_linux_x64_4xlarge = true
 }
