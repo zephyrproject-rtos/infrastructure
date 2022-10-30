@@ -484,7 +484,7 @@ resource "aws_vpc_endpoint" "ecr" {
 # Elastic File System (EFS)
 #---------------------------------------------------------------
 resource "aws_efs_file_system" "efs" {
-  creation_token = "efs"
+  creation_token = "${var.cluster_name}-efs"
   encrypted      = true
 
   tags = local.tags
@@ -550,7 +550,7 @@ data "aws_iam_policy_document" "managed_ng_assume_role_policy" {
 }
 
 resource "aws_iam_role" "managed_ng" {
-  name                  = "managed-node-role"
+  name                  = "${var.cluster_name}-managed-node-role"
   description           = "EKS Managed Node group IAM Role"
   assume_role_policy    = data.aws_iam_policy_document.managed_ng_assume_role_policy.json
   path                  = "/"
@@ -566,7 +566,7 @@ resource "aws_iam_role" "managed_ng" {
 }
 
 resource "aws_iam_instance_profile" "managed_ng" {
-  name = "managed-node-instance-profile"
+  name = "${var.cluster_name}-managed-node-instance-profile"
   role = aws_iam_role.managed_ng.name
   path = "/"
 
