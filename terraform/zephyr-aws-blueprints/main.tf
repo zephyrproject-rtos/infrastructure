@@ -660,3 +660,27 @@ resource "kubectl_manifest" "zephyr_runner_repo_cache_manifest" {
   wait       = true
   depends_on = [kubernetes_namespace.zephyr_runner_namespace]
 }
+
+# zephyr-runner-linux-x64-xlarge Kubernetes Deployment
+data "kubectl_path_documents" "zephyr_runner_linux_x64_xlarge_manifests" {
+  pattern = "../../kubernetes/zephyr-runner/zephyr-runner-linux-x64-xlarge.yaml"
+}
+
+resource "kubectl_manifest" "zephyr_runner_linux_x64_xlarge_manifest" {
+  count      = var.enable_zephyr_runner_linux_x64_xlarge ? length(data.kubectl_path_documents.zephyr_runner_linux_x64_xlarge_manifests.documents) : 0
+  yaml_body  = element(data.kubectl_path_documents.zephyr_runner_linux_x64_xlarge_manifests.documents, count.index)
+  wait       = true
+  depends_on = [kubernetes_namespace.zephyr_runner_namespace]
+}
+
+# zephyr-runner-linux-x64-4xlarge Kubernetes Deployment
+data "kubectl_path_documents" "zephyr_runner_linux_x64_4xlarge_manifests" {
+  pattern = "../../kubernetes/zephyr-runner/zephyr-runner-linux-x64-4xlarge.yaml"
+}
+
+resource "kubectl_manifest" "zephyr_runner_linux_x64_4xlarge_manifest" {
+  count      = var.enable_zephyr_runner_linux_x64_4xlarge ? length(data.kubectl_path_documents.zephyr_runner_linux_x64_4xlarge_manifests.documents) : 0
+  yaml_body  = element(data.kubectl_path_documents.zephyr_runner_linux_x64_4xlarge_manifests.documents, count.index)
+  wait       = true
+  depends_on = [kubernetes_namespace.zephyr_runner_namespace]
+}
