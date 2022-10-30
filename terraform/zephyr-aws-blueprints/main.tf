@@ -636,9 +636,19 @@ resource "kubernetes_cluster_role_binding" "eks_admin" {
 }
 
 #---------------------------------------------------------------
-# runner-repo-cache Kubernetes Deployment
+# Zephyr Runner Kubernetes Deployment
 #---------------------------------------------------------------
 
+# zephyr-runner Kubernetes Namespace
+resource "kubernetes_namespace" "zephyr_runner_namespace" {
+  metadata {
+    name = "zephyr-runner"
+  }
+
+  depends_on = [module.eks_blueprints_kubernetes_addons]
+}
+
+# runner-repo-cache Kubernetes Deployment
 data "kubectl_path_documents" "zephyr_runner_repo_cache_manifests" {
   pattern = "../../kubernetes/runner-repo-cache/*.yaml"
 }
@@ -647,5 +657,5 @@ resource "kubectl_manifest" "zephyr_runner_repo_cache_manifest" {
   count      = var.enable_zephyr_runner_repo_cache ? length(data.kubectl_path_documents.zephyr_runner_repo_cache_manifests.documents) : 0
   yaml_body  = element(data.kubectl_path_documents.zephyr_runner_repo_cache_manifests.documents, count.index)
   wait       = true
-  depends_on = [module.eks_blueprints_kubernetes_addons]
+  depends_on = [kubernetes_namespace.zephyr_runner_namespace]
 }
