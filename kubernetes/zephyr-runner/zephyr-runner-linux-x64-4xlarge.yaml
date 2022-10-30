@@ -1,0 +1,70 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: zephyr-runner-linux-x64-4xlarge-deployment
+  namespace: zephyr-runner
+spec:
+  template:
+    spec:
+      organization: zephyrproject-rtos
+      labels:
+      - zephyr-runner
+      - 4xlarge
+      - zephyr-runner-linux-x64-4xlarge
+      containers:
+      - name: runner
+        image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-arc-runner:v0.0.7
+        resources:
+          limits:
+            cpu: "16.0"
+            memory: "32Gi"
+          requests:
+            cpu: "7.5"
+            memory: "12Gi"
+        volumeMounts:
+        - mountPath: "/repo-cache"
+          name: runner-repo-cache
+          readOnly: true
+      - name: docker
+        image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-arc-dind:v0.0.7
+        resources:
+          limits:
+            cpu: "16.0"
+            memory: "32Gi"
+          requests:
+            cpu: "7.5"
+            memory: "12Gi"
+        volumeMounts:
+        - mountPath: "/repo-cache"
+          name: runner-repo-cache
+          readOnly: true
+      volumes:
+      - name: runner-repo-cache
+        persistentVolumeClaim:
+          claimName: runner-repo-cache-pvc
+      nodeSelector:
+        InstanceType: spot
+      tolerations:
+      - key: "spotInstance"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+---
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: HorizontalRunnerAutoscaler
+metadata:
+  name: zephyr-runner-linux-x64-4xlarge-deployment-autoscaler
+  namespace: zephyr-runner
+spec:
+  scaleTargetRef:
+    kind: RunnerDeployment
+    name: zephyr-runner-linux-x64-4xlarge-deployment
+  minReplicas: 1
+  maxReplicas: 100
+  scaleDownDelaySecondsAfterScaleOut: 600
+  metrics:
+  - type: PercentageRunnersBusy
+    scaleUpThreshold: '1.0'
+    scaleDownThreshold: '0.9'
+    scaleUpAdjustment: 10
+    scaleDownAdjustment: 5
