@@ -2,6 +2,7 @@ apiVersion: actions.summerwind.dev/v1alpha1
 kind: RunnerDeployment
 metadata:
   name: test-runner-deployment
+  namespace: zephyr-runner
 spec:
   template:
     spec:
@@ -51,6 +52,7 @@ apiVersion: actions.summerwind.dev/v1alpha1
 kind: HorizontalRunnerAutoscaler
 metadata:
   name: test-runner-deployment-autoscaler
+  namespace: zephyr-runner
 spec:
   scaleTargetRef:
     kind: RunnerDeployment
