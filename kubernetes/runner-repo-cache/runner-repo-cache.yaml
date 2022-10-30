@@ -2,6 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: runner-repo-cache-pvc
+  namespace: zephyr-runner
 spec:
   accessModes:
   - ReadWriteMany
@@ -14,6 +15,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: runner-repo-cache-sync
+  namespace: zephyr-runner
 spec:
   schedule: "0 23 * * *"
   jobTemplate:
