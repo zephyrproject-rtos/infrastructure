@@ -113,3 +113,9 @@ variable "actions_runner_controller_webhook_server_secret" {
   type        = string
   sensitive   = true
 }
+
+variable "enable_zephyr_runner_repo_cache" {
+  description = "Enable Zephyr Runner repository cache"
+  type        = bool
+  default     = false
+}
