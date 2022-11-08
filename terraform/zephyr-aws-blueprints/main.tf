@@ -313,6 +313,18 @@ module "eks_blueprints_kubernetes_addons" {
 
     set = [
       {
+        name  = "extraArgs.new-pod-scale-up-delay"
+        value = "30s"
+      },
+      {
+        name  = "extraArgs.scale-down-delay-after-add"
+        value = "2m"
+      },
+      {
+        name  = "extraArgs.scale-down-unneeded-time"
+        value = "2m"
+      },
+      {
         name  = "extraArgs.expander"
         value = "priority"
       },
