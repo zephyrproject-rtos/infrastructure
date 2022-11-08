@@ -2,13 +2,17 @@
 
 set -eux
 
+# ---------------------
+# CI Runner Components
+# ---------------------
+
 # Save Docker data directory
 sudo cp -R /var/lib/docker /var/lib/docker-orig
 
 # Start Docker daemon
 sudo systemctl start docker
 
-# Cache Docker images
+# Cache CI Docker images
 docker pull ghcr.io/zephyrproject-rtos/ci:v0.24.5 # zephyr:main
 docker pull ghcr.io/zephyrproject-rtos/ci:v0.24.2 # zephyr:v3.2-branch
 docker pull ghcr.io/zephyrproject-rtos/ci:v0.23.3 # zephyr:v3.1-branch
@@ -39,3 +43,16 @@ sudo systemctl stop docker
 # Create Docker data directory for Docker-in-Docker (DinD)
 sudo mv /var/lib/docker /var/lib/docker-dind
 sudo mv /var/lib/docker-orig /var/lib/docker
+
+# ---------------------------
+# Kubernetes Node Components
+# ---------------------------
+
+# Start Docker daemon
+sudo systemctl start docker
+
+# Cache Kubernetes pod Docker images
+docker pull ghcr.io/actions-runner-controller/actions-runner-controller/actions-runner:latest
+
+# Stop Docker daemon
+sudo systemctl stop docker
