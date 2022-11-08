@@ -11,37 +11,33 @@ spec:
       - zephyr-runner
       - xlarge
       - zephyr-runner-linux-x64-xlarge
-      containers:
-      - name: runner
-        image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-arc-runner:v0.0.7
-        resources:
-          limits:
-            cpu: "4.0"
-            memory: "8Gi"
-          requests:
-            cpu: "1.75"
-            memory: "2.5Gi"
-        volumeMounts:
-        - mountPath: "/repo-cache"
-          name: runner-repo-cache
-          readOnly: true
-      - name: docker
-        image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-arc-dind:v0.0.7
-        resources:
-          limits:
-            cpu: "4.0"
-            memory: "8Gi"
-          requests:
-            cpu: "1.75"
-            memory: "2.5Gi"
-        volumeMounts:
-        - mountPath: "/repo-cache"
-          name: runner-repo-cache
-          readOnly: true
+      dockerdWithinRunnerContainer: true
+      image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-arc:v0.0.8
+      resources:
+        limits:
+          cpu: "4.0"
+          memory: "8Gi"
+        requests:
+          cpu: "3.5"
+          memory: "5Gi"
+      volumeMounts:
+      - mountPath: "/repo-cache"
+        name: repo-cache
+        readOnly: true
+      - mountPath: "/var/lib/docker/image"
+        name: docker-image
+      - mountPath: "/var/lib/docker/overlay2"
+        name: docker-overlay2
       volumes:
-      - name: runner-repo-cache
-        persistentVolumeClaim:
-          claimName: runner-repo-cache-pvc
+      - name: repo-cache
+        hostPath:
+          path: /pod-cache/repos
+      - name: docker-image
+        hostPath:
+          path: /var/lib/docker-dind/image
+      - name: docker-overlay2
+        hostPath:
+          path: /var/lib/docker-dind/overlay2
       nodeSelector:
         InstanceType: spot
       tolerations:
