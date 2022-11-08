@@ -42,6 +42,17 @@ data "aws_ami" "amazonlinux2eks" {
   owners = ["amazon"]
 }
 
+data "aws_ami" "zephyr_runner_node" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["zephyr-runner-node-*"]
+  }
+
+  owners = ["724087766192"]
+}
+
 data "aws_availability_zones" "available" {}
 
 locals {
@@ -174,6 +185,9 @@ module "eks_blueprints" {
     # Spot instances with 4 vCPU and 8 GiB memory
     spot_4vcpu_8mem = {
       node_group_name = "mng-spot-4vcpu-8mem"
+
+      ami_type        = "CUSTOM"
+      custom_ami_id   = data.aws_ami.zephyr_runner_node.id
       capacity_type   = "SPOT"
       instance_types  = ["c5a.xlarge"]
 
@@ -218,6 +232,9 @@ module "eks_blueprints" {
     # Spot instances with 16 vCPUs and 32 GiB memory
     spot_16vcpu_32mem = {
       node_group_name = "mng-spot-16vcpu-32mem"
+
+      ami_type        = "CUSTOM"
+      custom_ami_id   = data.aws_ami.zephyr_runner_node.id
       capacity_type   = "SPOT"
       instance_types  = ["c5a.4xlarge"]
 
