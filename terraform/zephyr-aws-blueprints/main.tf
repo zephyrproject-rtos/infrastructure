@@ -511,58 +511,6 @@ resource "aws_vpc_endpoint" "ecr" {
 }
 
 #---------------------------------------------------------------
-# Elastic File System (EFS)
-#---------------------------------------------------------------
-resource "aws_efs_file_system" "efs" {
-  creation_token = "${var.cluster_name}-efs"
-  encrypted      = true
-
-  tags = local.tags
-}
-
-resource "aws_efs_mount_target" "efs_mt" {
-  count = length(module.vpc.private_subnets)
-
-  file_system_id  = aws_efs_file_system.efs.id
-  subnet_id       = module.vpc.private_subnets[count.index]
-  security_groups = [aws_security_group.efs.id]
-}
-
-resource "aws_security_group" "efs" {
-  name        = "${var.cluster_name}-efs"
-  description = "Allow inbound NFS traffic from private subnets of the VPC"
-  vpc_id      = module.vpc.vpc_id
-
-  ingress {
-    description = "Allow NFS 2049/tcp"
-    cidr_blocks = module.vpc.private_subnets_cidr_blocks
-    from_port   = 2049
-    to_port     = 2049
-    protocol    = "tcp"
-  }
-
-  tags = local.tags
-}
-
-resource "kubernetes_storage_class" "efs_sc" {
-  metadata {
-    name = "efs"
-  }
-
-  storage_provisioner = "efs.csi.aws.com"
-  reclaim_policy      = "Delete"
-
-  parameters = {
-    provisioningMode = "efs-ap"
-    fileSystemId     = aws_efs_file_system.efs.id
-    directoryPerms   = "700"
-    uid              = "1000"
-    gid              = "1000"
-    basePath         = "/dynamic"
-  }
-}
-
-#---------------------------------------------------------------
 # Custom IAM roles for Node Groups
 #---------------------------------------------------------------
 data "aws_iam_policy_document" "managed_ng_assume_role_policy" {
@@ -676,18 +624,6 @@ resource "kubernetes_namespace" "zephyr_runner_namespace" {
   }
 
   depends_on = [module.eks_blueprints_kubernetes_addons]
-}
-
-# runner-repo-cache Kubernetes Deployment
-data "kubectl_path_documents" "zephyr_runner_repo_cache_manifests" {
-  pattern = "../../kubernetes/runner-repo-cache/*.yaml"
-}
-
-resource "kubectl_manifest" "zephyr_runner_repo_cache_manifest" {
-  count      = var.enable_zephyr_runner_repo_cache ? length(data.kubectl_path_documents.zephyr_runner_repo_cache_manifests.documents) : 0
-  yaml_body  = element(data.kubectl_path_documents.zephyr_runner_repo_cache_manifests.documents, count.index)
-  wait       = true
-  depends_on = [kubernetes_namespace.zephyr_runner_namespace]
 }
 
 # zephyr-runner-linux-x64-xlarge Kubernetes Deployment
