@@ -42,6 +42,17 @@ data "aws_ami" "amazonlinux2eks" {
   owners = ["amazon"]
 }
 
+data "aws_ami" "zephyr_runner_node" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["zephyr-runner-node-*"]
+  }
+
+  owners = ["724087766192"]
+}
+
 data "aws_availability_zones" "available" {}
 
 locals {
@@ -174,8 +185,11 @@ module "eks_blueprints" {
     # Spot instances with 4 vCPU and 8 GiB memory
     spot_4vcpu_8mem = {
       node_group_name = "mng-spot-4vcpu-8mem"
+
+      ami_type        = "CUSTOM"
+      custom_ami_id   = data.aws_ami.zephyr_runner_node.id
       capacity_type   = "SPOT"
-      instance_types  = ["c5a.xlarge"]
+      instance_types  = ["c5a.xlarge", "c6a.xlarge"]
 
       # Node Group network configuration
       subnet_type = "private" # public or private - Default uses the private subnets used in control plane if you don't pass the "subnet_ids"
@@ -200,7 +214,7 @@ module "eks_blueprints" {
         {
           device_name = "/dev/xvda"
           volume_type = "gp3"
-          volume_size = 100
+          volume_size = 150
         }
       ]
 
@@ -218,8 +232,11 @@ module "eks_blueprints" {
     # Spot instances with 16 vCPUs and 32 GiB memory
     spot_16vcpu_32mem = {
       node_group_name = "mng-spot-16vcpu-32mem"
+
+      ami_type        = "CUSTOM"
+      custom_ami_id   = data.aws_ami.zephyr_runner_node.id
       capacity_type   = "SPOT"
-      instance_types  = ["c5a.4xlarge"]
+      instance_types  = ["c5a.4xlarge", "c6a.4xlarge"]
 
       # Node Group network configuration
       subnet_type = "private" # public or private - Default uses the private subnets used in control plane if you don't pass the "subnet_ids"
@@ -295,6 +312,18 @@ module "eks_blueprints_kubernetes_addons" {
     version = "9.21.0"
 
     set = [
+      {
+        name  = "extraArgs.new-pod-scale-up-delay"
+        value = "30s"
+      },
+      {
+        name  = "extraArgs.scale-down-delay-after-add"
+        value = "2m"
+      },
+      {
+        name  = "extraArgs.scale-down-unneeded-time"
+        value = "2m"
+      },
       {
         name  = "extraArgs.expander"
         value = "priority"

@@ -9,37 +9,33 @@ spec:
       organization: zephyrproject-rtos
       labels:
       - test-runner
-      containers:
-      - name: runner
-        image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-arc-runner:latest
-        resources:
-          limits:
-            cpu: "16.0"
-            memory: "32Gi"
-          requests:
-            cpu: "7.5"
-            memory: "12Gi"
-        volumeMounts:
-        - mountPath: "/repo-cache"
-          name: runner-repo-cache
-          readOnly: true
-      - name: docker
-        image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-arc-dind:latest
-        resources:
-          limits:
-            cpu: "16.0"
-            memory: "32Gi"
-          requests:
-            cpu: "7.5"
-            memory: "12Gi"
-        volumeMounts:
-        - mountPath: "/repo-cache"
-          name: runner-repo-cache
-          readOnly: true
+      dockerdWithinRunnerContainer: true
+      image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-arc:latest
+      resources:
+        limits:
+          cpu: "16.0"
+          memory: "32Gi"
+        requests:
+          cpu: "15.0"
+          memory: "24Gi"
+      volumeMounts:
+      - mountPath: "/repo-cache"
+        name: repo-cache
+        readOnly: true
+      - mountPath: "/var/lib/docker/image"
+        name: docker-image
+      - mountPath: "/var/lib/docker/overlay2"
+        name: docker-overlay2
       volumes:
-      - name: runner-repo-cache
-        persistentVolumeClaim:
-          claimName: runner-repo-cache-pvc
+      - name: repo-cache
+        hostPath:
+          path: /pod-cache/repos
+      - name: docker-image
+        hostPath:
+          path: /var/lib/docker-dind/image
+      - name: docker-overlay2
+        hostPath:
+          path: /var/lib/docker-dind/overlay2
       nodeSelector:
         InstanceType: spot
       tolerations:
@@ -57,16 +53,20 @@ spec:
   scaleTargetRef:
     kind: RunnerDeployment
     name: test-runner-deployment
-  minReplicas: 1
+  minReplicas: 0
   maxReplicas: 100
-  scaleDownDelaySecondsAfterScaleOut: 600
+  scaleDownDelaySecondsAfterScaleOut: 60
   # scaleUpTriggers:
   # - githubEvent:
   #     workflowJob: {}
   #   duration: "15m"
   metrics:
-  - type: PercentageRunnersBusy
-    scaleUpThreshold: '1.0'
-    scaleDownThreshold: '0.9'
-    scaleUpAdjustment: 10
-    scaleDownAdjustment: 5
+  - type: TotalNumberOfQueuedAndInProgressWorkflowRuns
+    repositoryNames:
+    - zephyr-testing
+  # metrics:
+  # - type: PercentageRunnersBusy
+  #   scaleUpThreshold: '1.0'
+  #   scaleDownThreshold: '0.9'
+  #   scaleUpAdjustment: 10
+  #   scaleDownAdjustment: 10
