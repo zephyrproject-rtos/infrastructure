@@ -55,12 +55,13 @@ spec:
   scaleTargetRef:
     kind: RunnerDeployment
     name: zephyr-runner-linux-x64-4xlarge-deployment
-  minReplicas: 1
+  minReplicas: 0
   maxReplicas: 100
-  scaleDownDelaySecondsAfterScaleOut: 600
+  scaleDownDelaySecondsAfterScaleOut: 60
   metrics:
-  - type: PercentageRunnersBusy
-    scaleUpThreshold: '1.0'
-    scaleDownThreshold: '0.9'
-    scaleUpAdjustment: 10
-    scaleDownAdjustment: 5
+  - type: TotalNumberOfQueuedAndInProgressWorkflowRuns
+    repositoryNames:
+    - zephyr
+    - zephyr-bt-sig
+    - sdk-ng
+    - docker-image
