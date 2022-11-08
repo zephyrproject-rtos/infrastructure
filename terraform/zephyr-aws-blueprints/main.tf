@@ -678,18 +678,6 @@ resource "kubernetes_namespace" "zephyr_runner_namespace" {
   depends_on = [module.eks_blueprints_kubernetes_addons]
 }
 
-# runner-repo-cache Kubernetes Deployment
-data "kubectl_path_documents" "zephyr_runner_repo_cache_manifests" {
-  pattern = "../../kubernetes/runner-repo-cache/*.yaml"
-}
-
-resource "kubectl_manifest" "zephyr_runner_repo_cache_manifest" {
-  count      = var.enable_zephyr_runner_repo_cache ? length(data.kubectl_path_documents.zephyr_runner_repo_cache_manifests.documents) : 0
-  yaml_body  = element(data.kubectl_path_documents.zephyr_runner_repo_cache_manifests.documents, count.index)
-  wait       = true
-  depends_on = [kubernetes_namespace.zephyr_runner_namespace]
-}
-
 # zephyr-runner-linux-x64-xlarge Kubernetes Deployment
 data "kubectl_path_documents" "zephyr_runner_linux_x64_xlarge_manifests" {
   pattern = "../../kubernetes/zephyr-runner/zephyr-runner-linux-x64-xlarge.yaml"
