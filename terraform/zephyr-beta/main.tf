@@ -18,7 +18,7 @@ module "zephyr_aws_blueprints" {
   ]
 
   mng_od_8vcpu_16mem_min_size     = 1
-  mng_od_8vcpu_16mem_max_size     = 2
+  mng_od_8vcpu_16mem_max_size     = 1
   mng_od_8vcpu_16mem_desired_size = 1
 
   mng_spot_4vcpu_8mem_min_size     = 0
