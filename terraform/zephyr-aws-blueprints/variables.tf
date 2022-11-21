@@ -74,6 +74,24 @@ variable "mng_spot_linux_x64_4xlarge_desired_size" {
   default     = 1
 }
 
+variable "mng_spot_linux_arm64_xlarge_min_size" {
+  description = "Minimum number of nodes for Linux ARM64 xlarge spot instance managed node group"
+  type        = number
+  default     = 0
+}
+
+variable "mng_spot_linux_arm64_xlarge_max_size" {
+  description = "Maximum number of nodes for Linux ARM64 xlarge spot instance managed node group"
+  type        = number
+  default     = 100
+}
+
+variable "mng_spot_linux_arm64_xlarge_desired_size" {
+  description = "Desired number of nodes for Linux ARM64 xlarge spot instance managed node group"
+  type        = number
+  default     = 1
+}
+
 variable "github_organization" {
   description = "GitHub organization name"
   type        = string

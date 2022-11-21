@@ -303,6 +303,60 @@ module "eks_blueprints" {
         "k8s.io/cluster-autoscaler/node-template/label/instanceOs"                     = "linux"
       }
     }
+
+    # Spot ARM64 Linux instances with 4 vCPU and 8 GiB memory
+    spot_linux_arm64_xlarge = {
+      node_group_name = "mng-spot-linux-arm64-xlarge"
+
+      ami_type        = "CUSTOM"
+      custom_ami_id   = data.aws_ami.zephyr_runner_node_arm64.id
+      capacity_type   = "SPOT"
+      instance_types  = ["c6g.xlarge", "c6gn.xlarge"]
+
+      # Node Group network configuration
+      subnet_type = "private" # public or private - Default uses the private subnets used in control plane if you don't pass the "subnet_ids"
+      subnet_ids  = []        # Defaults to private subnet-ids used by EKS Control plane. Define your private/public subnets list with comma separated subnet_ids  = ['subnet1','subnet2','subnet3']
+
+      # Node taints
+      k8s_taints = [{ key = "spotInstance", value = "true", effect = "NO_SCHEDULE" }]
+
+      # Node label configuration
+      k8s_labels = {
+        instanceType = "spot"
+        instanceSize = "xlarge"
+        instanceArch = "arm64"
+        instanceOs   = "linux"
+      }
+
+      # NOTE: If we want the node group to scale-down to zero nodes,
+      # we need to use a custom launch template and define some additional tags for the ASGs
+      desired_size = var.mng_spot_linux_arm64_xlarge_desired_size
+      max_size     = var.mng_spot_linux_arm64_xlarge_max_size
+      min_size     = var.mng_spot_linux_arm64_xlarge_min_size
+
+      # Block device configuration
+      block_device_mappings = [
+        {
+          device_name = "/dev/xvda"
+          volume_type = "gp3"
+          volume_size = 150
+        }
+      ]
+
+      # Launch template configuration
+      create_launch_template = true              # false will use the default launch template
+      launch_template_os     = "amazonlinux2eks" # amazonlinux2eks or bottlerocket
+
+      # This is so cluster autoscaler can identify which node (using ASGs tags) to scale-down to zero nodes
+      additional_tags = {
+        "k8s.io/cluster-autoscaler/node-template/label/eks.amazonaws.com/capacityType" = "SPOT"
+        "k8s.io/cluster-autoscaler/node-template/label/eks/node_group_name"            = "mng-spot-linux-arm64-xlarge"
+        "k8s.io/cluster-autoscaler/node-template/label/instanceType"                   = "spot"
+        "k8s.io/cluster-autoscaler/node-template/label/instanceSize"                   = "large"
+        "k8s.io/cluster-autoscaler/node-template/label/instanceArch"                   = "arm64"
+        "k8s.io/cluster-autoscaler/node-template/label/instanceOs"                     = "linux"
+      }
+    }
   }
 
   tags = local.tags

@@ -29,6 +29,10 @@ module "zephyr_aws_blueprints" {
   mng_spot_linux_x64_4xlarge_max_size     = 100
   mng_spot_linux_x64_4xlarge_desired_size = 1
 
+  mng_spot_linux_arm64_xlarge_min_size     = 0
+  mng_spot_linux_arm64_xlarge_max_size     = 100
+  mng_spot_linux_arm64_xlarge_desired_size = 1
+
   github_organization = "zephyrproject-rtos"
 
   kube_prometheus_stack_grafana_password = var.kube_prometheus_stack_grafana_password
