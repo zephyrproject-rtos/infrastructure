@@ -42,12 +42,23 @@ data "aws_ami" "amazonlinux2eks" {
   owners = ["amazon"]
 }
 
-data "aws_ami" "zephyr_runner_node" {
+data "aws_ami" "zephyr_runner_node_x86_64" {
   most_recent = true
 
   filter {
     name   = "name"
-    values = ["zephyr-runner-node-*"]
+    values = ["zephyr-runner-node-x86_64-*"]
+  }
+
+  owners = ["724087766192"]
+}
+
+data "aws_ami" "zephyr_runner_node_arm64" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["zephyr-runner-node-arm64-*"]
   }
 
   owners = ["724087766192"]
@@ -188,7 +199,7 @@ module "eks_blueprints" {
       node_group_name = "mng-spot-4vcpu-8mem"
 
       ami_type        = "CUSTOM"
-      custom_ami_id   = data.aws_ami.zephyr_runner_node.id
+      custom_ami_id   = data.aws_ami.zephyr_runner_node_x86_64.id
       capacity_type   = "SPOT"
       instance_types  = ["c5a.xlarge", "c6a.xlarge"]
 
@@ -238,7 +249,7 @@ module "eks_blueprints" {
       node_group_name = "mng-spot-16vcpu-32mem"
 
       ami_type        = "CUSTOM"
-      custom_ami_id   = data.aws_ami.zephyr_runner_node.id
+      custom_ami_id   = data.aws_ami.zephyr_runner_node_x86_64.id
       capacity_type   = "SPOT"
       instance_types  = ["c5a.4xlarge", "c6a.4xlarge"]
 
