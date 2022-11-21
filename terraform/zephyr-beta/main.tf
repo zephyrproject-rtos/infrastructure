@@ -50,4 +50,6 @@ module "zephyr_aws_blueprints" {
 
   enable_zephyr_runner_linux_x64_xlarge = false
   enable_zephyr_runner_linux_x64_4xlarge = false
+  enable_zephyr_runner_linux_arm64_xlarge = false
+  enable_zephyr_runner_linux_arm64_4xlarge = false
 }

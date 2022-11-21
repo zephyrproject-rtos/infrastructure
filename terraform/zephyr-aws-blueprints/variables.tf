@@ -161,3 +161,15 @@ variable "enable_zephyr_runner_linux_x64_4xlarge" {
   type        = bool
   default     = false
 }
+
+variable "enable_zephyr_runner_linux_arm64_xlarge" {
+  description = "Enable Zephyr Runner linux-arm64-xlarge"
+  type        = bool
+  default     = false
+}
+
+variable "enable_zephyr_runner_linux_arm64_4xlarge" {
+  description = "Enable Zephyr Runner linux-arm64-4xlarge"
+  type        = bool
+  default     = false
+}
