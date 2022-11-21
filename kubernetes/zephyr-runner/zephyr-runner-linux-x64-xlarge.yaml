@@ -41,6 +41,8 @@ spec:
       nodeSelector:
         instanceType: spot
         instanceSize: xlarge
+        instanceArch: x64
+        instanceOs: linux
       tolerations:
       - key: "spotInstance"
         operator: "Equal"
