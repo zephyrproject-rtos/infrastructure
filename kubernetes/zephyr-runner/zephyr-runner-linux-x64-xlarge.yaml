@@ -58,7 +58,7 @@ spec:
     name: zephyr-runner-linux-x64-xlarge-deployment
   minReplicas: 0
   maxReplicas: 100
-  scaleDownDelaySecondsAfterScaleOut: 50
+  scaleDownDelaySecondsAfterScaleOut: 60
   metrics:
   - type: TotalNumberOfQueuedAndInProgressWorkflowRuns
     repositoryNames:
