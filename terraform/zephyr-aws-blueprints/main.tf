@@ -350,9 +350,7 @@ module "eks_blueprints_kubernetes_addons" {
         name  = "expanderPriorities"
         value = <<-EOT
                   100:
-                    - .*-spot-linux-x64-xlarge.*
-                  90:
-                    - .*-spot-linux-x64-4xlarge.*
+                    - .*-spot-.*
                   10:
                     - .*
                 EOT
