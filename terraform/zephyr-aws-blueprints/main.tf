@@ -153,7 +153,8 @@ module "eks_blueprints" {
 
       # Node label configuration
       k8s_labels = {
-        InstanceType = "on-demand"
+        instanceType = "on-demand"
+        instanceSize = "2xlarge"
       }
 
       # Node Group scaling configuration
@@ -200,7 +201,8 @@ module "eks_blueprints" {
 
       # Node label configuration
       k8s_labels = {
-        InstanceType = "spot"
+        instanceType = "spot"
+        instanceSize = "xlarge"
       }
 
       # NOTE: If we want the node group to scale-down to zero nodes,
@@ -247,7 +249,8 @@ module "eks_blueprints" {
 
       # Node label configuration
       k8s_labels = {
-        InstanceType = "spot"
+        instanceType = "spot"
+        instanceSize = "4xlarge"
       }
 
       # NOTE: If we want the node group to scale-down to zero nodes,
