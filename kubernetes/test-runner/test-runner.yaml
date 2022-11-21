@@ -37,7 +37,10 @@ spec:
         hostPath:
           path: /var/lib/docker-dind/overlay2
       nodeSelector:
-        InstanceType: spot
+        instanceType: spot
+        instanceSize: 4xlarge
+        instanceArch: x64
+        instanceOs: linux
       tolerations:
       - key: "spotInstance"
         operator: "Equal"
