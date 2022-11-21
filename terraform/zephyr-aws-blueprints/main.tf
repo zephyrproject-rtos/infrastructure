@@ -228,6 +228,8 @@ module "eks_blueprints" {
       additional_tags = {
         "k8s.io/cluster-autoscaler/node-template/label/eks.amazonaws.com/capacityType" = "SPOT"
         "k8s.io/cluster-autoscaler/node-template/label/eks/node_group_name"            = "mng-spot-4vcpu-8mem"
+        "k8s.io/cluster-autoscaler/node-template/label/instanceType"                   = "spot"
+        "k8s.io/cluster-autoscaler/node-template/label/instanceSize"                   = "large"
       }
     }
 
@@ -276,6 +278,8 @@ module "eks_blueprints" {
       additional_tags = {
         "k8s.io/cluster-autoscaler/node-template/label/eks.amazonaws.com/capacityType" = "SPOT"
         "k8s.io/cluster-autoscaler/node-template/label/eks/node_group_name"            = "mng-spot-16vcpu-32mem"
+        "k8s.io/cluster-autoscaler/node-template/label/instanceType"                   = "spot"
+        "k8s.io/cluster-autoscaler/node-template/label/instanceSize"                   = "4xlarge"
       }
     }
   }
