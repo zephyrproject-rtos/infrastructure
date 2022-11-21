@@ -63,3 +63,4 @@ spec:
   - type: TotalNumberOfQueuedAndInProgressWorkflowRuns
     repositoryNames:
     - zephyr-testing
+    - sdk-ng-testing

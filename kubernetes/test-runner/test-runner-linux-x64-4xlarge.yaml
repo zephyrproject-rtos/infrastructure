@@ -67,6 +67,7 @@ spec:
   - type: TotalNumberOfQueuedAndInProgressWorkflowRuns
     repositoryNames:
     - zephyr-testing
+    - sdk-ng-testing
   # metrics:
   # - type: PercentageRunnersBusy
   #   scaleUpThreshold: '1.0'
