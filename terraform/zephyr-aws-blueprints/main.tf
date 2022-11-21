@@ -129,10 +129,10 @@ module "eks_blueprints" {
 
   # Node group configurations
   managed_node_groups = {
-    # On-demand general-purpose instances with 8 vCPUs and 16GiB memory 
-    od_8vcpu_16mem = {
+    # On-demand general-purpose x86-64 Linux instances with 8 vCPUs and 16 GiB memory
+    od_linux_x64_2xlarge = {
       # Node Group configuration
-      node_group_name = "mng-od-8vcpu-16mem" # Max 40 characters for node group name
+      node_group_name = "mng-od-linux-x64-2xlarge" # Max 40 characters for node group name
 
       ami_type               = "AL2_x86_64"    # Available options -> AL2_x86_64, AL2_x86_64_GPU, AL2_ARM_64, CUSTOM
       release_version        = ""              # Enter AMI release version to deploy the latest AMI released by AWS. Used only when you specify ami_type
@@ -169,9 +169,9 @@ module "eks_blueprints" {
       }
 
       # Node Group scaling configuration
-      desired_size = var.mng_od_8vcpu_16mem_desired_size
-      max_size     = var.mng_od_8vcpu_16mem_max_size
-      min_size     = var.mng_od_8vcpu_16mem_min_size
+      desired_size = var.mng_od_linux_x64_2xlarge_desired_size
+      max_size     = var.mng_od_linux_x64_2xlarge_max_size
+      min_size     = var.mng_od_linux_x64_2xlarge_min_size
 
       # Block device configuration
       block_device_mappings = [
@@ -194,9 +194,9 @@ module "eks_blueprints" {
       ssh_security_group_id = ""
     }
 
-    # Spot instances with 4 vCPU and 8 GiB memory
-    spot_4vcpu_8mem = {
-      node_group_name = "mng-spot-4vcpu-8mem"
+    # Spot x86-64 Linux instances with 4 vCPU and 8 GiB memory
+    spot_linux_x64_xlarge = {
+      node_group_name = "mng-spot-linux-x64-xlarge"
 
       ami_type        = "CUSTOM"
       custom_ami_id   = data.aws_ami.zephyr_runner_node_x86_64.id
@@ -218,9 +218,9 @@ module "eks_blueprints" {
 
       # NOTE: If we want the node group to scale-down to zero nodes,
       # we need to use a custom launch template and define some additional tags for the ASGs
-      desired_size = var.mng_spot_4vcpu_8mem_desired_size
-      max_size     = var.mng_spot_4vcpu_8mem_max_size
-      min_size     = var.mng_spot_4vcpu_8mem_min_size
+      desired_size = var.mng_spot_linux_x64_xlarge_desired_size
+      max_size     = var.mng_spot_linux_x64_xlarge_max_size
+      min_size     = var.mng_spot_linux_x64_xlarge_min_size
 
       # Block device configuration
       block_device_mappings = [
@@ -238,15 +238,15 @@ module "eks_blueprints" {
       # This is so cluster autoscaler can identify which node (using ASGs tags) to scale-down to zero nodes
       additional_tags = {
         "k8s.io/cluster-autoscaler/node-template/label/eks.amazonaws.com/capacityType" = "SPOT"
-        "k8s.io/cluster-autoscaler/node-template/label/eks/node_group_name"            = "mng-spot-4vcpu-8mem"
+        "k8s.io/cluster-autoscaler/node-template/label/eks/node_group_name"            = "mng-spot-linux-x64-xlarge"
         "k8s.io/cluster-autoscaler/node-template/label/instanceType"                   = "spot"
         "k8s.io/cluster-autoscaler/node-template/label/instanceSize"                   = "large"
       }
     }
 
-    # Spot instances with 16 vCPUs and 32 GiB memory
-    spot_16vcpu_32mem = {
-      node_group_name = "mng-spot-16vcpu-32mem"
+    # Spot x86-64 Linux instances with 16 vCPUs and 32 GiB memory
+    spot_linux_x64_4xlarge = {
+      node_group_name = "mng-spot-linux-x64-4xlarge"
 
       ami_type        = "CUSTOM"
       custom_ami_id   = data.aws_ami.zephyr_runner_node_x86_64.id
@@ -268,9 +268,9 @@ module "eks_blueprints" {
 
       # NOTE: If we want the node group to scale-down to zero nodes,
       # we need to use a custom launch template and define some additional tags for the ASGs
-      desired_size = var.mng_spot_16vcpu_32mem_desired_size
-      max_size     = var.mng_spot_16vcpu_32mem_max_size
-      min_size     = var.mng_spot_16vcpu_32mem_min_size
+      desired_size = var.mng_spot_linux_x64_4xlarge_desired_size
+      max_size     = var.mng_spot_linux_x64_4xlarge_max_size
+      min_size     = var.mng_spot_linux_x64_4xlarge_min_size
 
       # Block device configuration
       block_device_mappings = [
@@ -288,7 +288,7 @@ module "eks_blueprints" {
       # This is so cluster autoscaler can identify which node (using ASGs tags) to scale-down to zero nodes
       additional_tags = {
         "k8s.io/cluster-autoscaler/node-template/label/eks.amazonaws.com/capacityType" = "SPOT"
-        "k8s.io/cluster-autoscaler/node-template/label/eks/node_group_name"            = "mng-spot-16vcpu-32mem"
+        "k8s.io/cluster-autoscaler/node-template/label/eks/node_group_name"            = "mng-spot-linux-x64-4xlarge"
         "k8s.io/cluster-autoscaler/node-template/label/instanceType"                   = "spot"
         "k8s.io/cluster-autoscaler/node-template/label/instanceSize"                   = "4xlarge"
       }
@@ -350,9 +350,9 @@ module "eks_blueprints_kubernetes_addons" {
         name  = "expanderPriorities"
         value = <<-EOT
                   100:
-                    - .*-spot-4vcpu-8mem.*
+                    - .*-spot-linux-x64-xlarge.*
                   90:
-                    - .*-spot-16vcpu-32mem.*
+                    - .*-spot-linux-x64-4xlarge.*
                   10:
                     - .*
                 EOT

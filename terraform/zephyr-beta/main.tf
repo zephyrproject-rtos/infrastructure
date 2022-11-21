@@ -17,17 +17,17 @@ module "zephyr_aws_blueprints" {
     }
   ]
 
-  mng_od_8vcpu_16mem_min_size     = 1
-  mng_od_8vcpu_16mem_max_size     = 1
-  mng_od_8vcpu_16mem_desired_size = 1
+  mng_od_linux_x64_2xlarge_min_size     = 1
+  mng_od_linux_x64_2xlarge_max_size     = 1
+  mng_od_linux_x64_2xlarge_desired_size = 1
 
-  mng_spot_4vcpu_8mem_min_size     = 0
-  mng_spot_4vcpu_8mem_max_size     = 100
-  mng_spot_4vcpu_8mem_desired_size = 1
+  mng_spot_linux_x64_xlarge_min_size     = 0
+  mng_spot_linux_x64_xlarge_max_size     = 100
+  mng_spot_linux_x64_xlarge_desired_size = 1
 
-  mng_spot_16vcpu_32mem_min_size     = 0
-  mng_spot_16vcpu_32mem_max_size     = 100
-  mng_spot_16vcpu_32mem_desired_size = 1
+  mng_spot_linux_x64_4xlarge_min_size     = 0
+  mng_spot_linux_x64_4xlarge_max_size     = 100
+  mng_spot_linux_x64_4xlarge_desired_size = 1
 
   github_organization = "zephyrproject-rtos"
 
