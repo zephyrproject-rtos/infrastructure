@@ -166,6 +166,8 @@ module "eks_blueprints" {
       k8s_labels = {
         instanceType = "on-demand"
         instanceSize = "2xlarge"
+        instanceArch = "x64"
+        instanceOs   = "linux"
       }
 
       # Node Group scaling configuration
@@ -214,6 +216,8 @@ module "eks_blueprints" {
       k8s_labels = {
         instanceType = "spot"
         instanceSize = "xlarge"
+        instanceArch = "x64"
+        instanceOs   = "linux"
       }
 
       # NOTE: If we want the node group to scale-down to zero nodes,
@@ -241,6 +245,8 @@ module "eks_blueprints" {
         "k8s.io/cluster-autoscaler/node-template/label/eks/node_group_name"            = "mng-spot-linux-x64-xlarge"
         "k8s.io/cluster-autoscaler/node-template/label/instanceType"                   = "spot"
         "k8s.io/cluster-autoscaler/node-template/label/instanceSize"                   = "large"
+        "k8s.io/cluster-autoscaler/node-template/label/instanceArch"                   = "x64"
+        "k8s.io/cluster-autoscaler/node-template/label/instanceOs"                     = "linux"
       }
     }
 
@@ -264,6 +270,8 @@ module "eks_blueprints" {
       k8s_labels = {
         instanceType = "spot"
         instanceSize = "4xlarge"
+        instanceArch = "x64"
+        instanceOs   = "linux"
       }
 
       # NOTE: If we want the node group to scale-down to zero nodes,
@@ -291,6 +299,8 @@ module "eks_blueprints" {
         "k8s.io/cluster-autoscaler/node-template/label/eks/node_group_name"            = "mng-spot-linux-x64-4xlarge"
         "k8s.io/cluster-autoscaler/node-template/label/instanceType"                   = "spot"
         "k8s.io/cluster-autoscaler/node-template/label/instanceSize"                   = "4xlarge"
+        "k8s.io/cluster-autoscaler/node-template/label/instanceArch"                   = "x64"
+        "k8s.io/cluster-autoscaler/node-template/label/instanceOs"                     = "linux"
       }
     }
   }
