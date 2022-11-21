@@ -1,14 +1,14 @@
 apiVersion: actions.summerwind.dev/v1alpha1
 kind: RunnerDeployment
 metadata:
-  name: test-runner-deployment
+  name: test-runner-linux-x64-4xlarge-deployment
   namespace: zephyr-runner
 spec:
   template:
     spec:
       organization: zephyrproject-rtos
       labels:
-      - test-runner
+      - test-runner-linux-x64-4xlarge
       dockerdWithinRunnerContainer: true
       image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-arc:latest
       resources:
@@ -50,12 +50,12 @@ spec:
 apiVersion: actions.summerwind.dev/v1alpha1
 kind: HorizontalRunnerAutoscaler
 metadata:
-  name: test-runner-deployment-autoscaler
+  name: test-runner-linux-x64-4xlarge-deployment-autoscaler
   namespace: zephyr-runner
 spec:
   scaleTargetRef:
     kind: RunnerDeployment
-    name: test-runner-deployment
+    name: test-runner-linux-x64-4xlarge-deployment
   minReplicas: 0
   maxReplicas: 100
   scaleDownDelaySecondsAfterScaleOut: 60
