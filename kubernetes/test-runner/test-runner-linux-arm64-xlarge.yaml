@@ -1,25 +1,23 @@
 apiVersion: actions.summerwind.dev/v1alpha1
 kind: RunnerDeployment
 metadata:
-  name: zephyr-runner-linux-x64-4xlarge-deployment
+  name: test-runner-linux-arm64-xlarge-deployment
   namespace: zephyr-runner
 spec:
   template:
     spec:
       organization: zephyrproject-rtos
       labels:
-      - zephyr-runner
-      - 4xlarge
-      - zephyr-runner-linux-x64-4xlarge
+      - test-runner-linux-arm64-xlarge
       dockerdWithinRunnerContainer: true
-      image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-arc:v0.0.9
+      image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-arc:latest
       resources:
         limits:
-          cpu: "16.0"
-          memory: "32Gi"
+          cpu: "4.0"
+          memory: "8Gi"
         requests:
-          cpu: "15.0"
-          memory: "24Gi"
+          cpu: "3.5"
+          memory: "5Gi"
       volumeMounts:
       - mountPath: "/repo-cache"
         name: repo-cache
@@ -40,8 +38,8 @@ spec:
           path: /var/lib/docker-dind/overlay2
       nodeSelector:
         instanceType: spot
-        instanceSize: 4xlarge
-        instanceArch: x64
+        instanceSize: xlarge
+        instanceArch: arm64
         instanceOs: linux
       tolerations:
       - key: "spotInstance"
@@ -52,19 +50,17 @@ spec:
 apiVersion: actions.summerwind.dev/v1alpha1
 kind: HorizontalRunnerAutoscaler
 metadata:
-  name: zephyr-runner-linux-x64-4xlarge-deployment-autoscaler
+  name: test-runner-linux-arm64-xlarge-deployment-autoscaler
   namespace: zephyr-runner
 spec:
   scaleTargetRef:
     kind: RunnerDeployment
-    name: zephyr-runner-linux-x64-4xlarge-deployment
+    name: test-runner-linux-arm64-xlarge-deployment
   minReplicas: 0
   maxReplicas: 100
   scaleDownDelaySecondsAfterScaleOut: 60
   metrics:
   - type: TotalNumberOfQueuedAndInProgressWorkflowRuns
     repositoryNames:
-    - zephyr
-    - zephyr-bt-sig
-    - sdk-ng
-    - docker-image
+    - zephyr-testing
+    - sdk-ng-testing

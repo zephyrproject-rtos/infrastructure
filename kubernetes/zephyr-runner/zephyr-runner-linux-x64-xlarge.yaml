@@ -12,7 +12,7 @@ spec:
       - xlarge
       - zephyr-runner-linux-x64-xlarge
       dockerdWithinRunnerContainer: true
-      image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-arc:v0.0.8
+      image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-arc:v0.0.9
       resources:
         limits:
           cpu: "4.0"
@@ -41,6 +41,8 @@ spec:
       nodeSelector:
         instanceType: spot
         instanceSize: xlarge
+        instanceArch: x64
+        instanceOs: linux
       tolerations:
       - key: "spotInstance"
         operator: "Equal"
