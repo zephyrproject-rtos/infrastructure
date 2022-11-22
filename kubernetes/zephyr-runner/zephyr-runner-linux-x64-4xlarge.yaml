@@ -12,7 +12,7 @@ spec:
       - 4xlarge
       - zephyr-runner-linux-x64-4xlarge
       dockerdWithinRunnerContainer: true
-      image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-arc:v0.0.8
+      image: 724087766192.dkr.ecr.us-east-2.amazonaws.com/ci-zephyr-runner-arc:v0.0.9
       resources:
         limits:
           cpu: "16.0"
