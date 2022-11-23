@@ -10,7 +10,7 @@ packer {
 source "amazon-ebs" "zephyr_runner_node_x86_64" {
   region        = "us-east-2"
   ami_name      = "zephyr-runner-node-x86_64-{{timestamp}}"
-  source_ami    = "ami-06acc29adf84c8f3c" # amazon-eks-node-1.23-v20220926
+  source_ami    = "ami-0fcd72f3118e0dd88" # amazon-eks-node-1.23-v20221112
   instance_type = "c5a.xlarge"
   ssh_username  = "ec2-user"
   launch_block_device_mappings {
