@@ -285,7 +285,7 @@ module "eks_blueprints" {
         {
           device_name = "/dev/xvda"
           volume_type = "gp3"
-          volume_size = 150
+          volume_size = 200
         }
       ]
 
@@ -393,7 +393,7 @@ module "eks_blueprints" {
         {
           device_name = "/dev/xvda"
           volume_type = "gp3"
-          volume_size = 150
+          volume_size = 200
         }
       ]
 
