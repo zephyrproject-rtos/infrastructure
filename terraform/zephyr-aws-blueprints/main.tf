@@ -860,3 +860,20 @@ resource "kubectl_manifest" "zephyr_runner_linux_arm64_4xlarge_manifest" {
   wait       = true
   depends_on = [kubernetes_namespace.zephyr_runner_namespace]
 }
+
+#---------------------------------------------------------------
+# Elastic Cloud on Kubernetes (ECK) Stack Deployment
+#---------------------------------------------------------------
+
+# ECK Operator
+resource "helm_release" "elastic_operator" {
+  name       = "elastic-operator"
+  repository = "https://helm.elastic.co"
+  chart      = "eck-operator"
+  version    = "2.5.0"
+
+  namespace  = "elastic-system"
+  create_namespace = true
+
+  depends_on = [module.eks_blueprints_kubernetes_addons]
+}
