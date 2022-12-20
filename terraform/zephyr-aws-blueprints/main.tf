@@ -695,6 +695,33 @@ resource "aws_iam_instance_profile" "managed_ng" {
 }
 
 #---------------------------------------------------------------
+# Kubernetes Storage Class
+#---------------------------------------------------------------
+
+# NOTE: gp2 storage class is created by default.
+
+# gp3
+resource "kubernetes_storage_class_v1" "gp3" {
+  metadata {
+    name = "gp3"
+  }
+
+  storage_provisioner    = "ebs.csi.aws.com"
+  allow_volume_expansion = true
+  reclaim_policy         = "Delete"
+  volume_binding_mode    = "WaitForFirstConsumer"
+  parameters = {
+    encrypted = true
+    fsType    = "ext4"
+    type      = "gp3"
+  }
+
+  depends_on = [
+    module.eks_blueprints_kubernetes_addons
+  ]
+}
+
+#---------------------------------------------------------------
 # Actions Runner Controller (ARC)
 #---------------------------------------------------------------
 resource "helm_release" "actions_runner_controller_webhook_server_ingress" {
