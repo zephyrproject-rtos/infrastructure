@@ -510,6 +510,11 @@ module "eks_blueprints_kubernetes_addons" {
     values  = [templatefile("${path.module}/helm_values/nginx-values.yaml", {})]
   }
 
+  # AWS EBS CSI Driver Configurations
+  amazon_eks_aws_ebs_csi_driver_config = {
+    addon_version = "v1.13.0-eksbuild.2"
+  }
+
   # AWS EFS CSI Driver Configurations
   aws_efs_csi_driver_helm_config = {
     version = "2.2.6"
