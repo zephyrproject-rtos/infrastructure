@@ -721,6 +721,27 @@ resource "kubernetes_storage_class_v1" "gp3" {
   ]
 }
 
+# sc1
+resource "kubernetes_storage_class_v1" "sc1" {
+  metadata {
+    name = "sc1"
+  }
+
+  storage_provisioner    = "ebs.csi.aws.com"
+  allow_volume_expansion = true
+  reclaim_policy         = "Delete"
+  volume_binding_mode    = "WaitForFirstConsumer"
+  parameters = {
+    encrypted = true
+    fsType    = "ext4"
+    type      = "sc1"
+  }
+
+  depends_on = [
+    module.eks_blueprints_kubernetes_addons
+  ]
+}
+
 #---------------------------------------------------------------
 # Actions Runner Controller (ARC)
 #---------------------------------------------------------------
