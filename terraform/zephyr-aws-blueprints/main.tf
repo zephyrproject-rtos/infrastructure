@@ -510,6 +510,11 @@ module "eks_blueprints_kubernetes_addons" {
     values  = [templatefile("${path.module}/helm_values/nginx-values.yaml", {})]
   }
 
+  # AWS EBS CSI Driver Configurations
+  amazon_eks_aws_ebs_csi_driver_config = {
+    addon_version = "v1.13.0-eksbuild.2"
+  }
+
   # AWS EFS CSI Driver Configurations
   aws_efs_csi_driver_helm_config = {
     version = "2.2.6"
@@ -687,6 +692,54 @@ resource "aws_iam_instance_profile" "managed_ng" {
   }
 
   tags = local.tags
+}
+
+#---------------------------------------------------------------
+# Kubernetes Storage Class
+#---------------------------------------------------------------
+
+# NOTE: gp2 storage class is created by default.
+
+# gp3
+resource "kubernetes_storage_class_v1" "gp3" {
+  metadata {
+    name = "gp3"
+  }
+
+  storage_provisioner    = "ebs.csi.aws.com"
+  allow_volume_expansion = true
+  reclaim_policy         = "Delete"
+  volume_binding_mode    = "WaitForFirstConsumer"
+  parameters = {
+    encrypted = true
+    fsType    = "ext4"
+    type      = "gp3"
+  }
+
+  depends_on = [
+    module.eks_blueprints_kubernetes_addons
+  ]
+}
+
+# sc1
+resource "kubernetes_storage_class_v1" "sc1" {
+  metadata {
+    name = "sc1"
+  }
+
+  storage_provisioner    = "ebs.csi.aws.com"
+  allow_volume_expansion = true
+  reclaim_policy         = "Delete"
+  volume_binding_mode    = "WaitForFirstConsumer"
+  parameters = {
+    encrypted = true
+    fsType    = "ext4"
+    type      = "sc1"
+  }
+
+  depends_on = [
+    module.eks_blueprints_kubernetes_addons
+  ]
 }
 
 #---------------------------------------------------------------
