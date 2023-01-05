@@ -1,0 +1,53 @@
+# ElasticSearch
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: staging-es-http
+  namespace: elastic-stack
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    cert-manager.io/cluster-issuer: cert-manager-letsencrypt-production
+spec:
+  rules:
+  - host: elasticsearch.staging.zephyrproject.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: staging-es-http
+            port:
+              number: 9200
+  tls:
+  - hosts:
+    - elasticsearch.staging.zephyrproject.io
+    secretName: staging-es-http-tls
+---
+# Kibana
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: staging-kb-http
+  namespace: elastic-stack
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    cert-manager.io/cluster-issuer: cert-manager-letsencrypt-production
+spec:
+  rules:
+  - host: kibana.staging.zephyrproject.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: staging-kb-http
+            port:
+              number: 5601
+  tls:
+  - hosts:
+    - kibana.staging.zephyrproject.io
+    secretName: staging-kb-http-tls
