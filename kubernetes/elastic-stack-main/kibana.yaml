@@ -8,6 +8,14 @@ spec:
   count: 2
   config:
     server.publicBaseUrl: https://kibana.zephyrproject.io
+    xpack.security.authc.providers:
+      basic.basic1:
+        order: 0
+      anonymous.anonymous1:
+        order: 1
+        credentials:
+          username: "guest"
+          password: "kibanaguest"
   elasticsearchRef:
     name: main
   podTemplate:
