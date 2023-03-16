@@ -13,8 +13,8 @@ sudo cp -R /var/lib/docker /var/lib/docker-orig
 sudo systemctl start docker
 
 # Cache CI Docker images
-docker pull ghcr.io/zephyrproject-rtos/ci:v0.24.11 # zephyr:main (current)
-docker pull ghcr.io/zephyrproject-rtos/ci:v0.24.6 # zephyr:main (prev)
+docker pull ghcr.io/zephyrproject-rtos/ci:v0.25.0 # zephyr:main (current)
+docker pull ghcr.io/zephyrproject-rtos/ci:v0.24.11 # zephyr:main (prev)
 docker pull ghcr.io/zephyrproject-rtos/ci:v0.24.2 # zephyr:v3.2-branch
 docker pull ghcr.io/zephyrproject-rtos/ci:v0.23.3 # zephyr:v3.1-branch
 docker pull zephyrprojectrtos/ci:v0.21.0 # zephyr:v3.0-branch
