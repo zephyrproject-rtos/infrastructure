@@ -16,7 +16,7 @@ sudo systemctl start docker
 docker pull ghcr.io/zephyrproject-rtos/ci:v0.26.2 # zephyr:main (current)
 docker pull ghcr.io/zephyrproject-rtos/ci:v0.26.1 # zephyr:main (prev)
 docker pull ghcr.io/zephyrproject-rtos/ci:v0.24.11 # zephyr:v3.3-branch
-docker pull ghcr.io/zephyrproject-rtos/ci:v0.24.2 # zephyr:v3.2-branch
+docker pull ghcr.io/zephyrproject-rtos/ci:v0.24.3 # zephyr:v3.2-branch
 docker pull zephyrprojectrtos/ci:v0.18.4 # zephyr:v2.7-branch
 docker pull ghcr.io/zephyrproject-rtos/sdk-build:v1.2.3 # sdk-ng:main
 
