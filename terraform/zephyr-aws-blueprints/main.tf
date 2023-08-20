@@ -365,7 +365,7 @@ module "eks_blueprints" {
       ami_type        = "CUSTOM"
       custom_ami_id   = data.aws_ami.zephyr_runner_node_arm64.id
       capacity_type   = "SPOT"
-      instance_types  = ["c7g.4xlarge"] # "c6g.4xlarge", "c6gn.4xlarge"
+      instance_types  = ["c6g.4xlarge"] # "c7g.4xlarge", "c6gn.4xlarge"
 
       # Node Group network configuration
       subnet_type = "private" # public or private - Default uses the private subnets used in control plane if you don't pass the "subnet_ids"
