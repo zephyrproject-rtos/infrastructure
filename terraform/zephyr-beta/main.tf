@@ -18,8 +18,8 @@ module "zephyr_aws_blueprints" {
   ]
 
   mng_od_linux_x64_2xlarge_min_size     = 1
-  mng_od_linux_x64_2xlarge_max_size     = 1
-  mng_od_linux_x64_2xlarge_desired_size = 1
+  mng_od_linux_x64_2xlarge_max_size     = 2
+  mng_od_linux_x64_2xlarge_desired_size = 2
 
   mng_spot_linux_x64_xlarge_min_size     = 0
   mng_spot_linux_x64_xlarge_max_size     = 100
