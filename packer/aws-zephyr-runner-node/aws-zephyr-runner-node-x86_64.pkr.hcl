@@ -15,7 +15,7 @@ source "amazon-ebs" "zephyr_runner_node_x86_64" {
   ssh_username  = "ec2-user"
   launch_block_device_mappings {
     device_name = "/dev/xvda"
-    volume_size = 80
+    volume_size = 120
     volume_type = "gp3"
     iops        = 3000
     throughput  = 125
