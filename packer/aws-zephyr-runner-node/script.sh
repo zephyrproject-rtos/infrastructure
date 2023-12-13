@@ -2,57 +2,23 @@
 
 set -eux
 
-# ---------------------
-# CI Runner Components
-# ---------------------
+# Cache Docker images
 
-# Save Docker data directory
-sudo cp -R /var/lib/docker /var/lib/docker-orig
-
-# Start Docker daemon
+## Start Docker daemon
 sudo systemctl start docker
 
-# Cache CI Docker images
-docker pull ghcr.io/zephyrproject-rtos/ci:v0.26.6 # zephyr:main (current)
-docker pull ghcr.io/zephyrproject-rtos/ci:v0.26.5 # zephyr:main (prev)
-docker pull ghcr.io/zephyrproject-rtos/ci:v0.26.4 # zephyr:v3.4-branch
-docker pull ghcr.io/zephyrproject-rtos/ci:v0.24.11 # zephyr:v3.3-branch
-docker pull zephyrprojectrtos/ci:v0.18.4 # zephyr:v2.7-branch
-docker pull ghcr.io/zephyrproject-rtos/sdk-build:v1.2.3 # sdk-ng:main
-
-# Create pod-cache directory
-sudo mkdir -p /pod-cache
-sudo chmod 777 /pod-cache
-mkdir -p /pod-cache/repos
-mkdir -p /pod-cache/tools
-
-# Clone Zephyr repositories
-docker run -i --network host -v /pod-cache:/pod-cache ghcr.io/zephyrproject-rtos/ci:v0.26.6 <<-EOF
-su user
-mkdir -p /pod-cache/repos/zephyrproject
-cd /pod-cache/repos/zephyrproject
-git clone https://github.com/zephyrproject-rtos/zephyr.git
-west init -l zephyr
-west update
-EOF
-
-# Stop Docker daemon
-docker container prune -f
-sudo systemctl stop docker
-
-# Create Docker data directory for Docker-in-Docker (DinD)
-sudo mv /var/lib/docker /var/lib/docker-dind
-sudo mv /var/lib/docker-orig /var/lib/docker
-
-# ---------------------------
-# Kubernetes Node Components
-# ---------------------------
-
-# Start Docker daemon
-sudo systemctl start docker
-
-# Cache Kubernetes pod Docker images
+## Docker images for Actions Runner Controller
 docker pull ghcr.io/actions-runner-controller/actions-runner-controller/actions-runner:latest
 
-# Stop Docker daemon
+## Docker images for zephyr repository CI workflows
+docker pull ghcr.io/zephyrproject-rtos/ci-repo-cache:v0.26.6.20231213 # zephyr:main (current)
+docker pull ghcr.io/zephyrproject-rtos/ci-repo-cache:v0.26.5.20231213 # zephyr:main (prev)
+docker pull ghcr.io/zephyrproject-rtos/ci-repo-cache:v0.26.4.20231213 # zephyr:v3.4-branch
+docker pull ghcr.io/zephyrproject-rtos/ci-repo-cache:v0.24.11.20231213 # zephyr:v3.3-branch
+docker pull ghcr.io/zephyrproject-rtos/ci-repo-cache:v0.18.4.20231213 # zephyr:v3.3-branch
+
+## Docker images for sdk-ng repository CI workflows
+docker pull ghcr.io/zephyrproject-rtos/sdk-build:v1.2.3 # sdk-ng:main
+
+## Stop Docker daemon
 sudo systemctl stop docker
