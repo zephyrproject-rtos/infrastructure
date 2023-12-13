@@ -2,7 +2,7 @@ terraform {
   cloud {
     organization = "zephyrproject-rtos"
     workspaces {
-      name = "zephyr-beta"
+      name = "aws-zephyr-alpha"
     }
   }
 }

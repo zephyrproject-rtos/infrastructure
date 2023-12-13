@@ -9,13 +9,13 @@ configuration files for the Zephyr infrastructure components.
 
     * Amazon Web Services-based Kubernetes cluster configurations template.
 
-* zephyr-alpha
+* aws-zephyr-alpha
 
     * Production Kubernetes cluster for Zephyr infrastructure services.
     * Hosted on Amazon Web Services.
     * Terraform plan and applies are remotely executed on the Terraform Cloud.
 
-* zephyr-beta
+* aws-zephyr-beta
 
     * Staging Kubernetes cluster for Zephyr infrastructure services.
     * Hosted on Amazon Web Services.
