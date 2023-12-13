@@ -8,7 +8,7 @@ set -eux
 sudo systemctl start docker
 
 ## Docker images for Actions Runner Controller
-docker pull ghcr.io/actions-runner-controller/actions-runner-controller/actions-runner:latest
+docker pull ghcr.io/actions/actions-runner:2.311.0
 
 ## Docker images for zephyr repository CI workflows
 docker pull ghcr.io/zephyrproject-rtos/ci-repo-cache:v0.26.6.20231213 # zephyr:main (current)
