@@ -1,18 +1,18 @@
-name: Packer (zephyr-runner-node)
+name: Packer (aws-zephyr-runner-node)
 
 on:
   push:
     branches:
     - main
     paths:
-    - '.github/workflows/packer_zephyr-runner-node.yaml'
-    - 'packer/zephyr-runner-node/**'
+    - '.github/workflows/packer_aws-zephyr-runner-node.yaml'
+    - 'packer/aws-zephyr-runner-node/**'
   pull_request:
     branches:
     - main
     paths:
-    - '.github/workflows/packer_zephyr-runner-node.yaml'
-    - 'packer/zephyr-runner-node/**'
+    - '.github/workflows/packer_aws-zephyr-runner-node.yaml'
+    - 'packer/aws-zephyr-runner-node/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}
@@ -27,8 +27,8 @@ jobs:
       fail-fast: false
       matrix:
         image:
-        - zephyr-runner-node-arm64
-        - zephyr-runner-node-x86_64
+        - aws-zephyr-runner-node-arm64
+        - aws-zephyr-runner-node-x86_64
 
     steps:
     - name: Check out repository
@@ -41,12 +41,12 @@ jobs:
 
     - name: Initialise Packer
       run: |
-        cd packer/zephyr-runner-node
+        cd packer/aws-zephyr-runner-node
         packer init ${{ matrix.image }}.pkr.hcl
 
     - name: Validate Packer script
       run: |
-        cd packer/zephyr-runner-node
+        cd packer/aws-zephyr-runner-node
         packer validate ${{ matrix.image }}.pkr.hcl
 
     - name: Build image from Packer script
@@ -57,5 +57,5 @@ jobs:
         AWS_MAX_ATTEMPTS: 120
         AWS_POLL_DELAY_SECONDS: 60
       run: |
-        cd packer/zephyr-runner-node
+        cd packer/aws-zephyr-runner-node
         packer build ${{ matrix.image }}.pkr.hcl
