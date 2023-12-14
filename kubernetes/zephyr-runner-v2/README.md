@@ -59,6 +59,15 @@ kubectl create secret generic arc-github-app \
     --from-file=github_app_private_key=github-app-private-key.pem
 ```
 
+In addition, OpenEBS must be deployed in order to support the dynamic local PVs
+required by workflow pods:
+
+```
+helm repo add openebs https://openebs.github.io/charts
+helm repo update
+helm install openebs openebs/openebs --namespace openebs --create-namespace
+```
+
 To deploy an Actions Runner Controller runner scale set, run the following
 commands:
 
