@@ -50,6 +50,21 @@ access Pod features:
 kubectl apply -f cnx/cnx-privileged/privileged-podsecuritypolicy.yaml
 ```
 
+### OpenEBS Deployment
+
+OpenEBS must be deployed in order to support the dynamic local PVs required by
+workflow pods.
+
+To deploy OpenEBS, run the following commands:
+
+```
+helm repo add openebs https://openebs.github.io/charts
+helm repo update
+helm install openebs openebs/openebs \
+    --namespace openebs --create-namespace \
+    -f aws/aws-openebs/values.yaml
+```
+
 ### runner-scale-set-controller Deployment
 
 To deploy the Actions Runner Controller runner scale set controller, run the
@@ -75,15 +90,6 @@ kubectl create secret generic arc-github-app \
     --from-literal=github_app_id=123456 \
     --from-literal=github_app_installation_id=1234567890 \
     --from-file=github_app_private_key=github-app-private-key.pem
-```
-
-In addition, OpenEBS must be deployed in order to support the dynamic local PVs
-required by workflow pods:
-
-```
-helm repo add openebs https://openebs.github.io/charts
-helm repo update
-helm install openebs openebs/openebs --namespace openebs --create-namespace
 ```
 
 To deploy an Actions Runner Controller runner scale set, run the following
