@@ -1,0 +1,18 @@
+varDirectoryPath:
+  baseDir: "/var/lib/docker/openebs"
+
+localprovisioner:
+  # Set OpenEBS local PV base path to under Docker volume mount because the
+  # node root volume is relatively small and the primary ephemeral storage is
+  # intended to be the Docker volume. In addition, the Centrinix Kubernetes
+  # deployment places kubelet into a container and does not map the default
+  # OpenEBS var directory into the kubelet container, which leads to kubelet
+  # being unable to verify the local PV hostPath volume mounts.
+  basePath: "/var/lib/docker/openebs/local"
+
+ndm:
+  sparse:
+    path: "/var/lib/docker/openebs/sparse"
+
+jiva:
+  defaultStoragePath: "/var/lib/docker/openebs"
