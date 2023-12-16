@@ -32,6 +32,24 @@ While the Actions Runner Controller Helm chart installations are intended to be
 managed using Terraform, it is possible to manually install and manage them for
 testing purposes.
 
+### Pod Security Policy Configuration
+
+`PodSecurityPolicy` admission controller is enabled by default on both AWS
+Elastic Kubernetes Service (EKS) and Centrinix OpenStack Magnum Kubernetes
+clusters by default.
+
+In the AWS EKS Kubernetes cluster, AWS creates a default pod security policy
+that allows full unrestricted access to Pod features from all authenticated
+users.
+
+This is not done by default in the Centrinix Magnum OpenStack cluster and it is
+necessary to create a pod security policy that allows all authenticated users to
+access Pod features:
+
+```
+kubectl apply -f cnx/cnx-privileged/privileged-podsecuritypolicy.yaml
+```
+
 ### runner-scale-set-controller Deployment
 
 To deploy the Actions Runner Controller runner scale set controller, run the
