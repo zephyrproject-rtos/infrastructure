@@ -49,3 +49,6 @@ template:
         requests:
           cpu: "15.0"
           memory: "24Gi"
+    nodeSelector:
+      kubernetes.io/os: linux
+      kubernetes.io/arch: amd64
