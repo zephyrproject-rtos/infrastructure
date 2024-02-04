@@ -47,7 +47,7 @@ data "aws_ami" "zephyr_runner_node_x86_64" {
 
   filter {
     name   = "name"
-    values = ["zephyr-runner-node-x86_64-1700673478"]
+    values = ["zephyr-runner-node-x86_64-1707039002"]
   }
 
   owners = ["724087766192"]
