@@ -27,7 +27,7 @@ jobs:
       fail-fast: false
       matrix:
         image:
-        - aws-zephyr-runner-v1-node-arm64
+        # - aws-zephyr-runner-v1-node-arm64
         - aws-zephyr-runner-v1-node-x86_64
 
     steps:
