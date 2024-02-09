@@ -20,3 +20,9 @@ configuration files for the Zephyr infrastructure components.
 * zephyr-runner
 
     * GitHub Actions self-hosted runner for production use.
+    * To be phased out in the near future.
+
+* zephyr-runner-v2
+
+    * Next generation GitHub Actions self-hosted runner using GitHub runner
+      scale sets.
