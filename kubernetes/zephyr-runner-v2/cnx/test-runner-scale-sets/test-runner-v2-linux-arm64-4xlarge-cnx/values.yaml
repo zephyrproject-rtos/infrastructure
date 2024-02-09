@@ -1,8 +1,8 @@
 # Name of the runner scale set registered in GitHub
-runnerScaleSetName: "test-runner-v2-linux-x64-4xlarge-aws"
+runnerScaleSetName: "test-runner-v2-linux-arm64-4xlarge-cnx"
 
 # Runner group to which this runner scale set belongs.
-runnerGroup: "test-runner-v2-linux-x64-4xlarge"
+runnerGroup: "test-runner-v2-linux-arm64-4xlarge"
 
 # maxRunners is the max number of runners the autoscaling runner set will scale up to.
 maxRunners: 100
@@ -16,9 +16,9 @@ githubConfigUrl: "https://github.com/zephyrproject-rtos"
 # GitHub app secret for API access
 githubConfigSecret: arc-github-app
 
-# Container mode is an object that provides out-of-box configuration
-# for dind and kubernetes mode. Template will be modified as documented under the
-# template object.
+## Container mode is an object that provides out-of-box configuration
+## for dind and kubernetes mode. Template will be modified as documented under the
+## template object.
 containerMode:
   type: "kubernetes"  ## type can be set to dind or kubernetes
   kubernetesModeWorkVolumeClaim:
@@ -29,8 +29,8 @@ containerMode:
         # Size of workspace
         storage: 20Gi
 
-# template is the PodSpec for each runner Pod
-# For reference: https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#PodSpec
+## template is the PodSpec for each runner Pod
+## For reference: https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#PodSpec
 template:
   spec:
     containers:
@@ -49,14 +49,6 @@ template:
         requests:
           cpu: "15.0"
           memory: "24Gi"
-    # Ensure that runner pods are scheduled onto AWS spot instance nodes.
     nodeSelector:
-      instanceType: spot
-      instanceSize: 4xlarge
-      instanceArch: x64
-      instanceOs: linux
-    tolerations:
-    - key: "spotInstance"
-      operator: "Equal"
-      value: "true"
-      effect: "NoSchedule"
+      kubernetes.io/os: linux
+      kubernetes.io/arch: arm64
