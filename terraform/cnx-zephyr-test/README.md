@@ -17,9 +17,12 @@ Deployment process must be executed locally using the Terraform cloud state
 backend, which is managed in the `cnx-zephyr-test` workspace in the Terraform
 cloud.
 
+All secrets used during the deployment process are stored in the
+`zephyr-secrets` application in the HCP Vault Secrets.
+
 ### Host Requirements
 
-The deployment host must have Terraform, OpenStack Client
+The deployment host must have Terraform, Vault (`vlt`), OpenStack Client
 (`python-openstackclient`) and kubectl installed.
 
 In addition, the deployment host must have access to the Centrinix Cloud CGN

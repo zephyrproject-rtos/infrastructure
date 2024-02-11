@@ -29,6 +29,11 @@ provider "helm" {
   }
 }
 
+# HashiCorp Vault Secrets zephyr-secrets Vault
+data "hcp_vault_secrets_app" "zephyr_secrets" {
+  app_name = "zephyr-secrets"
+}
+
 # kubernetes-1.23-zephyr-test1 Magnum Kubernetes Cluster Template
 resource "openstack_containerinfra_clustertemplate_v1" "kubernetes_1_23_zephyr_test1" {
   name                  = "kubernetes-1.23-zephyr-test1"
