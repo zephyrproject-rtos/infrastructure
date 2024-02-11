@@ -2,6 +2,10 @@ terraform {
   required_version = ">= 0.14.0"
 
   required_providers {
+    hcp = {
+      source  = "hashicorp/hcp"
+      version = "~> 0.82.0"
+    }
     openstack = {
       source  = "terraform-provider-openstack/openstack"
       version = "1.53.0"
