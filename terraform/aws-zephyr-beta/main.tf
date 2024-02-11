@@ -6,6 +6,11 @@ provider "helm" {
   }
 }
 
+# Local Variables
+locals {
+  arc_version = "0.8.2"
+}
+
 # HashiCorp Vault Secrets zephyr-secrets Vault
 data "hcp_vault_secrets_app" "zephyr_secrets" {
   app_name = "zephyr-secrets"
@@ -58,6 +63,11 @@ module "zephyr_aws_blueprints" {
   actions_runner_controller_github_app_id              = nonsensitive(data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_id"])
   actions_runner_controller_github_app_installation_id = nonsensitive(data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_installation_id"])
   actions_runner_controller_github_app_private_key     = data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_private_key"]
+
+  actions_runner_controller_v2_version                    = local.arc_version
+  actions_runner_controller_v2_github_app_id              = data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_id"]
+  actions_runner_controller_v2_github_app_installation_id = data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_installation_id"]
+  actions_runner_controller_v2_github_app_private_key     = data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_private_key"]
 
   enable_zephyr_runner_linux_x64_xlarge = false
   enable_zephyr_runner_linux_x64_4xlarge = false
