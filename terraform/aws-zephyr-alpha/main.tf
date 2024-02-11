@@ -45,9 +45,6 @@ module "zephyr_aws_blueprints" {
   actions_runner_controller_github_app_installation_id = "30394780"
   actions_runner_controller_github_app_private_key     = var.actions_runner_controller_github_app_private_key
 
-  actions_runner_controller_webhook_server_host   = "webhook.arc-alpha.ci.zephyrproject.io"
-  actions_runner_controller_webhook_server_secret = var.actions_runner_controller_webhook_server_secret
-
   enable_zephyr_runner_linux_x64_xlarge = true
   enable_zephyr_runner_linux_x64_4xlarge = true
   enable_zephyr_runner_linux_arm64_xlarge = true
