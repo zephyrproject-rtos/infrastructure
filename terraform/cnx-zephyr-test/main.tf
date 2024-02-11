@@ -20,6 +20,15 @@ provider "kubectl" {
   load_config_file       = false
 }
 
+provider "helm" {
+  kubernetes {
+    host                   = openstack_containerinfra_cluster_v1.zephyr_test1.kubeconfig.host
+    cluster_ca_certificate = openstack_containerinfra_cluster_v1.zephyr_test1.kubeconfig.cluster_ca_certificate
+    client_certificate     = openstack_containerinfra_cluster_v1.zephyr_test1.kubeconfig.client_certificate
+    client_key             = openstack_containerinfra_cluster_v1.zephyr_test1.kubeconfig.client_key
+  }
+}
+
 # kubernetes-1.23-zephyr-test1 Magnum Kubernetes Cluster Template
 resource "openstack_containerinfra_clustertemplate_v1" "kubernetes_1_23_zephyr_test1" {
   name                  = "kubernetes-1.23-zephyr-test1"
@@ -112,4 +121,16 @@ resource "kubectl_manifest" "cnx_privileged_manifest" {
   yaml_body  = element(data.kubectl_path_documents.cnx_privileged_manifests.documents, count.index)
   wait       = true
   depends_on = [openstack_containerinfra_cluster_v1.zephyr_test1]
+}
+
+# OpenEBS Installation
+resource "helm_release" "openebs" {
+  name       = "openebs"
+  namespace  = "openebs"
+  create_namespace = true
+  repository = "https://openebs.github.io/charts"
+  chart      = "openebs"
+  version    = "3.10.0"
+  values     = ["${file("../../kubernetes/zephyr-runner-v2/cnx/cnx-openebs/values.yaml")}"]
+  depends_on = [kubectl_manifest.cnx_privileged_manifest]
 }
