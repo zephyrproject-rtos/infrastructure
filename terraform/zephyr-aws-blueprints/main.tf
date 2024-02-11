@@ -828,6 +828,21 @@ resource "kubectl_manifest" "zephyr_runner_linux_arm64_4xlarge_manifest" {
   depends_on = [kubernetes_namespace.zephyr_runner_namespace]
 }
 
+#-------------------
+# OpenEBS Deployment
+#-------------------
+
+resource "helm_release" "openebs" {
+  name       = "openebs"
+  namespace  = "openebs"
+  create_namespace = true
+  repository = "https://openebs.github.io/charts"
+  chart      = "openebs"
+  version    = "3.10.0"
+  values     = ["${file("../../kubernetes/zephyr-runner-v2/aws/aws-openebs/values.yaml")}"]
+  depends_on = [module.eks_blueprints_kubernetes_addons]
+}
+
 #---------------------------------------------------------------
 # Elastic Cloud on Kubernetes (ECK) Stack Deployment
 #---------------------------------------------------------------
