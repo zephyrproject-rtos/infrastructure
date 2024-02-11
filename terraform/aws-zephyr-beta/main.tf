@@ -85,3 +85,13 @@ resource "helm_release" "test_runner_v2_linux_x64_4xlarge_aws" {
   values     = ["${file("../../kubernetes/zephyr-runner-v2/aws/test-runner-scale-sets/test-runner-v2-linux-x64-4xlarge-aws/values.yaml")}"]
   depends_on = [module.zephyr_aws_blueprints.actions_runner_controller]
 }
+
+## test-runner-v2-linux-arm64-4xlarge-aws Runner Scale Set Deployment
+resource "helm_release" "test_runner_v2_linux_arm64_4xlarge_aws" {
+  name       = "test-runner-v2-linux-arm64-4xlarge-aws"
+  namespace  = "arc-runners"
+  chart      = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set"
+  version    = local.arc_version
+  values     = ["${file("../../kubernetes/zephyr-runner-v2/aws/test-runner-scale-sets/test-runner-v2-linux-arm64-4xlarge-aws/values.yaml")}"]
+  depends_on = [module.zephyr_aws_blueprints.actions_runner_controller]
+}
