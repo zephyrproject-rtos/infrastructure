@@ -1,3 +1,11 @@
+provider "helm" {
+  kubernetes {
+    host                   = module.zephyr_aws_blueprints.eks_cluster_endpoint
+    cluster_ca_certificate = module.zephyr_aws_blueprints.eks_cluster_ca_certificate
+    token                  = module.zephyr_aws_blueprints.eks_cluster_auth_token
+  }
+}
+
 # HashiCorp Vault Secrets zephyr-secrets Vault
 data "hcp_vault_secrets_app" "zephyr_secrets" {
   app_name = "zephyr-secrets"
