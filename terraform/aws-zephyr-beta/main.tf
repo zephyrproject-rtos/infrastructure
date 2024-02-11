@@ -1,3 +1,9 @@
+# HashiCorp Vault Secrets zephyr-secrets Vault
+data "hcp_vault_secrets_app" "zephyr_secrets" {
+  app_name = "zephyr-secrets"
+}
+
+# Zephyr AWS Blueprints
 module "zephyr_aws_blueprints" {
   source = "../zephyr-aws-blueprints"
 
@@ -39,14 +45,11 @@ module "zephyr_aws_blueprints" {
 
   github_organization = "zephyrproject-rtos"
 
-  kube_prometheus_stack_grafana_password = var.kube_prometheus_stack_grafana_password
+  kube_prometheus_stack_grafana_password = data.hcp_vault_secrets_app.zephyr_secrets.secrets["kube_prometheus_stack_grafana_password"]
 
-  actions_runner_controller_github_app_id              = "256098"
-  actions_runner_controller_github_app_installation_id = "30737086"
-  actions_runner_controller_github_app_private_key     = var.actions_runner_controller_github_app_private_key
-
-  actions_runner_controller_webhook_server_host   = "webhook.arc-beta.ci.zephyrproject.io"
-  actions_runner_controller_webhook_server_secret = var.actions_runner_controller_webhook_server_secret
+  actions_runner_controller_github_app_id              = nonsensitive(data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_id"])
+  actions_runner_controller_github_app_installation_id = nonsensitive(data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_installation_id"])
+  actions_runner_controller_github_app_private_key     = data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_private_key"]
 
   enable_zephyr_runner_linux_x64_xlarge = false
   enable_zephyr_runner_linux_x64_4xlarge = false

@@ -74,7 +74,7 @@ locals {
 
   tags = {
     Blueprint  = var.cluster_name
-    GithubRepo = "github.com/zephyrproject-rtos/infrastructure-private"
+    GithubRepo = "github.com/zephyrproject-rtos/infrastructure"
   }
 }
 
@@ -577,10 +577,6 @@ module "eks_blueprints_kubernetes_addons" {
       {
         name  = "authSecret.github_app_private_key"
         value = var.actions_runner_controller_github_app_private_key
-      },
-      {
-        name  = "githubWebhookServer.secret.github_webhook_secret_token"
-        value = var.actions_runner_controller_webhook_server_secret
       }
     ]
   }
@@ -740,35 +736,6 @@ resource "kubernetes_storage_class_v1" "sc1" {
   depends_on = [
     module.eks_blueprints_kubernetes_addons
   ]
-}
-
-#---------------------------------------------------------------
-# Actions Runner Controller (ARC)
-#---------------------------------------------------------------
-resource "helm_release" "actions_runner_controller_webhook_server_ingress" {
-  name      = "actions-runner-controller-webhook-server-ingress"
-  chart     = "${path.module}/actions-runner-controller-webhook-server-ingress"
-  version   = "0.1.0"
-
-  set {
-    name  = "ingressHost"
-    value = var.actions_runner_controller_webhook_server_host
-    type  = "string"
-  }
-
-  depends_on = [module.eks_blueprints_kubernetes_addons]
-}
-
-resource "github_organization_webhook" "actions_runner_controller_github_webhook" {
-  configuration {
-    url          = "https://${var.actions_runner_controller_webhook_server_host}/"
-    content_type = "json"
-    secret       = var.actions_runner_controller_webhook_server_secret
-    insecure_ssl = false
-  }
-
-  active = true
-  events = ["workflow_job"]
 }
 
 #---------------------------------------------------------------
