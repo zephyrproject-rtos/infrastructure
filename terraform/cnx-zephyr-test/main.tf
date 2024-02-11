@@ -139,3 +139,61 @@ resource "helm_release" "openebs" {
   values     = ["${file("../../kubernetes/zephyr-runner-v2/cnx/cnx-openebs/values.yaml")}"]
   depends_on = [kubectl_manifest.cnx_privileged_manifest]
 }
+
+# Actions Runner Controller (ARC) Installation
+## arc-runners Namespace
+resource "kubernetes_namespace" "arc_runners" {
+  metadata {
+    name = "arc-runners"
+  }
+  depends_on = [helm_release.openebs]
+}
+
+## GitHub App Secret
+resource "kubernetes_secret" "arc_github_app" {
+  metadata {
+    name = "arc-github-app"
+    namespace = "arc-runners"
+  }
+  data = {
+    github_app_id = data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_id"]
+    github_app_installation_id = data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_installation_id"]
+    github_app_private_key = data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_private_key"]
+  }
+  depends_on = [kubernetes_namespace.arc_runners]
+}
+
+## Runner Scale Set Controller Deployment
+locals {
+  arc_version = "0.8.2"
+}
+
+resource "helm_release" "arc" {
+  name       = "arc"
+  namespace  = "arc-systems"
+  create_namespace = true
+  chart      = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller"
+  version    = local.arc_version
+  values     = ["${file("../../kubernetes/zephyr-runner-v2/cnx/cnx-runner-scale-set-controller/values.yaml")}"]
+  depends_on = [kubernetes_secret.arc_github_app]
+}
+
+## test-runner-v2-linux-x64-4xlarge-cnx Runner Scale Set Deployment
+resource "helm_release" "test_runner_v2_linux_x64_4xlarge_cnx" {
+  name       = "test-runner-v2-linux-x64-4xlarge-cnx"
+  namespace  = "arc-runners"
+  chart      = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set"
+  version    = local.arc_version
+  values     = ["${file("../../kubernetes/zephyr-runner-v2/cnx/test-runner-scale-sets/test-runner-v2-linux-x64-4xlarge-cnx/values.yaml")}"]
+  depends_on = [helm_release.arc]
+}
+
+## test-runner-v2-linux-arm64-4xlarge-cnx Runner Scale Set Deployment
+resource "helm_release" "test_runner_v2_linux_arm64_4xlarge_cnx" {
+  name       = "test-runner-v2-linux-arm64-4xlarge-cnx"
+  namespace  = "arc-runners"
+  chart      = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set"
+  version    = local.arc_version
+  values     = ["${file("../../kubernetes/zephyr-runner-v2/cnx/test-runner-scale-sets/test-runner-v2-linux-arm64-4xlarge-cnx/values.yaml")}"]
+  depends_on = [helm_release.arc]
+}
