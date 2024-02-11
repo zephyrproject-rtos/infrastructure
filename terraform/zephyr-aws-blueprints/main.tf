@@ -544,7 +544,7 @@ module "eks_blueprints_kubernetes_addons" {
     ]
   }
 
-  # Actions Runner Controller (ARC) Configurations
+  # Actions Runner Controller (ARC) Configurations (v1)
   actions_runner_controller_helm_config = {
     version = "0.21.1"
     set = [
@@ -768,7 +768,7 @@ resource "kubernetes_cluster_role_binding" "eks_admin" {
 }
 
 #---------------------------------------------------------------
-# Zephyr Runner Kubernetes Deployment
+# Zephyr Runner Kubernetes Deployment (v1)
 #---------------------------------------------------------------
 
 # zephyr-runner Kubernetes Namespace
@@ -826,6 +826,58 @@ resource "kubectl_manifest" "zephyr_runner_linux_arm64_4xlarge_manifest" {
   yaml_body  = element(data.kubectl_path_documents.zephyr_runner_linux_arm64_4xlarge_manifests.documents, count.index)
   wait       = true
   depends_on = [kubernetes_namespace.zephyr_runner_namespace]
+}
+
+#-------------------
+# OpenEBS Deployment
+#-------------------
+
+resource "helm_release" "openebs" {
+  name       = "openebs"
+  namespace  = "openebs"
+  create_namespace = true
+  repository = "https://openebs.github.io/charts"
+  chart      = "openebs"
+  version    = "3.10.0"
+  values     = ["${file("../../kubernetes/zephyr-runner-v2/aws/aws-openebs/values.yaml")}"]
+  depends_on = [module.eks_blueprints_kubernetes_addons]
+}
+
+#------------------------------------------------
+# Actions Runner Controller (ARC) Deployment (v2)
+#------------------------------------------------
+
+## arc-runners Namespace
+resource "kubernetes_namespace" "arc_runners" {
+  metadata {
+    name = "arc-runners"
+  }
+  depends_on = [helm_release.openebs]
+}
+
+## GitHub App Secret
+resource "kubernetes_secret" "arc_github_app" {
+  metadata {
+    name = "arc-github-app"
+    namespace = "arc-runners"
+  }
+  data = {
+    github_app_id = var.actions_runner_controller_v2_github_app_id
+    github_app_installation_id = var.actions_runner_controller_v2_github_app_installation_id
+    github_app_private_key = var.actions_runner_controller_v2_github_app_private_key
+}
+  depends_on = [kubernetes_namespace.arc_runners]
+}
+
+## Runner Scale Set Controller Deployment
+resource "helm_release" "arc" {
+  name       = "arc"
+  namespace  = "arc-systems"
+  create_namespace = true
+  chart      = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller"
+  version    = var.actions_runner_controller_v2_version
+  values     = ["${file("../../kubernetes/zephyr-runner-v2/aws/aws-runner-scale-set-controller/values.yaml")}"]
+  depends_on = [kubernetes_secret.arc_github_app]
 }
 
 #---------------------------------------------------------------

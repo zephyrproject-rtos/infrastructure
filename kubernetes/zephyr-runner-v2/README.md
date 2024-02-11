@@ -12,18 +12,21 @@ Terraform manifest.
 
 * aws: Configurations for AWS cloud zephyr-runner-v2 deployments
 
+    * aws-openebs: AWS OpenEBS configurations
     * aws-runner-scale-set-controller: AWS Actions Runner Controller
       configurations
-    * aws-test-runner-scale-sets: AWS test runner scale set configurations
-    * aws-zephyr-runner-scale-sets: AWS production runner scale set
+    * test-runner-scale-sets: AWS test runner scale set configurations
+    * zephyr-runner-scale-sets: AWS production runner scale set
       configurations
 
 * cnx: Configurations for Centrinix cloud zephyr-runner-v2 deployments
 
+    * cnx-privileged: Centrinix Magnum Kubernetes cluster permissive pod security policy
+    * cnx-openebs: Centrinix OpenEBS configurations
     * cnx-runner-scale-set-controller: Centrinix Actions Runner Controller
       configurations
-    * cnx-test-runner-scale-sets: Centrinix test runner scale set configurations
-    * cnx-zephyr-runner-scale-sets: Centrinix production runner scale set
+    * test-runner-scale-sets: Centrinix test runner scale set configurations
+    * zephyr-runner-scale-sets: Centrinix production runner scale set
       configurations
 
 ## Manual Deployment Process

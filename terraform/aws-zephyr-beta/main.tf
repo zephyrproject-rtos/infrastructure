@@ -1,3 +1,16 @@
+provider "helm" {
+  kubernetes {
+    host                   = module.zephyr_aws_blueprints.eks_cluster_endpoint
+    cluster_ca_certificate = module.zephyr_aws_blueprints.eks_cluster_ca_certificate
+    token                  = module.zephyr_aws_blueprints.eks_cluster_auth_token
+  }
+}
+
+# Local Variables
+locals {
+  arc_version = "0.8.2"
+}
+
 # HashiCorp Vault Secrets zephyr-secrets Vault
 data "hcp_vault_secrets_app" "zephyr_secrets" {
   app_name = "zephyr-secrets"
@@ -51,8 +64,34 @@ module "zephyr_aws_blueprints" {
   actions_runner_controller_github_app_installation_id = nonsensitive(data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_installation_id"])
   actions_runner_controller_github_app_private_key     = data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_private_key"]
 
+  actions_runner_controller_v2_version                    = local.arc_version
+  actions_runner_controller_v2_github_app_id              = data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_id"]
+  actions_runner_controller_v2_github_app_installation_id = data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_installation_id"]
+  actions_runner_controller_v2_github_app_private_key     = data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_private_key"]
+
   enable_zephyr_runner_linux_x64_xlarge = false
   enable_zephyr_runner_linux_x64_4xlarge = false
   enable_zephyr_runner_linux_arm64_xlarge = false
   enable_zephyr_runner_linux_arm64_4xlarge = false
+}
+
+# Actions Runner Controller (ARC) Runner Scale Sets
+## test-runner-v2-linux-x64-4xlarge-aws Runner Scale Set Deployment
+resource "helm_release" "test_runner_v2_linux_x64_4xlarge_aws" {
+  name       = "test-runner-v2-linux-x64-4xlarge-aws"
+  namespace  = "arc-runners"
+  chart      = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set"
+  version    = local.arc_version
+  values     = ["${file("../../kubernetes/zephyr-runner-v2/aws/test-runner-scale-sets/test-runner-v2-linux-x64-4xlarge-aws/values.yaml")}"]
+  depends_on = [module.zephyr_aws_blueprints.actions_runner_controller]
+}
+
+## test-runner-v2-linux-arm64-4xlarge-aws Runner Scale Set Deployment
+resource "helm_release" "test_runner_v2_linux_arm64_4xlarge_aws" {
+  name       = "test-runner-v2-linux-arm64-4xlarge-aws"
+  namespace  = "arc-runners"
+  chart      = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set"
+  version    = local.arc_version
+  values     = ["${file("../../kubernetes/zephyr-runner-v2/aws/test-runner-scale-sets/test-runner-v2-linux-arm64-4xlarge-aws/values.yaml")}"]
+  depends_on = [module.zephyr_aws_blueprints.actions_runner_controller]
 }
