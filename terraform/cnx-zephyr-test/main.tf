@@ -3,6 +3,7 @@ provider "openstack" {
   region      = "Gumi"
   domain_name = "zephyrproject"
   tenant_name = "test"
+  tenant_id   = "7141c55aa8414c958e5e6a9c9105485d"
 }
 
 provider "kubernetes" {
