@@ -21,6 +21,12 @@ configuration files for the Zephyr infrastructure components.
     * Hosted on Amazon Web Services.
     * Terraform plan and applies are locally executed with Terraform Cloud state backend.
 
+* cnx-zephyr-ci
+
+    * Production Kubernetes cluster for Zephyr infrastructure services.
+    * Hosted on Centrinix Cloud.
+    * Terraform plan and applies are locally executed with Terraform Cloud state backend.
+
 * cnx-zephyr-test
 
     * Staging Kubernetes cluster for Zephyr infrastructure services.
