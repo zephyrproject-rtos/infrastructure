@@ -231,6 +231,18 @@ resource "helm_release" "arc" {
   depends_on = [kubernetes_secret.arc_github_app]
 }
 
+## zephyr-runner-v2 Pod Templates
+data "kubectl_path_documents" "zephyr_runner_v2_pod_templates_manifests" {
+  pattern = "../../kubernetes/zephyr-runner-v2/cnx/zephyr-runner-scale-sets/zephyr-runner-v2-pod-templates.yaml"
+}
+
+resource "kubectl_manifest" "zephyr_runner_v2_pod_templates_manifest" {
+  count      = length(data.kubectl_path_documents.zephyr_runner_v2_pod_templates_manifests.documents)
+  yaml_body  = element(data.kubectl_path_documents.zephyr_runner_v2_pod_templates_manifests.documents, count.index)
+  wait       = true
+  depends_on = [helm_release.arc]
+}
+
 ## zephyr-runner-v2-linux-x64-4xlarge-cnx Runner Scale Set Deployment
 resource "helm_release" "zephyr_runner_v2_linux_x64_4xlarge_cnx" {
   name       = "zephyr-runner-v2-linux-x64-4xlarge-cnx"
@@ -238,7 +250,7 @@ resource "helm_release" "zephyr_runner_v2_linux_x64_4xlarge_cnx" {
   chart      = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set"
   version    = local.arc_version
   values     = ["${file("../../kubernetes/zephyr-runner-v2/cnx/zephyr-runner-scale-sets/zephyr-runner-v2-linux-x64-4xlarge-cnx/values.yaml")}"]
-  depends_on = [helm_release.arc]
+  depends_on = [kubectl_manifest.zephyr_runner_v2_pod_templates_manifest]
 }
 
 ## zephyr-runner-v2-linux-arm64-4xlarge-cnx Runner Scale Set Deployment
@@ -248,5 +260,5 @@ resource "helm_release" "zephyr_runner_v2_linux_arm64_4xlarge_cnx" {
   chart      = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set"
   version    = local.arc_version
   values     = ["${file("../../kubernetes/zephyr-runner-v2/cnx/zephyr-runner-scale-sets/zephyr-runner-v2-linux-arm64-4xlarge-cnx/values.yaml")}"]
-  depends_on = [helm_release.arc]
+  depends_on = [kubectl_manifest.zephyr_runner_v2_pod_templates_manifest]
 }

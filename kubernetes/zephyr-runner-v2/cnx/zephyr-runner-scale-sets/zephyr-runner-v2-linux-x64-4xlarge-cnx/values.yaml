@@ -41,6 +41,24 @@ template:
       # Allow running workflow jobs outside a container.
       - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
         value: "false"
+      # Use custom workflow pod template.
+      - name: ACTIONS_RUNNER_CONTAINER_HOOK_TEMPLATE
+        value: /home/runner/pod-templates/workflow.yaml
+      # Export cloud information to the runner.
+      - name: ZEPHYR_RUNNER_CLOUD_PROVIDER
+        value: "Centrinix"
+      - name: ZEPHYR_RUNNER_CLOUD_NODE
+        valueFrom:
+          fieldRef:
+            fieldPath: spec.nodeName
+      - name: ZEPHYR_RUNNER_CLOUD_POD
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+      volumeMounts:
+      - name: pod-templates
+        mountPath: /home/runner/pod-templates
+        readOnly: true
       # CPU and RAM allocations
       resources:
         limits:
@@ -49,6 +67,10 @@ template:
         requests:
           cpu: "15.0"
           memory: "24Gi"
+    volumes:
+    - name: pod-templates
+      configMap:
+        name: zephyr-runner-v2-pod-templates
     nodeSelector:
       kubernetes.io/os: linux
       kubernetes.io/arch: amd64
