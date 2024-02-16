@@ -96,6 +96,10 @@ resource "openstack_containerinfra_nodegroup_v1" "az1_linux_x64" {
     availability_zone = "az1"
   }
 
+  lifecycle {
+    ignore_changes = [node_count]
+  }
+
   depends_on          = [openstack_containerinfra_cluster_v1.zephyr_ci]
 }
 
@@ -112,6 +116,10 @@ resource "openstack_containerinfra_nodegroup_v1" "az2_linux_x64" {
 
   labels = {
     availability_zone = "az2"
+  }
+
+  lifecycle {
+    ignore_changes = [node_count]
   }
 
   depends_on          = [openstack_containerinfra_cluster_v1.zephyr_ci]
@@ -132,6 +140,10 @@ resource "openstack_containerinfra_nodegroup_v1" "az3_linux_arm64" {
     availability_zone = "az3"
   }
 
+  lifecycle {
+    ignore_changes = [node_count]
+  }
+
   depends_on          = [openstack_containerinfra_cluster_v1.zephyr_ci]
 }
 
@@ -148,6 +160,10 @@ resource "openstack_containerinfra_nodegroup_v1" "az3_linux_x64" {
 
   labels = {
     availability_zone = "az3"
+  }
+
+  lifecycle {
+    ignore_changes = [node_count]
   }
 
   depends_on          = [openstack_containerinfra_cluster_v1.zephyr_ci]
