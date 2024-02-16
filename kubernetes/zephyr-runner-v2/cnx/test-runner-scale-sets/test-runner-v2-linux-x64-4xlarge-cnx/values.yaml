@@ -1,5 +1,5 @@
 # Name of the runner scale set registered in GitHub
-runnerScaleSetName: "test-runner-v2-linux-x64-4xlarge-cnx"
+runnerScaleSetName: "trv2-linux-x64-4xlarge-cnx"
 
 # Runner group to which this runner scale set belongs.
 runnerGroup: "test-runner-v2-linux-x64-4xlarge"

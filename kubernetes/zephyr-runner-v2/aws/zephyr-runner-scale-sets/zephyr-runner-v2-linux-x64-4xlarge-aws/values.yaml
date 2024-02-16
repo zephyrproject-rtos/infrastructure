@@ -1,5 +1,5 @@
 # Name of the runner scale set registered in GitHub
-runnerScaleSetName: "zephyr-runner-v2-linux-x64-4xlarge-aws"
+runnerScaleSetName: "zrv2-linux-x64-4xlarge-aws"
 
 # Runner group to which this runner scale set belongs.
 runnerGroup: "zephyr-runner-v2-linux-x64-4xlarge"
