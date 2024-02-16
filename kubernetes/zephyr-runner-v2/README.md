@@ -99,6 +99,10 @@ To deploy an Actions Runner Controller runner scale set, run the following
 commands:
 
 ```
+# Create pod template
+kubectl apply -f aws/test-runner-scale-sets/test-runner-v2-pod-templates.yaml
+
+# Install runner scale set Helm chart
 helm install test-runner-v2-linux-x64-4xlarge-aws \
     --namespace arc-runners --create-namespace \
     -f aws/test-runner-scale-sets/test-runner-v2-linux-x64-4xlarge-aws/values.yaml \

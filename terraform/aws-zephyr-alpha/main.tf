@@ -1,3 +1,10 @@
+provider "kubectl" {
+  host                   = module.zephyr_aws_blueprints.eks_cluster_endpoint
+  cluster_ca_certificate = module.zephyr_aws_blueprints.eks_cluster_ca_certificate
+  token                  = module.zephyr_aws_blueprints.eks_cluster_auth_token
+  load_config_file       = false
+}
+
 provider "helm" {
   kubernetes {
     host                   = module.zephyr_aws_blueprints.eks_cluster_endpoint
@@ -76,6 +83,18 @@ module "zephyr_aws_blueprints" {
 }
 
 # Actions Runner Controller (ARC) Runner Scale Sets
+## zephyr-runner-v2 Pod Templates
+data "kubectl_path_documents" "zephyr_runner_v2_pod_templates_manifests" {
+  pattern = "../../kubernetes/zephyr-runner-v2/aws/zephyr-runner-scale-sets/zephyr-runner-v2-pod-templates.yaml"
+}
+
+resource "kubectl_manifest" "zephyr_runner_v2_pod_templates_manifest" {
+  count      = length(data.kubectl_path_documents.zephyr_runner_v2_pod_templates_manifests.documents)
+  yaml_body  = element(data.kubectl_path_documents.zephyr_runner_v2_pod_templates_manifests.documents, count.index)
+  wait       = true
+  depends_on = [module.zephyr_aws_blueprints.actions_runner_controller]
+}
+
 ## zephyr-runner-v2-linux-x64-4xlarge-aws Runner Scale Set Deployment
 resource "helm_release" "zephyr_runner_v2_linux_x64_4xlarge_aws" {
   name       = "zephyr-runner-v2-linux-x64-4xlarge-aws"
@@ -83,5 +102,5 @@ resource "helm_release" "zephyr_runner_v2_linux_x64_4xlarge_aws" {
   chart      = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set"
   version    = local.arc_version
   values     = ["${file("../../kubernetes/zephyr-runner-v2/aws/zephyr-runner-scale-sets/zephyr-runner-v2-linux-x64-4xlarge-aws/values.yaml")}"]
-  depends_on = [module.zephyr_aws_blueprints.actions_runner_controller]
+  depends_on = [kubectl_manifest.zephyr_runner_v2_pod_templates_manifest]
 }
