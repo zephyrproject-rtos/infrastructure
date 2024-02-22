@@ -41,6 +41,9 @@ template:
       # Allow running workflow jobs outside a container.
       - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
         value: "false"
+      # Set container image download timeout to 1 hour.
+      - name: ACTIONS_RUNNER_PREPARE_JOB_TIMEOUT_SECONDS
+        value: "3600"
       # Use custom workflow pod template.
       - name: ACTIONS_RUNNER_CONTAINER_HOOK_TEMPLATE
         value: /home/runner/pod-templates/workflow.yaml
