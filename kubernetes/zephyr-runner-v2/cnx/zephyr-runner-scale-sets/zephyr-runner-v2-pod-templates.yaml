@@ -27,3 +27,11 @@ data:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+        volumeMounts:
+        - name: node-cache
+          mountPath: /node-cache
+      volumes:
+      - name: node-cache
+        hostPath:
+          path: /var/lib/docker/zephyr-runner-v2/node-cache
+          type: DirectoryOrCreate

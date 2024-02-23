@@ -62,6 +62,8 @@ template:
       - name: pod-templates
         mountPath: /home/runner/pod-templates
         readOnly: true
+      - name: node-cache
+        mountPath: /node-cache
       # CPU and RAM allocations
       resources:
         limits:
@@ -74,6 +76,10 @@ template:
     - name: pod-templates
       configMap:
         name: zephyr-runner-v2-pod-templates
+    - name: node-cache
+      hostPath:
+        path: /var/lib/docker/zephyr-runner-v2/node-cache
+        type: DirectoryOrCreate
     nodeSelector:
       kubernetes.io/os: linux
       kubernetes.io/arch: arm64
