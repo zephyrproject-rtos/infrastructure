@@ -1,0 +1,118 @@
+# keydb-cache-1 Pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: keydb-cache-1
+  namespace: keydb-cache
+  labels:
+    app.kubernetes.io/name: keydb-cache-1
+spec:
+  containers:
+  - name: keydb
+    image: ghcr.io/centrinix/keydb:v6.3.4.cnx
+    ports:
+    - containerPort: 6379
+    resources:
+      limits:
+        cpu: "16.0"
+        memory: "256Gi"
+      requests:
+        cpu: "15.0"
+        memory: "224Gi"
+    volumeMounts:
+    - mountPath: /data
+      name: data
+    - mountPath: /etc/keydb
+      name: config
+  volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: keydb-cache-1-data
+  - name: config
+    configMap:
+      name: keydb-cache-config
+      items:
+      - key: keydb-config
+        path: keydb.conf
+  nodeSelector:
+    magnum.openstack.org/role: cache
+
+---
+# keydb-cache-2 Pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: keydb-cache-2
+  namespace: keydb-cache
+  labels:
+    app.kubernetes.io/name: keydb-cache-2
+spec:
+  containers:
+  - name: keydb
+    image: ghcr.io/centrinix/keydb:v6.3.4.cnx
+    ports:
+    - containerPort: 6379
+    resources:
+      limits:
+        cpu: "16.0"
+        memory: "256Gi"
+      requests:
+        cpu: "15.0"
+        memory: "224Gi"
+    volumeMounts:
+    - mountPath: /data
+      name: data
+    - mountPath: /etc/keydb
+      name: config
+  volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: keydb-cache-2-data
+  - name: config
+    configMap:
+      name: keydb-cache-config
+      items:
+      - key: keydb-config
+        path: keydb.conf
+  nodeSelector:
+    magnum.openstack.org/role: cache
+
+---
+# keydb-cache-3 Pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: keydb-cache-3
+  namespace: keydb-cache
+  labels:
+    app.kubernetes.io/name: keydb-cache-3
+spec:
+  containers:
+  - name: keydb
+    image: ghcr.io/centrinix/keydb:v6.3.4.cnx
+    ports:
+    - containerPort: 6379
+    resources:
+      limits:
+        cpu: "16.0"
+        memory: "256Gi"
+      requests:
+        cpu: "15.0"
+        memory: "224Gi"
+    volumeMounts:
+    - mountPath: /data
+      name: data
+    - mountPath: /etc/keydb
+      name: config
+  volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: keydb-cache-3-data
+  - name: config
+    configMap:
+      name: keydb-cache-config
+      items:
+      - key: keydb-config
+        path: keydb.conf
+  nodeSelector:
+    magnum.openstack.org/role: cache
