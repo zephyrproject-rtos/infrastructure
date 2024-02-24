@@ -83,3 +83,4 @@ template:
     nodeSelector:
       kubernetes.io/os: linux
       kubernetes.io/arch: arm64
+      magnum.openstack.org/role: runner
