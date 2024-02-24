@@ -260,6 +260,64 @@ resource "helm_release" "openebs" {
   depends_on = [kubectl_manifest.cnx_privileged_manifest]
 }
 
+
+# KeyDB Redis Cache Installation
+## keydb-cache Namespace
+resource "kubernetes_namespace" "keydb_cache" {
+  metadata {
+    name = "keydb-cache"
+  }
+  depends_on = [helm_release.openebs]
+}
+
+## Configurations
+data "kubectl_path_documents" "keydb_cache_config_manifests" {
+  pattern = "../../kubernetes/zephyr-runner-v2/cnx/cnx-keydb-cache/config.yaml"
+}
+
+resource "kubectl_manifest" "keydb_cache_config_manifest" {
+  count      = length(data.kubectl_path_documents.keydb_cache_config_manifests.documents)
+  yaml_body  = element(data.kubectl_path_documents.keydb_cache_config_manifests.documents, count.index)
+  wait       = true
+  depends_on = [kubernetes_namespace.keydb_cache]
+}
+
+## Persistent Volume Claims
+data "kubectl_path_documents" "keydb_cache_pvc_manifests" {
+  pattern = "../../kubernetes/zephyr-runner-v2/cnx/cnx-keydb-cache/pvc.yaml"
+}
+
+resource "kubectl_manifest" "keydb_cache_pvc_manifest" {
+  count      = length(data.kubectl_path_documents.keydb_cache_pvc_manifests.documents)
+  yaml_body  = element(data.kubectl_path_documents.keydb_cache_pvc_manifests.documents, count.index)
+  wait       = true
+  depends_on = [kubernetes_namespace.keydb_cache]
+}
+
+## KeyDB Pods
+data "kubectl_path_documents" "keydb_cache_keydb_manifests" {
+  pattern = "../../kubernetes/zephyr-runner-v2/cnx/cnx-keydb-cache/keydb.yaml"
+}
+
+resource "kubectl_manifest" "keydb_cache_keydb_manifest" {
+  count      = length(data.kubectl_path_documents.keydb_cache_keydb_manifests.documents)
+  yaml_body  = element(data.kubectl_path_documents.keydb_cache_keydb_manifests.documents, count.index)
+  wait       = true
+  depends_on = [kubernetes_namespace.keydb_cache]
+}
+
+## Services
+data "kubectl_path_documents" "keydb_cache_services_manifests" {
+  pattern = "../../kubernetes/zephyr-runner-v2/cnx/cnx-keydb-cache/services.yaml"
+}
+
+resource "kubectl_manifest" "keydb_cache_services_manifest" {
+  count      = length(data.kubectl_path_documents.keydb_cache_services_manifests.documents)
+  yaml_body  = element(data.kubectl_path_documents.keydb_cache_services_manifests.documents, count.index)
+  wait       = true
+  depends_on = [kubernetes_namespace.keydb_cache]
+}
+
 # Actions Runner Controller (ARC) Installation
 ## arc-runners Namespace
 resource "kubernetes_namespace" "arc_runners" {
