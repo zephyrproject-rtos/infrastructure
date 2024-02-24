@@ -89,7 +89,7 @@ resource "openstack_containerinfra_nodegroup_v1" "az3_linux_arm64" {
   image_id            = "fedora-coreos-35.20220116.3.0-aarch64"
   flavor_id           = "m1a.4xlarge"
   docker_volume_size  = 100
-  role                = "worker"
+  role                = "runner"
   node_count          = 1
   merge_labels        = true
 
@@ -111,7 +111,7 @@ resource "openstack_containerinfra_nodegroup_v1" "az3_linux_x64" {
   image_id            = "fedora-coreos-35.20220116.3.0-x86_64"
   flavor_id           = "m1.4xlarge"
   docker_volume_size  = 100
-  role                = "worker"
+  role                = "runner"
   node_count          = 1
   merge_labels        = true
 
