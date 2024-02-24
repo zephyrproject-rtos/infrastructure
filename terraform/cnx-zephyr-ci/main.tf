@@ -82,6 +82,72 @@ resource "openstack_containerinfra_cluster_v1" "zephyr_ci" {
   depends_on          = [openstack_containerinfra_clustertemplate_v1.kubernetes_1_23_zephyr_ci]
 }
 
+# az1-cache Node Group
+resource "openstack_containerinfra_nodegroup_v1" "az1_cache" {
+  name                = "az1-cache"
+  cluster_id          = openstack_containerinfra_cluster_v1.zephyr_ci.id
+  image_id            = "fedora-coreos-35.20220116.3.0-x86_64"
+  flavor_id           = "x2.4xlarge"
+  docker_volume_size  = 1000
+  role                = "cache"
+  node_count          = 1
+  merge_labels        = true
+
+  labels = {
+    availability_zone = "az1"
+  }
+
+  lifecycle {
+    ignore_changes = [node_count]
+  }
+
+  depends_on          = [openstack_containerinfra_cluster_v1.zephyr_ci]
+}
+
+# az2-cache Node Group
+resource "openstack_containerinfra_nodegroup_v1" "az2_cache" {
+  name                = "az2-cache"
+  cluster_id          = openstack_containerinfra_cluster_v1.zephyr_ci.id
+  image_id            = "fedora-coreos-35.20220116.3.0-x86_64"
+  flavor_id           = "x2.4xlarge"
+  docker_volume_size  = 1000
+  role                = "cache"
+  node_count          = 1
+  merge_labels        = true
+
+  labels = {
+    availability_zone = "az2"
+  }
+
+  lifecycle {
+    ignore_changes = [node_count]
+  }
+
+  depends_on          = [openstack_containerinfra_cluster_v1.zephyr_ci]
+}
+
+# az3-cache Node Group
+resource "openstack_containerinfra_nodegroup_v1" "az3_cache" {
+  name                = "az3-cache"
+  cluster_id          = openstack_containerinfra_cluster_v1.zephyr_ci.id
+  image_id            = "fedora-coreos-35.20220116.3.0-x86_64"
+  flavor_id           = "x2.4xlarge"
+  docker_volume_size  = 1000
+  role                = "cache"
+  node_count          = 1
+  merge_labels        = true
+
+  labels = {
+    availability_zone = "az3"
+  }
+
+  lifecycle {
+    ignore_changes = [node_count]
+  }
+
+  depends_on          = [openstack_containerinfra_cluster_v1.zephyr_ci]
+}
+
 # az1-linux-x64 Node Group
 resource "openstack_containerinfra_nodegroup_v1" "az1_linux_x64" {
   name                = "az1-linux-x64"

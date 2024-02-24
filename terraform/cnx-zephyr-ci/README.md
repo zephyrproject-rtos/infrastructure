@@ -50,6 +50,9 @@ terraform apply -target=openstack_containerinfra_cluster_v1.zephyr_ci
 3. Deploy node groups:
 
 ```
+terraform apply -target=openstack_containerinfra_nodegroup_v1.az1_cache
+terraform apply -target=openstack_containerinfra_nodegroup_v1.az2_cache
+terraform apply -target=openstack_containerinfra_nodegroup_v1.az3_cache
 terraform apply -target=openstack_containerinfra_nodegroup_v1.az1_linux_x64
 terraform apply -target=openstack_containerinfra_nodegroup_v1.az2_linux_x64
 terraform apply -target=openstack_containerinfra_nodegroup_v1.az3_linux_x64
