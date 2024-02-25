@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keydb-cache-config
+  namespace: keydb-cache
+data:
+  keydb-config: |
+    # Set server thread count to 4.
+    server-threads 4
+
+    # Set maximum memory to 224 GiB.
+    maxmemory 224gb
+
+    # Evict cache based on Least Recently Used (LRU).
+    maxmemory-policy allkeys-lru
+
+    # Disable RDB and AOF persistence.
+    save ""
+    appendonly no
