@@ -1,0 +1,2 @@
+node:
+  dataDirPath: /var/lib/docker/openebs/rawfile
