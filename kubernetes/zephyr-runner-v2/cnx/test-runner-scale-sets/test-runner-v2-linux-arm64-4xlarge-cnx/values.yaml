@@ -23,7 +23,7 @@ containerMode:
   type: "kubernetes"  ## type can be set to dind or kubernetes
   kubernetesModeWorkVolumeClaim:
     accessModes: ["ReadWriteOnce"]
-    storageClassName: "openebs-hostpath"
+    storageClassName: "rawfile-localpv"
     resources:
       requests:
         # Size of workspace
@@ -33,6 +33,13 @@ containerMode:
 ## For reference: https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#PodSpec
 template:
   spec:
+    initContainers:
+    - name: set-workdir-permission
+      image: ghcr.io/actions/actions-runner:2.313.0
+      command: ["sudo", "chown", "runner:runner", "/home/runner/_work"]
+      volumeMounts:
+      - name: work
+        mountPath: /home/runner/_work
     containers:
     - name: runner
       image: ghcr.io/actions/actions-runner:2.313.0
