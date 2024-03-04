@@ -260,6 +260,15 @@ resource "helm_release" "openebs" {
   depends_on = [kubectl_manifest.cnx_privileged_manifest]
 }
 
+# OpenEBS rawfile-localpv Installation
+resource "helm_release" "openebs_rawfile_localpv" {
+  name       = "rawfile-csi"
+  namespace  = "kube-system"
+  chart      = "../../kubernetes/zephyr-runner-v2/cnx/cnx-rawfile-localpv/openebs-rawfile-localpv/deploy/charts/rawfile-csi"
+  version    = "0.8.0"
+  values     = ["${file("../../kubernetes/zephyr-runner-v2/cnx/cnx-rawfile-localpv/values.yaml")}"]
+  depends_on = [kubectl_manifest.cnx_privileged_manifest]
+}
 
 # KeyDB Redis Cache Installation
 ## keydb-cache Namespace
@@ -324,7 +333,7 @@ resource "kubernetes_namespace" "arc_runners" {
   metadata {
     name = "arc-runners"
   }
-  depends_on = [helm_release.openebs]
+  depends_on = [helm_release.openebs, helm_release.openebs_rawfile_localpv]
 }
 
 ## GitHub App Secret

@@ -1,3 +1,6 @@
 [submodule "terraform-aws-eks-blueprints"]
 	path = terraform/zephyr-aws-blueprints/terraform-aws-eks-blueprints
 	url = https://github.com/zephyrproject-rtos/terraform-aws-eks-blueprints.git
+[submodule "kubernetes/zephyr-runner-v2/cnx/cnx-rawfile-localpv/openebs-rawfile-localpv"]
+	path = kubernetes/zephyr-runner-v2/cnx/cnx-rawfile-localpv/openebs-rawfile-localpv
+	url = https://github.com/Centrinix/openebs-rawfile-localpv.git
