@@ -56,7 +56,7 @@ resource "openstack_containerinfra_clustertemplate_v1" "kubernetes_1_23_zephyr_c
     container_infra_prefix           = "registry.centrinix.cloud/openstack/"
     node_problem_detector_tag        = "v0.8.15"
     selinux_mode                     = "permissive"
-    boot_volume_size                 = "20"
+    boot_volume_size                 = "200"
     boot_volume_type                 = "fc_r1"
     docker_volume_type               = "fc_r1"
     fixed_subnet_cidr                = "10.0.0.0/16"
@@ -88,12 +88,14 @@ resource "openstack_containerinfra_nodegroup_v1" "az1_cache" {
   cluster_id          = openstack_containerinfra_cluster_v1.zephyr_ci.id
   image_id            = "fedora-coreos-35.20220116.3.0-x86_64"
   flavor_id           = "x2.4xlarge"
-  docker_volume_size  = 1000
+  docker_volume_size  = 100
   role                = "cache"
   node_count          = 1
   merge_labels        = true
 
   labels = {
+    boot_volume_size  = "1000"
+    boot_volume_type  = "fc_r1"
     availability_zone = "az1"
   }
 
@@ -110,12 +112,14 @@ resource "openstack_containerinfra_nodegroup_v1" "az2_cache" {
   cluster_id          = openstack_containerinfra_cluster_v1.zephyr_ci.id
   image_id            = "fedora-coreos-35.20220116.3.0-x86_64"
   flavor_id           = "x2.4xlarge"
-  docker_volume_size  = 1000
+  docker_volume_size  = 100
   role                = "cache"
   node_count          = 1
   merge_labels        = true
 
   labels = {
+    boot_volume_size  = "1000"
+    boot_volume_type  = "fc_r1"
     availability_zone = "az2"
   }
 
@@ -132,12 +136,14 @@ resource "openstack_containerinfra_nodegroup_v1" "az3_cache" {
   cluster_id          = openstack_containerinfra_cluster_v1.zephyr_ci.id
   image_id            = "fedora-coreos-35.20220116.3.0-x86_64"
   flavor_id           = "x2.4xlarge"
-  docker_volume_size  = 1000
+  docker_volume_size  = 100
   role                = "cache"
   node_count          = 1
   merge_labels        = true
 
   labels = {
+    boot_volume_size  = "1000"
+    boot_volume_type  = "fc_r1"
     availability_zone = "az3"
   }
 

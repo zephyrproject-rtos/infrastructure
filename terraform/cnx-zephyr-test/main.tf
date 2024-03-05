@@ -56,7 +56,7 @@ resource "openstack_containerinfra_clustertemplate_v1" "kubernetes_1_23_zephyr_t
     container_infra_prefix           = "registry.centrinix.cloud/openstack/"
     node_problem_detector_tag        = "v0.8.15"
     selinux_mode                     = "permissive"
-    boot_volume_size                 = "20"
+    boot_volume_size                 = "200"
     boot_volume_type                 = "fc_r1"
     docker_volume_type               = "fc_r1"
     fixed_subnet_cidr                = "10.0.0.0/16"
