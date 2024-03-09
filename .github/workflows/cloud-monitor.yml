@@ -1,0 +1,119 @@
+name: Cloud Monitor
+
+on:
+  workflow_dispatch:
+    branches:
+    - main
+  schedule:
+  # Run every 10 minutes
+  - cron: '*/10 * * * *'
+
+jobs:
+  cnx-monitor:
+    name: Centrinix Cloud Monitor
+    runs-on: ubuntu-22.04
+
+    env:
+      DISCORD_INFRA_MONITOR_WEBHOOK: "${{ secrets.DISCORD_INFRA_MONITOR_WEBHOOK }}"
+      OS_AUTH_TYPE: "v3applicationcredential"
+      OS_AUTH_URL: "https://openstack.gumi.centrinix.cloud:5000"
+      OS_IDENTITY_API_VERSION: "3"
+      OS_REGION_NAME: "Gumi"
+      OS_INTERFACE: "public"
+      OS_APPLICATION_CREDENTIAL_ID: "${{ secrets.CNX_OS_APPLICATION_CREDENTIAL_ID }}"
+      OS_APPLICATION_CREDENTIAL_SECRET: "${{ secrets.CNX_OS_APPLICATION_CREDENTIAL_SECRET }}"
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install OpenVPN client
+      run: |
+        sudo apt install -y openvpn
+
+    - name: Install OpenStack command line tools
+      run: |
+        pip install python-openstackclient
+        pip install python-magnumclient
+
+    - name: Install Kubernetes command line tools
+      run: |
+        curl -LO https://dl.k8s.io/release/v1.23.0/bin/linux/amd64/kubectl
+        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+    - name: Check environment
+      run: |
+        jq --version
+        openvpn --version
+        openstack --version
+        kubectl version --client=true
+
+    - name: Connect to Centrinix CGN VPN
+      uses: kota65535/github-openvpn-connect-action@v3
+      with:
+        config_file: .github/cnx-cgn.ovpn
+        username: ${{ secrets.CNX_CGNVPN_USERNAME }}
+        password: ${{ secrets.CNX_CGNVPN_PASSWORD }}
+
+    - name: Check OpenStack server instances
+      continue-on-error: true
+      run: |
+        openstack server list
+        serverList=$(openstack server list -f json)
+
+        nonActiveCount=$(echo "$serverList" | jq -r '
+          [
+            .[] |
+            select(.Status != "ACTIVE")
+          ] | length')
+
+        if [ "$nonActiveCount" -gt "0" ]; then
+          .github/log.sh ERROR "Found ${nonActiveCount} server(s) with non-active status."
+          exit 911
+        fi
+
+    - name: Check OpenStack COE cluster nodegroups
+      continue-on-error: true
+      run: |
+        openstack coe nodegroup list zephyr-ci
+        nodeGroupList=$(openstack coe nodegroup list zephyr-ci -f json)
+
+        incompleteCount=$(echo "$nodeGroupList" | jq -r '
+          [
+            .[] |
+            select(
+              .status != "CREATE_COMPLETE" and
+              .status != "UPDATE_COMPLETE")
+          ] | length')
+
+        if [ "$incompleteCount" -gt "0" ]; then
+          .github/log.sh ERROR "Found ${incompleteCount} nodegroup(s) with incomplete status."
+          exit 911
+        fi
+
+    - name: Get OpenStack COE cluster configuration
+      run: |
+        for ((i=0; i<10; ++i)); do
+          openstack coe cluster config zephyr-ci || true
+          [ -f config ] && break
+        done
+
+        echo "KUBECONFIG=${PWD}/config" >> $GITHUB_ENV
+
+    - name: Check Kubernetes nodes
+      continue-on-error: true
+      run: |
+        kubectl get nodes
+        nodeList=$(kubectl get nodes -o json)
+
+        notReadyCount=$(echo "$nodeList" | jq -r '
+          [
+            .items[].status.conditions[] |
+            select(.type == "Ready") |
+            select(.status | not)
+          ] | length')
+
+        if [ "$notReadyCount" -gt "0" ]; then
+          .github/log.sh ERROR "Found ${notReadyCount} node(s) with not-ready status."
+          exit 911
+        fi
