@@ -193,6 +193,24 @@ jobs:
           exit 911
         fi
 
+    - name: Check KeyDB cache pods
+      continue-on-error: true
+      run: |
+        kubectl -n keydb-cache get pods
+        podList=$(kubectl -n keydb-cache get pods -o json)
+
+        notReadyCount=$(echo "$podList" | jq -r '
+          [
+            .items[].status.conditions[] |
+            select(.type == "Ready") |
+            select(.status | not)
+          ] | length')
+
+        if [ "$notReadyCount" -gt "0" ]; then
+          .github/log.sh ERROR "cnx: zephyr-ci: Found ${notReadyCount} KeyDB cache pods with not-ready status."
+          exit 911
+        fi
+
     - name: Report failure
       if: failure()
       run: |
