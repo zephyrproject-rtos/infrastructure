@@ -77,6 +77,24 @@ jobs:
           exit 911
         fi
 
+    - name: Check Actions Runner Controller pods
+      continue-on-error: true
+      run: |
+        kubectl -n arc-systems get pods
+        podList=$(kubectl -n arc-systems get pods -o json)
+
+        notReadyCount=$(echo "$podList" | jq -r '
+          [
+            .items[].status.conditions[] |
+            select(.type == "Ready") |
+            select(.status | not)
+          ] | length')
+
+        if [ "$notReadyCount" -gt "0" ]; then
+          .github/log.sh ERROR "aws: zephyr-alpha: Found ${notReadyCount} ARC pods with not-ready status."
+          exit 911
+        fi
+
     - name: Report failure
       if: failure()
       run: |
@@ -208,6 +226,24 @@ jobs:
 
         if [ "$notReadyCount" -gt "0" ]; then
           .github/log.sh ERROR "cnx: zephyr-ci: Found ${notReadyCount} KeyDB cache pods with not-ready status."
+          exit 911
+        fi
+
+    - name: Check Actions Runner Controller pods
+      continue-on-error: true
+      run: |
+        kubectl -n arc-systems get pods
+        podList=$(kubectl -n arc-systems get pods -o json)
+
+        notReadyCount=$(echo "$podList" | jq -r '
+          [
+            .items[].status.conditions[] |
+            select(.type == "Ready") |
+            select(.status | not)
+          ] | length')
+
+        if [ "$notReadyCount" -gt "0" ]; then
+          .github/log.sh ERROR "cnx: zephyr-ci: Found ${notReadyCount} ARC pods with not-ready status."
           exit 911
         fi
 
