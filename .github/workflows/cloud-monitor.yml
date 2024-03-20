@@ -36,7 +36,7 @@ jobs:
         kubectl version --client=true
 
     - name: Check EKS cluster nodegroups
-      continue-on-error: true
+      if: always()
       run: |
         nodeGroupNames=$(aws eks list-nodegroups --cluster-name zephyr-alpha | jq -r '.nodegroups[]')
         isFailed="no"
@@ -56,11 +56,13 @@ jobs:
         fi
 
     - name: Get EKS cluster configuration
+      if: always()
       run: |
         aws eks update-kubeconfig --name zephyr-alpha --kubeconfig config
         echo "KUBECONFIG=${PWD}/config" >> $GITHUB_ENV
 
     - name: Check Kubernetes nodes
+      if: always()
       run: |
         kubectl get nodes
         nodeList=$(kubectl get nodes -o json)
@@ -78,7 +80,7 @@ jobs:
         fi
 
     - name: Check Actions Runner Controller pods
-      continue-on-error: true
+      if: always()
       run: |
         kubectl -n arc-systems get pods
         podList=$(kubectl -n arc-systems get pods -o json)
@@ -149,7 +151,7 @@ jobs:
         password: ${{ secrets.CNX_CGNVPN_PASSWORD }}
 
     - name: Check OpenStack server instances
-      continue-on-error: true
+      if: always()
       run: |
         openstack server list
         serverList=$(openstack server list -f json)
@@ -166,7 +168,7 @@ jobs:
         fi
 
     - name: Check OpenStack COE cluster nodegroups
-      continue-on-error: true
+      if: always()
       run: |
         openstack coe nodegroup list zephyr-ci
         nodeGroupList=$(openstack coe nodegroup list zephyr-ci -f json)
@@ -185,6 +187,7 @@ jobs:
         fi
 
     - name: Get OpenStack COE cluster configuration
+      if: always()
       run: |
         for ((i=0; i<10; ++i)); do
           openstack coe cluster config zephyr-ci || true
@@ -194,7 +197,7 @@ jobs:
         echo "KUBECONFIG=${PWD}/config" >> $GITHUB_ENV
 
     - name: Check Kubernetes nodes
-      continue-on-error: true
+      if: always()
       run: |
         kubectl get nodes
         nodeList=$(kubectl get nodes -o json)
@@ -212,7 +215,7 @@ jobs:
         fi
 
     - name: Check KeyDB cache pods
-      continue-on-error: true
+      if: always()
       run: |
         kubectl -n keydb-cache get pods
         podList=$(kubectl -n keydb-cache get pods -o json)
@@ -230,7 +233,7 @@ jobs:
         fi
 
     - name: Check Actions Runner Controller pods
-      continue-on-error: true
+      if: always()
       run: |
         kubectl -n arc-systems get pods
         podList=$(kubectl -n arc-systems get pods -o json)
