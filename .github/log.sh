@@ -40,7 +40,7 @@ if [ ! -z "${DISCORD_INFRA_MONITOR_WEBHOOK}" ]; then
   }
   '
 
-  curl \
+  curl -s \
     -H "Content-Type: application/json" \
     -X POST \
     -d "${discordMessage}" \
