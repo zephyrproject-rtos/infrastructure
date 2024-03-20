@@ -145,6 +145,11 @@ jobs:
         openstack --version
         kubectl version --client=true
 
+    - name: Load SSH key
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.CNX_ZEPHYR_CI_SSH_KEY }}
+
     - name: Connect to Centrinix CGN VPN
       uses: kota65535/github-openvpn-connect-action@v3
       with:
@@ -253,6 +258,46 @@ jobs:
           .github/log.sh ERROR "cnx: zephyr-ci: Found ${notReadyCount} ARC pods with not-ready status."
           exit 911
         fi
+
+    - name: Clean up stuck PVs
+      if: always()
+      run: |
+        releasedPvList=$(kubectl get pv -o json | jq '
+          .items[] |
+          select(.status.phase == "Released")')
+
+        for pvName in $(echo "$releasedPvList" | jq -r '.metadata.name'); do
+          pvEventList=$(kubectl -n default get events \
+            --field-selector involvedObject.name=$pvName -o json)
+
+          pvFailedDeleteVolumeInUseCount=$(echo "$pvEventList" | jq -r '
+            [
+              .items[] |
+              select(.reason == "VolumeFailedDelete") |
+              select(.message | contains("Volume in use"))
+            ] | length')
+
+          if [ "$pvFailedDeleteVolumeInUseCount" -gt "0" ]; then
+            pvNodeName=$(echo "$releasedPvList" | jq -r '
+              select(.metadata.name == '\"$pvName\"') |
+              .spec.nodeAffinity.required.nodeSelectorTerms[].matchExpressions[] |
+              select(.key == "hostname") |
+              .values |
+              first
+              ')
+
+            pvNodeIp=$(kubectl get node $pvNodeName -o json | jq -r '
+              .status.addresses[] |
+              select(.type == "ExternalIP") |
+              .address')
+
+            ssh -T -o LogLevel=ERROR -o StrictHostKeyChecking=no \
+              core@$pvNodeIp \
+              -t 'sudo rm -fv /var/lib/containerd/openebs/rawfile/'\"$pvName\"'/disk.img'
+
+           .github/log.sh INFO "cnx: zephyr-ci: Cleaned up stuck PV '$pvName' on '$pvNodeName' ($pvNodeIp)"
+          fi
+        done
 
     - name: Report failure
       if: failure()
