@@ -69,7 +69,9 @@ jobs:
 
         notReadyCount=$(echo "$nodeList" | jq -r '
           [
-            .items[].status.conditions[] |
+            .items[] |
+            select(.spec.unschedulable == null) |
+            .status.conditions[] |
             select(.type == "Ready") |
             select(.status != "True")
           ] | length')
@@ -204,7 +206,9 @@ jobs:
 
         notReadyCount=$(echo "$nodeList" | jq -r '
           [
-            .items[].status.conditions[] |
+            .items[] |
+            select(.spec.unschedulable == null) |
+            .status.conditions[] |
             select(.type == "Ready") |
             select(.status != "True")
           ] | length')
