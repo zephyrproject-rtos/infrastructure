@@ -27,7 +27,7 @@ containerMode:
     resources:
       requests:
         # Size of workspace
-        storage: 180Gi
+        storage: 160Gi
 
 ## template is the PodSpec for each runner Pod
 ## For reference: https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#PodSpec
