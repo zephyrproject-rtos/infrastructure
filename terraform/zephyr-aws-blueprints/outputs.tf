@@ -17,8 +17,3 @@ output "eks_cluster_auth_token" {
   description = "Elastic Kubernetes Service Authentication Token"
   value       = data.aws_eks_cluster_auth.this.token
 }
-
-output "actions_runner_controller" {
-  description = "Actions Runner Controller Resource"
-  value       = helm_release.arc
-}

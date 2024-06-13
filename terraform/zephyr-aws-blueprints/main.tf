@@ -436,7 +436,6 @@ module "eks_blueprints_kubernetes_addons" {
   enable_aws_efs_csi_driver            = true
   enable_kubernetes_dashboard          = true
   enable_kube_prometheus_stack         = true
-  enable_actions_runner_controller     = true
 
   # Metrics Server Configurations
   metrics_server_helm_config = {
@@ -540,43 +539,6 @@ module "eks_blueprints_kubernetes_addons" {
       {
         name  = "grafana.adminPassword"
         value = var.kube_prometheus_stack_grafana_password
-      }
-    ]
-  }
-
-  # Actions Runner Controller (ARC) Configurations (v1)
-  actions_runner_controller_helm_config = {
-    version = "0.21.1"
-    set = [
-      {
-        name  = "authSecret.create"
-        value = "true"
-      },
-      {
-        name  = "authSecret.github_app_id"
-        value = var.actions_runner_controller_github_app_id
-      },
-      {
-        name  = "authSecret.github_app_installation_id"
-        value = var.actions_runner_controller_github_app_installation_id
-      },
-      {
-        name  = "githubWebhookServer.enabled"
-        value = "true"
-      },
-      {
-        name  = "githubWebhookServer.secret.enabled"
-        value = "true"
-      },
-      {
-        name  = "githubWebhookServer.secret.create"
-        value = "true"
-      }
-    ]
-    set_sensitive = [
-      {
-        name  = "authSecret.github_app_private_key"
-        value = var.actions_runner_controller_github_app_private_key
       }
     ]
   }
@@ -765,67 +727,6 @@ resource "kubernetes_cluster_role_binding" "eks_admin" {
   }
 
   depends_on = [kubernetes_service_account.eks_admin]
-}
-
-#---------------------------------------------------------------
-# Zephyr Runner Kubernetes Deployment (v1)
-#---------------------------------------------------------------
-
-# zephyr-runner Kubernetes Namespace
-resource "kubernetes_namespace" "zephyr_runner_namespace" {
-  metadata {
-    name = "zephyr-runner"
-  }
-
-  depends_on = [module.eks_blueprints_kubernetes_addons]
-}
-
-# zephyr-runner-linux-x64-xlarge Kubernetes Deployment
-data "kubectl_path_documents" "zephyr_runner_linux_x64_xlarge_manifests" {
-  pattern = "../../kubernetes/zephyr-runner/zephyr-runner-linux-x64-xlarge.yaml"
-}
-
-resource "kubectl_manifest" "zephyr_runner_linux_x64_xlarge_manifest" {
-  count      = var.enable_zephyr_runner_linux_x64_xlarge ? length(data.kubectl_path_documents.zephyr_runner_linux_x64_xlarge_manifests.documents) : 0
-  yaml_body  = element(data.kubectl_path_documents.zephyr_runner_linux_x64_xlarge_manifests.documents, count.index)
-  wait       = true
-  depends_on = [kubernetes_namespace.zephyr_runner_namespace]
-}
-
-# zephyr-runner-linux-x64-4xlarge Kubernetes Deployment
-data "kubectl_path_documents" "zephyr_runner_linux_x64_4xlarge_manifests" {
-  pattern = "../../kubernetes/zephyr-runner/zephyr-runner-linux-x64-4xlarge.yaml"
-}
-
-resource "kubectl_manifest" "zephyr_runner_linux_x64_4xlarge_manifest" {
-  count      = var.enable_zephyr_runner_linux_x64_4xlarge ? length(data.kubectl_path_documents.zephyr_runner_linux_x64_4xlarge_manifests.documents) : 0
-  yaml_body  = element(data.kubectl_path_documents.zephyr_runner_linux_x64_4xlarge_manifests.documents, count.index)
-  wait       = true
-  depends_on = [kubernetes_namespace.zephyr_runner_namespace]
-}
-
-# zephyr-runner-linux-arm64-xlarge Kubernetes Deployment
-data "kubectl_path_documents" "zephyr_runner_linux_arm64_xlarge_manifests" {
-  pattern = "../../kubernetes/zephyr-runner/zephyr-runner-linux-arm64-xlarge.yaml"
-}
-
-resource "kubectl_manifest" "zephyr_runner_linux_arm64_xlarge_manifest" {
-  count      = var.enable_zephyr_runner_linux_arm64_xlarge ? length(data.kubectl_path_documents.zephyr_runner_linux_arm64_xlarge_manifests.documents) : 0
-  yaml_body  = element(data.kubectl_path_documents.zephyr_runner_linux_arm64_xlarge_manifests.documents, count.index)
-  wait       = true
-  depends_on = [kubernetes_namespace.zephyr_runner_namespace]
-}
-
-# zephyr-runner-linux-arm64-4xlarge Kubernetes Deployment
-data "kubectl_path_documents" "zephyr_runner_linux_arm64_4xlarge_manifests" {
-  pattern = "../../kubernetes/zephyr-runner/zephyr-runner-linux-arm64-4xlarge.yaml"
-}
-
-resource "kubectl_manifest" "zephyr_runner_linux_arm64_4xlarge_manifest" {
-  count      = var.enable_zephyr_runner_linux_arm64_4xlarge ? length(data.kubectl_path_documents.zephyr_runner_linux_arm64_4xlarge_manifests.documents) : 0
-  yaml_body  = element(data.kubectl_path_documents.zephyr_runner_linux_arm64_4xlarge_manifests.documents, count.index)
-  wait       = true
-  depends_on = [kubernetes_namespace.zephyr_runner_namespace]
 }
 
 #-------------------

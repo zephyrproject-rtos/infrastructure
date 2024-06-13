@@ -122,46 +122,6 @@ variable "kube_prometheus_stack_grafana_password" {
   sensitive   = true
 }
 
-variable "actions_runner_controller_github_app_id" {
-  description = "GitHub app ID for Actions Runner Controller"
-  type        = string
-}
-
-variable "actions_runner_controller_github_app_installation_id" {
-  description = "GitHub app installation ID for Actions Runner Controller"
-  type        = string
-}
-
-variable "actions_runner_controller_github_app_private_key" {
-  description = "GitHub app private key for Actions Runner Controller"
-  type        = string
-  sensitive   = true
-}
-
-variable "enable_zephyr_runner_linux_x64_xlarge" {
-  description = "Enable Zephyr Runner linux-x64-xlarge"
-  type        = bool
-  default     = false
-}
-
-variable "enable_zephyr_runner_linux_x64_4xlarge" {
-  description = "Enable Zephyr Runner linux-x64-4xlarge"
-  type        = bool
-  default     = false
-}
-
-variable "enable_zephyr_runner_linux_arm64_xlarge" {
-  description = "Enable Zephyr Runner linux-arm64-xlarge"
-  type        = bool
-  default     = false
-}
-
-variable "enable_zephyr_runner_linux_arm64_4xlarge" {
-  description = "Enable Zephyr Runner linux-arm64-4xlarge"
-  type        = bool
-  default     = false
-}
-
 variable "actions_runner_controller_v2_version" {
   description = "Actions Runner Controller version"
   type        = string
