@@ -9,7 +9,7 @@ on:
   - cron: '*/5 * * * *'
 
 env:
-  STATUS_GIST_ID: b0d0a65518311e68dc2b3b0bbfb1a1c8
+  STATUS_GIST_ID: 08a5b71b4208c6bd48d7f6447c10c786
 
 jobs:
   # AWS Cloud Status Publisher Job
