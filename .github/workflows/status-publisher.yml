@@ -226,7 +226,7 @@ jobs:
       if: always()
       uses: exuanbo/actions-deploy-gist@v1
       with:
-        token: ${{ secrets.ZB_GIST_GITHUB_TOKEN }}
+        token: ${{ secrets.ZB_GITHUB_TOKEN }}
         gist_id: ${{ env.STATUS_GIST_ID }}
         file_path: status.aws_kubernetes_cluster.json
         file_type: text
@@ -235,7 +235,7 @@ jobs:
       if: always()
       uses: exuanbo/actions-deploy-gist@v1
       with:
-        token: ${{ secrets.ZB_GIST_GITHUB_TOKEN }}
+        token: ${{ secrets.ZB_GITHUB_TOKEN }}
         gist_id: ${{ env.STATUS_GIST_ID }}
         file_path: status.aws_actions_runner_controller.json
         file_type: text
@@ -244,7 +244,7 @@ jobs:
       if: always()
       uses: exuanbo/actions-deploy-gist@v1
       with:
-        token: ${{ secrets.ZB_GIST_GITHUB_TOKEN }}
+        token: ${{ secrets.ZB_GITHUB_TOKEN }}
         gist_id: ${{ env.STATUS_GIST_ID }}
         file_path: status.aws_runner_scale_set-linux_arm64_4xlarge.json
         file_type: text
@@ -253,7 +253,7 @@ jobs:
       if: always()
       uses: exuanbo/actions-deploy-gist@v1
       with:
-        token: ${{ secrets.ZB_GIST_GITHUB_TOKEN }}
+        token: ${{ secrets.ZB_GITHUB_TOKEN }}
         gist_id: ${{ env.STATUS_GIST_ID }}
         file_path: status.aws_runner_scale_set-linux_x64_4xlarge.json
         file_type: text
@@ -262,7 +262,7 @@ jobs:
       if: always()
       uses: exuanbo/actions-deploy-gist@v1
       with:
-        token: ${{ secrets.ZB_GIST_GITHUB_TOKEN }}
+        token: ${{ secrets.ZB_GITHUB_TOKEN }}
         gist_id: ${{ env.STATUS_GIST_ID }}
         file_path: status.aws_elasticsearch.json
         file_type: text
@@ -271,7 +271,7 @@ jobs:
       if: always()
       uses: exuanbo/actions-deploy-gist@v1
       with:
-        token: ${{ secrets.ZB_GIST_GITHUB_TOKEN }}
+        token: ${{ secrets.ZB_GITHUB_TOKEN }}
         gist_id: ${{ env.STATUS_GIST_ID }}
         file_path: status.aws_kibana.json
         file_type: text
@@ -503,7 +503,7 @@ jobs:
       if: always()
       uses: exuanbo/actions-deploy-gist@v1
       with:
-        token: ${{ secrets.ZB_GIST_GITHUB_TOKEN }}
+        token: ${{ secrets.ZB_GITHUB_TOKEN }}
         gist_id: ${{ env.STATUS_GIST_ID }}
         file_path: status.cnx_kubernetes_cluster.json
         file_type: text
@@ -512,7 +512,7 @@ jobs:
       if: always()
       uses: exuanbo/actions-deploy-gist@v1
       with:
-        token: ${{ secrets.ZB_GIST_GITHUB_TOKEN }}
+        token: ${{ secrets.ZB_GITHUB_TOKEN }}
         gist_id: ${{ env.STATUS_GIST_ID }}
         file_path: status.cnx_keydb_cache.json
         file_type: text
@@ -521,7 +521,7 @@ jobs:
       if: always()
       uses: exuanbo/actions-deploy-gist@v1
       with:
-        token: ${{ secrets.ZB_GIST_GITHUB_TOKEN }}
+        token: ${{ secrets.ZB_GITHUB_TOKEN }}
         gist_id: ${{ env.STATUS_GIST_ID }}
         file_path: status.cnx_actions_runner_controller.json
         file_type: text
@@ -530,7 +530,7 @@ jobs:
       if: always()
       uses: exuanbo/actions-deploy-gist@v1
       with:
-        token: ${{ secrets.ZB_GIST_GITHUB_TOKEN }}
+        token: ${{ secrets.ZB_GITHUB_TOKEN }}
         gist_id: ${{ env.STATUS_GIST_ID }}
         file_path: status.cnx_runner_scale_set-linux_arm64_4xlarge.json
         file_type: text
@@ -539,7 +539,7 @@ jobs:
       if: always()
       uses: exuanbo/actions-deploy-gist@v1
       with:
-        token: ${{ secrets.ZB_GIST_GITHUB_TOKEN }}
+        token: ${{ secrets.ZB_GITHUB_TOKEN }}
         gist_id: ${{ env.STATUS_GIST_ID }}
         file_path: status.cnx_runner_scale_set-linux_x64_4xlarge.json
         file_type: text
