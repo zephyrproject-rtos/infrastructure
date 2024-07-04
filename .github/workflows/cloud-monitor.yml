@@ -126,6 +126,7 @@ jobs:
 
     - name: Install OpenVPN client
       run: |
+        sudo apt update
         sudo apt install -y openvpn
 
     - name: Install OpenStack command line tools
