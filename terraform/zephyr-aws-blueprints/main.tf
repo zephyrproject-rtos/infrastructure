@@ -67,7 +67,7 @@ data "aws_ami" "zephyr_runner_node_arm64" {
 data "aws_availability_zones" "available" {}
 
 locals {
-  cluster_version = "1.23"
+  cluster_version = "1.24"
 
   vpc_cidr = "10.0.0.0/16"
   azs      = slice(data.aws_availability_zones.available.names, 0, 3)
