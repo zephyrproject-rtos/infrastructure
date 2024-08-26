@@ -47,7 +47,7 @@ data "aws_ami" "zephyr_runner_node_x86_64" {
 
   filter {
     name   = "name"
-    values = ["zephyr-runner-node-x86_64-1707039002"]
+    values = ["zephyr-runner-node-x86_64-1724677663"]
   }
 
   owners = ["724087766192"]
@@ -58,7 +58,7 @@ data "aws_ami" "zephyr_runner_node_arm64" {
 
   filter {
     name   = "name"
-    values = ["zephyr-runner-node-arm64-1700673482"]
+    values = ["zephyr-runner-node-arm64-1724677666"]
   }
 
   owners = ["724087766192"]
@@ -67,7 +67,7 @@ data "aws_ami" "zephyr_runner_node_arm64" {
 data "aws_availability_zones" "available" {}
 
 locals {
-  cluster_version = "1.23"
+  cluster_version = "1.24"
 
   vpc_cidr = "10.0.0.0/16"
   azs      = slice(data.aws_availability_zones.available.names, 0, 3)
