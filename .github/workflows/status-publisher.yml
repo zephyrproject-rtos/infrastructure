@@ -375,16 +375,16 @@ jobs:
       run: |
         podList=$(kubectl -n keydb-cache get pods -o json)
 
-        notReadyCount=$(echo "$podList" | jq -r '
+        readyCount=$(echo "$podList" | jq -r '
           [
             .items[].status.conditions[] |
             select(.type == "Ready") |
-            select(.status != "True")
+            select(.status == "True")
           ] | length')
 
-        if [ "$notReadyCount" -gt "1" ]; then
+        if [ "$readyCount" -lt "2" ]; then
           status="majorOutage"
-        elif [ "$notReadyCount" -gt "0" ]; then
+        elif [ "$readyCount" -lt "3" ]; then
           status="partialOutage"
         else
           status="operational"
