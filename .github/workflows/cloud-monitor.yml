@@ -230,15 +230,15 @@ jobs:
         kubectl -n keydb-cache get pods
         podList=$(kubectl -n keydb-cache get pods -o json)
 
-        notReadyCount=$(echo "$podList" | jq -r '
+        readyCount=$(echo "$podList" | jq -r '
           [
             .items[].status.conditions[] |
             select(.type == "Ready") |
-            select(.status != "True")
+            select(.status == "True")
           ] | length')
 
-        if [ "$notReadyCount" -gt "0" ]; then
-          .github/log.sh ERROR "cnx: zephyr-ci: Found ${notReadyCount} KeyDB cache pods with not-ready status."
+        if [ "$readyCount" -lt "3" ]; then
+          .github/log.sh ERROR "cnx: zephyr-ci: Found ${readyCount} KeyDB cache pod with ready status (expected 3)."
           exit 911
         fi
 
