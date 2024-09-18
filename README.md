@@ -24,3 +24,8 @@ files.
 
     * Packer scripts used for building node machine images.
     * Mainly used for building AMIs for use in the AWS.
+
+* cilicon
+
+    * Cilicon macOS GitHub Actions runner orchestrator configurations. 
+    * Manually deployed to macOS runner nodes.
