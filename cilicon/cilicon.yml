@@ -1,0 +1,8 @@
+source: oci://ghcr.io/zephyrproject-rtos/sdk-build-macos:v0.0.3
+provisioner:
+  type: github
+  config:
+    appId: 1001043
+    organization: zephyrproject-rtos
+    privateKeyPath: ~/zephyr-runner-v2-macos.2024-09-17.private-key.pem
+    runnerGroup: zephyr-runner-v2-macos-arm64-2xlarge
