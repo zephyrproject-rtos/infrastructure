@@ -1,0 +1,40 @@
+# keydb-cache-1-data Persistent Volume Claim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: keydb-cache-1-data
+  namespace: keydb-cache
+spec:
+  storageClassName: openebs-hostpath
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1600Gi
+
+---
+# keydb-cache-2-data Persistent Volume Claim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: keydb-cache-2-data
+  namespace: keydb-cache
+spec:
+  storageClassName: openebs-hostpath
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1600Gi
+
+---
+# keydb-cache-3-data Persistent Volume Claim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: keydb-cache-3-data
+  namespace: keydb-cache
+spec:
+  storageClassName: openebs-hostpath
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1600Gi
