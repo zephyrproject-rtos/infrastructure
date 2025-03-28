@@ -15,7 +15,7 @@ provider "helm" {
 
 # Local Variables
 locals {
-  arc_version = "0.9.3"
+  arc_version = "0.11.0"
 }
 
 # HashiCorp Vault Secrets zephyr-secrets Vault
