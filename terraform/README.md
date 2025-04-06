@@ -32,3 +32,9 @@ configuration files for the Zephyr infrastructure components.
     * Staging Kubernetes cluster for Zephyr infrastructure services.
     * Hosted on Centrinix Cloud.
     * Terraform plan and applies are locally executed with Terraform Cloud state backend.
+
+* hzr-ci-main
+
+    * Production Kubernetes cluster for Zephyr infrastructure services.
+    * Hosted on Hetzner Rancher Server.
+    * Terraform plan and applies are locally executed with Terraform Cloud state backend.
