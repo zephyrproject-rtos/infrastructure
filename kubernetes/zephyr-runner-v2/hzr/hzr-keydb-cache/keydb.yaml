@@ -1,0 +1,121 @@
+# keydb-cache-1 Pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: keydb-cache-1
+  namespace: keydb-cache
+  labels:
+    app.kubernetes.io/name: keydb-cache-1
+spec:
+  containers:
+  - name: keydb
+    image: eqalpha/keydb:x86_64_v6.3.4
+    ports:
+    - containerPort: 6379
+    resources:
+      limits:
+        cpu: "18.0"
+        memory: "496Gi"
+      requests:
+        cpu: "16.0"
+        memory: "480Gi"
+    volumeMounts:
+    - mountPath: /data
+      name: data
+    - mountPath: /etc/keydb
+      name: config
+  volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: keydb-cache-1-data
+  - name: config
+    configMap:
+      name: keydb-cache-config
+      items:
+      - key: keydb-config
+        path: keydb.conf
+  nodeSelector:
+    kubernetes.zephyrproject.io/role: cache
+    kubernetes.io/hostname: cluachc1
+
+---
+# keydb-cache-2 Pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: keydb-cache-2
+  namespace: keydb-cache
+  labels:
+    app.kubernetes.io/name: keydb-cache-2
+spec:
+  containers:
+  - name: keydb
+    image: eqalpha/keydb:x86_64_v6.3.4
+    ports:
+    - containerPort: 6379
+    resources:
+      limits:
+        cpu: "18.0"
+        memory: "496Gi"
+      requests:
+        cpu: "16.0"
+        memory: "480Gi"
+    volumeMounts:
+    - mountPath: /data
+      name: data
+    - mountPath: /etc/keydb
+      name: config
+  volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: keydb-cache-2-data
+  - name: config
+    configMap:
+      name: keydb-cache-config
+      items:
+      - key: keydb-config
+        path: keydb.conf
+  nodeSelector:
+    kubernetes.zephyrproject.io/role: cache
+    kubernetes.io/hostname: cluachc2
+
+---
+# keydb-cache-3 Pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: keydb-cache-3
+  namespace: keydb-cache
+  labels:
+    app.kubernetes.io/name: keydb-cache-3
+spec:
+  containers:
+  - name: keydb
+    image: eqalpha/keydb:x86_64_v6.3.4
+    ports:
+    - containerPort: 6379
+    resources:
+      limits:
+        cpu: "18.0"
+        memory: "496Gi"
+      requests:
+        cpu: "16.0"
+        memory: "480Gi"
+    volumeMounts:
+    - mountPath: /data
+      name: data
+    - mountPath: /etc/keydb
+      name: config
+  volumes:
+  - name: data
+    persistentVolumeClaim:
+      claimName: keydb-cache-3-data
+  - name: config
+    configMap:
+      name: keydb-cache-config
+      items:
+      - key: keydb-config
+        path: keydb.conf
+  nodeSelector:
+    kubernetes.zephyrproject.io/role: cache
+    kubernetes.io/hostname: cluachc3

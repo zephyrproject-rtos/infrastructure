@@ -29,6 +29,14 @@ Terraform manifest.
     * zephyr-runner-scale-sets: Centrinix production runner scale set
       configurations
 
+* hzr: Configurations for Hetzner zephyr-runner-v2 deployments
+
+    * hzr-openebs: Hetzner OpenEBS configurations
+    * hzr-runner-scale-set-controller: Hetzner Actions Runner Controller configurations
+    * test-runner-scale-sets: Hetzner test runner scale set configurations
+    * zephyr-runner-scale-sets: Hetzner production runner scale set configurations
+
+
 ## Manual Deployment Process
 
 While the Actions Runner Controller Helm chart installations are intended to be
