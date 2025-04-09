@@ -53,12 +53,14 @@ To create and activate all runner scale sets in the hzr-zephyr-ci deployment:
 
 ```
 terraform apply \
-    -target=helm_release.zephyr_runner_v2_linux_x64_4xlarge_hzr
+    -target=helm_release.zephyr_runner_v2_linux_x64_4xlarge_hzr \
+    -target=helm_release.zephyr_runner_v2_linux_arm64_4xlarge_hzr
 ```
 
 To destroy and deactivate all runner scale sets in the hzr-zephyr-ci deployment:
 
 ```
 terraform destroy \
-    -target=helm_release.zephyr_runner_v2_linux_x64_4xlarge_hzr
+    -target=helm_release.zephyr_runner_v2_linux_x64_4xlarge_hzr \
+    -target=helm_release.zephyr_runner_v2_linux_arm64_4xlarge_hzr
 ```
