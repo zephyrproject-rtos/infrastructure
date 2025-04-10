@@ -162,3 +162,13 @@ resource "helm_release" "zephyr_runner_v2_linux_x64_4xlarge_hzr" {
   values     = ["${file("../../kubernetes/zephyr-runner-v2/hzr/zephyr-runner-scale-sets/zephyr-runner-v2-linux-x64-4xlarge-hzr/values.yaml")}"]
   depends_on = [kubectl_manifest.zephyr_runner_v2_pod_templates_manifest]
 }
+
+## zephyr-runner-v2-linux-arm64-4xlarge-hzr Runner Scale Set Deployment
+resource "helm_release" "zephyr_runner_v2_linux_arm64" {
+  name       = "zephyr-runner-v2-linux-arm64-4xlarge-hzr"
+  namespace  = "arc-runners"
+  chart      = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set"
+  version    = local.arc_version
+  values     = ["${file("../../kubernetes/zephyr-runner-v2/hzr/zephyr-runner-scale-sets/zephyr-runner-v2-linux-arm64-4xlarge-hzr/values.yaml")}"]
+  depends_on = [kubectl_manifest.zephyr_runner_v2_pod_templates_manifest]
+}
