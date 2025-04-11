@@ -164,7 +164,7 @@ resource "helm_release" "zephyr_runner_v2_linux_x64_4xlarge_hzr" {
 }
 
 ## zephyr-runner-v2-linux-arm64-4xlarge-hzr Runner Scale Set Deployment
-resource "helm_release" "zephyr_runner_v2_linux_arm64" {
+resource "helm_release" "zephyr_runner_v2_linux_arm64_4xlarge_hzr" {
   name       = "zephyr-runner-v2-linux-arm64-4xlarge-hzr"
   namespace  = "arc-runners"
   chart      = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set"
