@@ -382,7 +382,9 @@ jobs:
             select(.status == "True")
           ] | length')
 
-        if [ "$readyCount" -lt "2" ]; then
+        if [ "$readyCount" -lt "1" ]; then
+          status="inactive"
+        elif [ "$readyCount" -lt "2" ]; then
           status="majorOutage"
         elif [ "$readyCount" -lt "3" ]; then
           status="partialOutage"
