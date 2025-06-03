@@ -170,10 +170,15 @@ jobs:
             select(.Status != "ACTIVE")
           ] | length')
 
-        if [ "$nonActiveCount" -gt "0" ]; then
-          .github/log.sh ERROR "cnx: Found ${nonActiveCount} server(s) with non-active status."
-          exit 911
-        fi
+        #
+        # NOTE: OpenStack active server instance count check is disabled because
+        #       CNX is no longer the main hosting provider.
+        #
+        # if [ "$nonActiveCount" -gt "0" ]; then
+        #   .github/log.sh ERROR "cnx: Found ${nonActiveCount} server(s) with non-active status."
+        #   exit 911
+        # fi
+        .github/log.sh INFO "cnx: Found ${nonActiveCount} server(s) with non-active status."
 
     - name: Check OpenStack COE cluster nodegroups
       if: always()
@@ -189,10 +194,15 @@ jobs:
               .status != "UPDATE_COMPLETE")
           ] | length')
 
-        if [ "$incompleteCount" -gt "0" ]; then
-          .github/log.sh ERROR "cnx: zephyr-ci: Found ${incompleteCount} nodegroup(s) with incomplete status."
-          exit 911
-        fi
+        #
+        # NOTE: OpenStack complete COE cluster nodegroup check is disabled
+        #       because CNX is no longer the main hosting provider.
+        #
+        # if [ "$incompleteCount" -gt "0" ]; then
+        #   .github/log.sh ERROR "cnx: zephyr-ci: Found ${incompleteCount} nodegroup(s) with incomplete status."
+        #   exit 911
+        # fi
+        .github/log.sh INFO "cnx: zephyr-ci: Found ${incompleteCount} nodegroup(s) with incomplete status."
 
     - name: Get OpenStack COE cluster configuration
       if: always()
@@ -219,28 +229,35 @@ jobs:
             select(.status != "True")
           ] | length')
 
-        if [ "$notReadyCount" -gt "0" ]; then
+        # NOTE: Not-ready Kubernetes node count check threshold has been set to
+        #       80 because CNX is no longer the main hosting provider and is
+        #       operating at a reduced capacity.
+        if [ "$notReadyCount" -gt "80" ]; then
           .github/log.sh ERROR "cnx: zephyr-ci: Found ${notReadyCount} node(s) with not-ready status."
           exit 911
         fi
 
-    - name: Check KeyDB cache pods
-      if: always()
-      run: |
-        kubectl -n keydb-cache get pods
-        podList=$(kubectl -n keydb-cache get pods -o json)
+    #
+    # NOTE: KeyDB cache pod check is disabled because CNX is no longer the main
+    #       hosting provider and cache nodes are no longer active on it.
+    #
+    # - name: Check KeyDB cache pods
+    #   if: always()
+    #   run: |
+    #     kubectl -n keydb-cache get pods
+    #     podList=$(kubectl -n keydb-cache get pods -o json)
 
-        readyCount=$(echo "$podList" | jq -r '
-          [
-            .items[].status.conditions[] |
-            select(.type == "Ready") |
-            select(.status == "True")
-          ] | length')
+    #     readyCount=$(echo "$podList" | jq -r '
+    #       [
+    #         .items[].status.conditions[] |
+    #         select(.type == "Ready") |
+    #         select(.status == "True")
+    #       ] | length')
 
-        if [ "$readyCount" -lt "3" ]; then
-          .github/log.sh ERROR "cnx: zephyr-ci: Found ${readyCount} KeyDB cache pod with ready status (expected 3)."
-          exit 911
-        fi
+    #     if [ "$readyCount" -lt "3" ]; then
+    #       .github/log.sh ERROR "cnx: zephyr-ci: Found ${readyCount} KeyDB cache pod with ready status (expected 3)."
+    #       exit 911
+    #     fi
 
     - name: Check Actions Runner Controller pods
       if: always()
