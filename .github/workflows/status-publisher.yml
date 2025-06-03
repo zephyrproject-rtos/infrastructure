@@ -352,11 +352,11 @@ jobs:
             select(.status != "True")
           ] | length')
 
-        if [ "$notReadyCount" -gt "50" ]; then
+        if [ "$notReadyCount" -gt "85" ]; then
           status="majorOutage"
-        elif [ "$notReadyCount" -gt "20" ]; then
+        elif [ "$notReadyCount" -gt "82" ]; then
           status="partialOutage"
-        elif [ "$notReadyCount" -gt "1" ]; then
+        elif [ "$notReadyCount" -gt "80" ]; then
           status="degradedPerformance"
         else
           status="operational"
