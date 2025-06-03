@@ -178,7 +178,6 @@ jobs:
         #   .github/log.sh ERROR "cnx: Found ${nonActiveCount} server(s) with non-active status."
         #   exit 911
         # fi
-        .github/log.sh INFO "cnx: Found ${nonActiveCount} server(s) with non-active status."
 
     - name: Check OpenStack COE cluster nodegroups
       if: always()
@@ -202,7 +201,6 @@ jobs:
         #   .github/log.sh ERROR "cnx: zephyr-ci: Found ${incompleteCount} nodegroup(s) with incomplete status."
         #   exit 911
         # fi
-        .github/log.sh INFO "cnx: zephyr-ci: Found ${incompleteCount} nodegroup(s) with incomplete status."
 
     - name: Get OpenStack COE cluster configuration
       if: always()
