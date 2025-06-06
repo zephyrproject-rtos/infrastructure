@@ -320,3 +320,124 @@ jobs:
       run: |
         jobUrl="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         .github/log.sh ERROR "cnx: Cloud monitor job ${{ github.run_id }} failed.\n${jobUrl}"
+
+  # Hetzner Cloud Monitor Job
+  hzr-monitor:
+    name: Hetzner Cloud Monitor
+    runs-on: ubuntu-22.04
+
+    env:
+      DISCORD_INFRA_MONITOR_WEBHOOK: "${{ secrets.DISCORD_INFRA_MONITOR_WEBHOOK }}"
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install WireGuard client
+      run: |
+        sudo apt install wireguard openresolv
+
+    - name: Install Kubernetes command line tools
+      run: |
+        curl -LO https://dl.k8s.io/release/v1.31.4/bin/linux/amd64/kubectl
+        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+    - name: Check environment
+      run: |
+        jq --version
+        wg --version
+        kubectl version --client=true
+
+    - name: Connect to Hetzner VPN
+      run: |
+        sudo sh -c 'echo "${{ secrets.HZR_WG_CONF }}" > /etc/wireguard/wg0.conf'
+        sudo wg-quick up wg0
+
+    - name: Set up Kubernetes cluster configuration
+      run: |
+        echo '${{ secrets.HZR_KUBECONFIG }}' > config
+        echo "KUBECONFIG=${PWD}/config" >> $GITHUB_ENV
+
+    - name: Check Kubernetes nodes
+      if: always()
+      run: |
+        kubectl get nodes
+        nodeList=$(kubectl get nodes -o json)
+
+        notReadyCount=$(echo "$nodeList" | jq -r '
+          [
+            .items[] |
+            select(.spec.unschedulable == null) |
+            .status.conditions[] |
+            select(.type == "Ready") |
+            select(.status != "True")
+          ] | length')
+
+        if [ "$notReadyCount" -gt "0" ]; then
+          .github/log.sh ERROR "hzr: ci-main: Found ${notReadyCount} node(s) with not-ready status."
+          exit 911
+        fi
+
+    - name: Check KeyDB cache pods
+      if: always()
+      run: |
+        kubectl -n keydb-cache get pods
+        podList=$(kubectl -n keydb-cache get pods -o json)
+
+        readyCount=$(echo "$podList" | jq -r '
+          [
+            .items[].status.conditions[] |
+            select(.type == "Ready") |
+            select(.status == "True")
+          ] | length')
+
+        if [ "$readyCount" -lt "3" ]; then
+          .github/log.sh ERROR "hzr: ci-main: Found ${readyCount} KeyDB cache pod with ready status (expected 3)."
+          exit 911
+        fi
+
+    - name: Check Actions Runner Controller pods
+      if: always()
+      run: |
+        kubectl -n arc-systems get pods
+        podList=$(kubectl -n arc-systems get pods -o json)
+
+        notReadyCount=$(echo "$podList" | jq -r '
+          [
+            .items[].status.conditions[] |
+            select(.type == "Ready") |
+            select(.status != "True")
+          ] | length')
+
+        if [ "$notReadyCount" -gt "0" ]; then
+          .github/log.sh ERROR "hzr: ci-main: Found ${notReadyCount} ARC pods with not-ready status."
+          exit 911
+        fi
+
+    - name: Clean up failed ephemeral runners
+      if: always()
+      run: |
+        kubectl -n arc-runners get ephemeralrunners
+        runnerList=$(kubectl -n arc-runners get ephemeralrunners -o json)
+
+        failedCount=$(echo "$runnerList" | jq -r '
+          [
+            .items[].status |
+            select(.phase == "Failed")
+          ] | length')
+
+        if [ "$failedCount" -gt "0" ]; then
+          .github/log.sh WARN "hzr: ci-main: Found ${failedCount} ephemeral runners with failed status."
+
+          echo "$runnerList" |
+            jq -r '.items[].status | select(.phase == "Failed").runnerName' |
+            xargs kubectl delete ephemeralrunner
+
+          .github/log.sh INFO "hzr: ci-main: Cleaned up ${failedCount} ephemeral runners with failed status."
+        fi
+
+    - name: Report failure
+      if: failure()
+      run: |
+        jobUrl="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        .github/log.sh ERROR "hzr: Cloud monitor job ${{ github.run_id }} failed.\n${jobUrl}"
