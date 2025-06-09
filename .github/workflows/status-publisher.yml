@@ -546,3 +546,246 @@ jobs:
         gist_id: ${{ env.STATUS_GIST_ID }}
         file_path: status.cnx_runner_scale_set-linux_x64_4xlarge.json
         file_type: text
+
+  # Hetzner Cloud Status Publisher Job
+  hzr-status-publisher:
+    name: Hetzner Cloud Status Publisher
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install WireGuard client
+      run: |
+        sudo apt install wireguard openresolv
+
+    - name: Install Kubernetes command line tools
+      run: |
+        curl -LO https://dl.k8s.io/release/v1.31.4/bin/linux/amd64/kubectl
+        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+    - name: Check environment
+      run: |
+        jq --version
+        wg --version
+        kubectl version --client=true
+
+    - name: Connect to Hetzner VPN
+      run: |
+        sudo sh -c 'echo "${{ secrets.HZR_WG_CONF }}" > /etc/wireguard/wg0.conf'
+        sudo wg-quick up wg0
+
+    - name: Set up Kubernetes cluster configuration
+      run: |
+        echo '${{ secrets.HZR_KUBECONFIG }}' > config
+        echo "KUBECONFIG=${PWD}/config" >> $GITHUB_ENV
+
+    - name: Check Kubernetes Cluster status
+      if: always()
+      run: |
+        nodeList=$(kubectl get nodes -o json)
+
+        notReadyCount=$(echo "$nodeList" | jq -r '
+          [
+            .items[] |
+            select(.spec.unschedulable == null) |
+            .status.conditions[] |
+            select(.type == "Ready") |
+            select(.status != "True")
+          ] | length')
+
+        if [ "$notReadyCount" -gt "10" ]; then
+          status="majorOutage"
+        elif [ "$notReadyCount" -gt "5" ]; then
+          status="partialOutage"
+        elif [ "$notReadyCount" -gt "2" ]; then
+          status="degradedPerformance"
+        else
+          status="operational"
+        fi
+
+        cat <<EOF > status.hzr_kubernetes_cluster.json
+        {
+          "status": "${status}",
+          "rawData": $(kubectl get nodes | jq -sR),
+          "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+        }
+        EOF
+
+    - name: Check KeyDB Cache status
+      if: always()
+      run: |
+        podList=$(kubectl -n keydb-cache get pods -o json)
+
+        readyCount=$(echo "$podList" | jq -r '
+          [
+            .items[].status.conditions[] |
+            select(.type == "Ready") |
+            select(.status == "True")
+          ] | length')
+
+        if [ "$readyCount" -lt "1" ]; then
+          status="inactive"
+        elif [ "$readyCount" -lt "2" ]; then
+          status="majorOutage"
+        elif [ "$readyCount" -lt "3" ]; then
+          status="partialOutage"
+        else
+          status="operational"
+        fi
+
+        cat <<EOF > status.hzr_keydb_cache.json
+        {
+          "status": "${status}",
+          "rawData": $(kubectl -n keydb-cache get pods | jq -sR),
+          "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+        }
+        EOF
+
+    - name: Check Actions Runner Controller status
+      if: always()
+      run: |
+        podList=$(kubectl -n arc-systems get pods -o json)
+
+        notReadyCount=$(echo "$podList" | jq -r '
+          [
+            .items[].status.conditions[] |
+            select(.type == "Ready") |
+            select(.status != "True")
+          ] | length')
+
+        if [ "$notReadyCount" -gt "0" ]; then
+          status="majorOutage"
+        else
+          status="operational"
+        fi
+
+        cat <<EOF > status.hzr_actions_runner_controller.json
+        {
+          "status": "${status}",
+          "rawData": $(kubectl -n arc-systems get pods | jq -sR),
+          "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+        }
+        EOF
+
+    - name: Check Runner Scaling Set linux-arm64-4xlarge status
+      if: always()
+      run: |
+        podList=$(kubectl -n arc-systems get pods -o json)
+        podName=$(echo "$podList" | jq -r '
+          .items[] |
+          select(.metadata.name | startswith("zrv2-linux-arm64-4xlarge-hzr")) |
+          .metadata.name')
+
+        if [ "$podName" != "" ]; then
+          podData=$(kubectl -n arc-systems get pods ${podName} -o json)
+          podStatus=$(echo "$podData" | jq -r '
+            .status.conditions[] |
+            select(.type == "Ready") |
+            .status
+            ')
+
+          if [ "$podStatus" != "True" ]; then
+            status="majorOutage"
+          else
+            status="operational"
+          fi
+
+          rawData="$(kubectl -n arc-systems get pods ${podName})"$'\n\n'
+          rawData+="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-arm64-4xlarge-hzr)"
+        else
+          status="inactive"
+          rawData="$(kubectl -n arc-systems get pods)"
+        fi
+
+        cat <<EOF > status.hzr_runner_scale_set-linux_arm64_4xlarge.json
+        {
+          "status": "${status}",
+          "rawData": $(echo "${rawData}" | jq -sR),
+          "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+        }
+        EOF
+
+    - name: Check Runner Scaling Set linux-x64-4xlarge status
+      if: always()
+      run: |
+        podList=$(kubectl -n arc-systems get pods -o json)
+        podName=$(echo "$podList" | jq -r '
+          .items[] |
+          select(.metadata.name | startswith("zrv2-linux-x64-4xlarge-hzr")) |
+          .metadata.name')
+
+        if [ "$podName" != "" ]; then
+          podData=$(kubectl -n arc-systems get pods ${podName} -o json)
+          podStatus=$(echo "$podData" | jq -r '
+            .status.conditions[] |
+            select(.type == "Ready") |
+            .status
+            ')
+
+          if [ "$podStatus" != "True" ]; then
+            status="majorOutage"
+          else
+            status="operational"
+          fi
+
+          rawData="$(kubectl -n arc-systems get pods ${podName})"$'\n\n'
+          rawData+="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-x64-4xlarge-hzr)"
+        else
+          status="inactive"
+          rawData="$(kubectl -n arc-systems get pods)"
+        fi
+
+        cat <<EOF > status.hzr_runner_scale_set-linux_x64_4xlarge.json
+        {
+          "status": "${status}",
+          "rawData": $(echo "${rawData}" | jq -sR),
+          "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+        }
+        EOF
+
+    - name: Upload Kubernetes Cluster status
+      if: always()
+      uses: exuanbo/actions-deploy-gist@v1
+      with:
+        token: ${{ secrets.ZB_GITHUB_TOKEN }}
+        gist_id: ${{ env.STATUS_GIST_ID }}
+        file_path: status.hzr_kubernetes_cluster.json
+        file_type: text
+
+    - name: Upload KeyDB Cache status
+      if: always()
+      uses: exuanbo/actions-deploy-gist@v1
+      with:
+        token: ${{ secrets.ZB_GITHUB_TOKEN }}
+        gist_id: ${{ env.STATUS_GIST_ID }}
+        file_path: status.hzr_keydb_cache.json
+        file_type: text
+
+    - name: Upload Actions Runner Controller status
+      if: always()
+      uses: exuanbo/actions-deploy-gist@v1
+      with:
+        token: ${{ secrets.ZB_GITHUB_TOKEN }}
+        gist_id: ${{ env.STATUS_GIST_ID }}
+        file_path: status.hzr_actions_runner_controller.json
+        file_type: text
+
+    - name: Upload Runner Scaling Set linux-arm64-4xlarge status
+      if: always()
+      uses: exuanbo/actions-deploy-gist@v1
+      with:
+        token: ${{ secrets.ZB_GITHUB_TOKEN }}
+        gist_id: ${{ env.STATUS_GIST_ID }}
+        file_path: status.hzr_runner_scale_set-linux_arm64_4xlarge.json
+        file_type: text
+
+    - name: Upload Runner Scaling Set linux-x64-4xlarge status
+      if: always()
+      uses: exuanbo/actions-deploy-gist@v1
+      with:
+        token: ${{ secrets.ZB_GITHUB_TOKEN }}
+        gist_id: ${{ env.STATUS_GIST_ID }}
+        file_path: status.hzr_runner_scale_set-linux_x64_4xlarge.json
+        file_type: text
