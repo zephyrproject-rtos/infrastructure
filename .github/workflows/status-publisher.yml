@@ -8,9 +8,6 @@ on:
   # Run every 5 minutes
   - cron: '*/5 * * * *'
 
-env:
-  STATUS_GIST_ID: 08a5b71b4208c6bd48d7f6447c10c786
-
 jobs:
   # AWS Cloud Status Publisher Job
   aws-status-publisher:
@@ -222,59 +219,10 @@ jobs:
         }
         EOF
 
-    - name: Upload Kubernetes Cluster status
+    - name: Upload status data to S3 bucket
       if: always()
-      uses: exuanbo/actions-deploy-gist@v1
-      with:
-        token: ${{ secrets.ZB_GITHUB_TOKEN }}
-        gist_id: ${{ env.STATUS_GIST_ID }}
-        file_path: status.aws_kubernetes_cluster.json
-        file_type: text
-
-    - name: Upload Actions Runner Controller status
-      if: always()
-      uses: exuanbo/actions-deploy-gist@v1
-      with:
-        token: ${{ secrets.ZB_GITHUB_TOKEN }}
-        gist_id: ${{ env.STATUS_GIST_ID }}
-        file_path: status.aws_actions_runner_controller.json
-        file_type: text
-
-    - name: Upload Runner Scaling Set linux-arm64-4xlarge status
-      if: always()
-      uses: exuanbo/actions-deploy-gist@v1
-      with:
-        token: ${{ secrets.ZB_GITHUB_TOKEN }}
-        gist_id: ${{ env.STATUS_GIST_ID }}
-        file_path: status.aws_runner_scale_set-linux_arm64_4xlarge.json
-        file_type: text
-
-    - name: Upload Runner Scaling Set linux-x64-4xlarge status
-      if: always()
-      uses: exuanbo/actions-deploy-gist@v1
-      with:
-        token: ${{ secrets.ZB_GITHUB_TOKEN }}
-        gist_id: ${{ env.STATUS_GIST_ID }}
-        file_path: status.aws_runner_scale_set-linux_x64_4xlarge.json
-        file_type: text
-
-    - name: Upload Elasticsearch status
-      if: always()
-      uses: exuanbo/actions-deploy-gist@v1
-      with:
-        token: ${{ secrets.ZB_GITHUB_TOKEN }}
-        gist_id: ${{ env.STATUS_GIST_ID }}
-        file_path: status.aws_elasticsearch.json
-        file_type: text
-
-    - name: Upload Kibana status
-      if: always()
-      uses: exuanbo/actions-deploy-gist@v1
-      with:
-        token: ${{ secrets.ZB_GITHUB_TOKEN }}
-        gist_id: ${{ env.STATUS_GIST_ID }}
-        file_path: status.aws_kibana.json
-        file_type: text
+      run: |
+        aws s3 cp . s3://statuspage-data/ --recursive --exclude '*' --include 'status.*.json'
 
   # Centrinix Cloud Status Publisher Job
   cnx-status-publisher:
@@ -282,6 +230,9 @@ jobs:
     runs-on: ubuntu-22.04
 
     env:
+      AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+      AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+      AWS_DEFAULT_REGION: "us-east-2"
       OS_AUTH_TYPE: "v3applicationcredential"
       OS_AUTH_URL: "https://openstack.gumi.centrinix.cloud:5000"
       OS_IDENTITY_API_VERSION: "3"
@@ -502,55 +453,20 @@ jobs:
         }
         EOF
 
-    - name: Upload Kubernetes Cluster status
+    - name: Upload status data to S3 bucket
       if: always()
-      uses: exuanbo/actions-deploy-gist@v1
-      with:
-        token: ${{ secrets.ZB_GITHUB_TOKEN }}
-        gist_id: ${{ env.STATUS_GIST_ID }}
-        file_path: status.cnx_kubernetes_cluster.json
-        file_type: text
-
-    - name: Upload KeyDB Cache status
-      if: always()
-      uses: exuanbo/actions-deploy-gist@v1
-      with:
-        token: ${{ secrets.ZB_GITHUB_TOKEN }}
-        gist_id: ${{ env.STATUS_GIST_ID }}
-        file_path: status.cnx_keydb_cache.json
-        file_type: text
-
-    - name: Upload Actions Runner Controller status
-      if: always()
-      uses: exuanbo/actions-deploy-gist@v1
-      with:
-        token: ${{ secrets.ZB_GITHUB_TOKEN }}
-        gist_id: ${{ env.STATUS_GIST_ID }}
-        file_path: status.cnx_actions_runner_controller.json
-        file_type: text
-
-    - name: Upload Runner Scaling Set linux-arm64-4xlarge status
-      if: always()
-      uses: exuanbo/actions-deploy-gist@v1
-      with:
-        token: ${{ secrets.ZB_GITHUB_TOKEN }}
-        gist_id: ${{ env.STATUS_GIST_ID }}
-        file_path: status.cnx_runner_scale_set-linux_arm64_4xlarge.json
-        file_type: text
-
-    - name: Upload Runner Scaling Set linux-x64-4xlarge status
-      if: always()
-      uses: exuanbo/actions-deploy-gist@v1
-      with:
-        token: ${{ secrets.ZB_GITHUB_TOKEN }}
-        gist_id: ${{ env.STATUS_GIST_ID }}
-        file_path: status.cnx_runner_scale_set-linux_x64_4xlarge.json
-        file_type: text
+      run: |
+        aws s3 cp . s3://statuspage-data/ --recursive --exclude '*' --include 'status.*.json'
 
   # Hetzner Cloud Status Publisher Job
   hzr-status-publisher:
     name: Hetzner Cloud Status Publisher
     runs-on: ubuntu-22.04
+
+    env:
+      AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+      AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+      AWS_DEFAULT_REGION: "us-east-2"
 
     steps:
     - name: Checkout
@@ -745,47 +661,8 @@ jobs:
         }
         EOF
 
-    - name: Upload Kubernetes Cluster status
+    - name: Upload status data to S3 bucket
       if: always()
-      uses: exuanbo/actions-deploy-gist@v1
-      with:
-        token: ${{ secrets.ZB_GITHUB_TOKEN }}
-        gist_id: ${{ env.STATUS_GIST_ID }}
-        file_path: status.hzr_kubernetes_cluster.json
-        file_type: text
+      run: |
+        aws s3 cp . s3://statuspage-data/ --recursive --exclude '*' --include 'status.*.json'
 
-    - name: Upload KeyDB Cache status
-      if: always()
-      uses: exuanbo/actions-deploy-gist@v1
-      with:
-        token: ${{ secrets.ZB_GITHUB_TOKEN }}
-        gist_id: ${{ env.STATUS_GIST_ID }}
-        file_path: status.hzr_keydb_cache.json
-        file_type: text
-
-    - name: Upload Actions Runner Controller status
-      if: always()
-      uses: exuanbo/actions-deploy-gist@v1
-      with:
-        token: ${{ secrets.ZB_GITHUB_TOKEN }}
-        gist_id: ${{ env.STATUS_GIST_ID }}
-        file_path: status.hzr_actions_runner_controller.json
-        file_type: text
-
-    - name: Upload Runner Scaling Set linux-arm64-4xlarge status
-      if: always()
-      uses: exuanbo/actions-deploy-gist@v1
-      with:
-        token: ${{ secrets.ZB_GITHUB_TOKEN }}
-        gist_id: ${{ env.STATUS_GIST_ID }}
-        file_path: status.hzr_runner_scale_set-linux_arm64_4xlarge.json
-        file_type: text
-
-    - name: Upload Runner Scaling Set linux-x64-4xlarge status
-      if: always()
-      uses: exuanbo/actions-deploy-gist@v1
-      with:
-        token: ${{ secrets.ZB_GITHUB_TOKEN }}
-        gist_id: ${{ env.STATUS_GIST_ID }}
-        file_path: status.hzr_runner_scale_set-linux_x64_4xlarge.json
-        file_type: text
