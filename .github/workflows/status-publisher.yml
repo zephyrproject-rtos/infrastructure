@@ -120,16 +120,24 @@ jobs:
             status="operational"
           fi
 
+          runnerData="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-arm64-4xlarge-aws -o json)"
+          runningRunnerCount=$(echo "$runnerData" | jq -r '.status.runningEphemeralRunners')
+          pendingRunnerCount=$(echo "$runnerData" | jq -r '.status.pendingEphemeralRunners')
+
           rawData="$(kubectl -n arc-systems get pods ${podName})"$'\n\n'
           rawData+="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-arm64-4xlarge-aws)"
         else
           status="inactive"
+          runningRunnerCount=0
+          pendingRunnerCount=0
           rawData="$(kubectl -n arc-systems get pods)"
         fi
 
         cat <<EOF > status.aws_runner_scale_set-linux_arm64_4xlarge.json
         {
           "status": "${status}",
+          "runningRunnerCount": ${runningRunnerCount},
+          "pendingRunnerCount": ${pendingRunnerCount},
           "rawData": $(echo "${rawData}" | jq -sR),
           "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
         }
@@ -158,16 +166,24 @@ jobs:
             status="operational"
           fi
 
+          runnerData="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-x64-4xlarge-aws -o json)"
+          runningRunnerCount=$(echo "$runnerData" | jq -r '.status.runningEphemeralRunners')
+          pendingRunnerCount=$(echo "$runnerData" | jq -r '.status.pendingEphemeralRunners')
+
           rawData="$(kubectl -n arc-systems get pods ${podName})"$'\n\n'
           rawData+="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-x64-4xlarge-aws)"
         else
           status="inactive"
+          runningRunnerCount=0
+          pendingRunnerCount=0
           rawData="$(kubectl -n arc-systems get pods)"
         fi
 
         cat <<EOF > status.aws_runner_scale_set-linux_x64_4xlarge.json
         {
           "status": "${status}",
+          "runningRunnerCount": ${runningRunnerCount},
+          "pendingRunnerCount": ${pendingRunnerCount},
           "rawData": $(echo "${rawData}" | jq -sR),
           "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
         }
@@ -400,16 +416,24 @@ jobs:
             status="operational"
           fi
 
+          runnerData="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-arm64-4xlarge-cnx -o json)"
+          runningRunnerCount=$(echo "$runnerData" | jq -r '.status.runningEphemeralRunners')
+          pendingRunnerCount=$(echo "$runnerData" | jq -r '.status.pendingEphemeralRunners')
+
           rawData="$(kubectl -n arc-systems get pods ${podName})"$'\n\n'
           rawData+="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-arm64-4xlarge-cnx)"
         else
           status="inactive"
+          runningRunnerCount=0
+          pendingRunnerCount=0
           rawData="$(kubectl -n arc-systems get pods)"
         fi
 
         cat <<EOF > status.cnx_runner_scale_set-linux_arm64_4xlarge.json
         {
           "status": "${status}",
+          "runningRunnerCount": ${runningRunnerCount},
+          "pendingRunnerCount": ${pendingRunnerCount},
           "rawData": $(echo "${rawData}" | jq -sR),
           "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
         }
@@ -438,16 +462,24 @@ jobs:
             status="operational"
           fi
 
+          runnerData="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-x64-4xlarge-cnx -o json)"
+          runningRunnerCount=$(echo "$runnerData" | jq -r '.status.runningEphemeralRunners')
+          pendingRunnerCount=$(echo "$runnerData" | jq -r '.status.pendingEphemeralRunners')
+
           rawData="$(kubectl -n arc-systems get pods ${podName})"$'\n\n'
           rawData+="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-x64-4xlarge-cnx)"
         else
           status="inactive"
+          runningRunnerCount=0
+          pendingRunnerCount=0
           rawData="$(kubectl -n arc-systems get pods)"
         fi
 
         cat <<EOF > status.cnx_runner_scale_set-linux_x64_4xlarge.json
         {
           "status": "${status}",
+          "runningRunnerCount": ${runningRunnerCount},
+          "pendingRunnerCount": ${pendingRunnerCount},
           "rawData": $(echo "${rawData}" | jq -sR),
           "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
         }
@@ -608,16 +640,24 @@ jobs:
             status="operational"
           fi
 
+          runnerData="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-arm64-4xlarge-hzr -o json)"
+          runningRunnerCount=$(echo "$runnerData" | jq -r '.status.runningEphemeralRunners')
+          pendingRunnerCount=$(echo "$runnerData" | jq -r '.status.pendingEphemeralRunners')
+
           rawData="$(kubectl -n arc-systems get pods ${podName})"$'\n\n'
           rawData+="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-arm64-4xlarge-hzr)"
         else
           status="inactive"
+          runningRunnerCount=0
+          pendingRunnerCount=0
           rawData="$(kubectl -n arc-systems get pods)"
         fi
 
         cat <<EOF > status.hzr_runner_scale_set-linux_arm64_4xlarge.json
         {
           "status": "${status}",
+          "runningRunnerCount": ${runningRunnerCount},
+          "pendingRunnerCount": ${pendingRunnerCount},
           "rawData": $(echo "${rawData}" | jq -sR),
           "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
         }
@@ -646,16 +686,24 @@ jobs:
             status="operational"
           fi
 
+          runnerData="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-x64-4xlarge-hzr -o json)"
+          runningRunnerCount=$(echo "$runnerData" | jq -r '.status.runningEphemeralRunners')
+          pendingRunnerCount=$(echo "$runnerData" | jq -r '.status.pendingEphemeralRunners')
+
           rawData="$(kubectl -n arc-systems get pods ${podName})"$'\n\n'
           rawData+="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-x64-4xlarge-hzr)"
         else
           status="inactive"
+          runningRunnerCount=0
+          pendingRunnerCount=0
           rawData="$(kubectl -n arc-systems get pods)"
         fi
 
         cat <<EOF > status.hzr_runner_scale_set-linux_x64_4xlarge.json
         {
           "status": "${status}",
+          "runningRunnerCount": ${runningRunnerCount},
+          "pendingRunnerCount": ${pendingRunnerCount},
           "rawData": $(echo "${rawData}" | jq -sR),
           "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
         }
