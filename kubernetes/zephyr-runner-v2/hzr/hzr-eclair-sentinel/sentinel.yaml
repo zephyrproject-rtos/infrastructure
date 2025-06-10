@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentinel
+  namespace: eclair-sentinel
+  labels:
+    app.kubernetes.io/name: sentinel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sentinel
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: sentinel
+    spec:
+      containers:
+      - name: sentinel
+        image: ghcr.io/zephyrproject-rtos/eclair-sentinel:v10.13.1-1
+        ports:
+        - containerPort: 1947
+        volumeMounts:
+        # config
+        - mountPath: /etc/hasplm/hasplm.ini
+          name: config
+          subPath: hasplm.ini
+        # data
+        - mountPath: /var/hasplm/ack
+          name: data-ack
+        - mountPath: /var/hasplm/attached
+          name: data-attached
+        - mountPath: /var/hasplm/detached
+          name: data-detached
+        - mountPath: /var/hasplm/installed
+          name: data-installed
+        - mountPath: /var/hasplm/lmid
+          name: data-lmid
+        - mountPath: /var/hasplm/log
+          name: data-log
+        - mountPath: /var/hasplm/storage
+          name: data-storage
+        - mountPath: /var/hasplm/identity.db
+          name: data-identity-db
+        - mountPath: /var/hasplm/name.db
+          name: data-name-db
+        args: [ "sleep", "infinity" ]
+      volumes:
+      - name: config
+        configMap:
+          name: sentinel-config
+      - name: data-ack
+        hostPath:
+          path: /var/local/hasplm/ack
+          type: DirectoryOrCreate
+      - name: data-attached
+        hostPath:
+          path: /var/local/hasplm/attached
+          type: DirectoryOrCreate
+      - name: data-detached
+        hostPath:
+          path: /var/local/hasplm/detached
+          type: DirectoryOrCreate
+      - name: data-installed
+        hostPath:
+          path: /var/local/hasplm/installed
+          type: DirectoryOrCreate
+      - name: data-lmid
+        hostPath:
+          path: /var/local/hasplm/lmid
+          type: DirectoryOrCreate
+      - name: data-log
+        hostPath:
+          path: /var/local/hasplm/log
+          type: DirectoryOrCreate
+      - name: data-storage
+        hostPath:
+          path: /var/local/hasplm/storage
+          type: DirectoryOrCreate
+      - name: data-identity-db
+        hostPath:
+          path: /var/local/hasplm/identity.db
+          type: FileOrCreate
+      - name: data-name-db
+        hostPath:
+          path: /var/local/hasplm/name.db
+          type: FileOrCreate
+      imagePullSecrets:
+      - name: ghcr-eclair-sentinel
+      nodeSelector:
+        kubernetes.io/hostname: cluams1

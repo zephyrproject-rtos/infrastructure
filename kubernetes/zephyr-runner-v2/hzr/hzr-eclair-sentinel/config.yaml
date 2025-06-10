@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sentinel-config
+  namespace: eclair-sentinel
+data:
+  hasplm.ini: |
+    [SERVER]
+    name = sentinel
+    adminusername = admin
+    adminpassword = c7pGxyEyc+VfaQBVINSZGw==:KafbZG+lTqAgcTJE29BwPA==:100000
+    accremote = 0
+    adminremote = 0
+    old_files_delete_days = 90
+
+    enabledetach = 1
+    multiple_detach_per_identity = 0
+    enableautodetach = 0
+    autodetachhours = 2
+    reservedseats = 0
+    reservedpercent = 0
+    detachmaxdays = 14
+    commuter_delete_days = 7
+    disable_um = 0
+    idle_session_timeout_mins = 720
+    multiple_session_per_identity = 0
+
+    requestlog = 1
+    loglocal = 1
+    logremote = 1
+    logadmin = 1
+    errorlog = 1
+    rotatelogs = 1
+    access_log_maxsize = 0
+    error_log_maxsize = 0
+    zip_logs_days = 0
+    delete_logs_days = 90
+    pidfile = 1
+    passacc = 1
+
+    accessfromremote = anyone
+    accesstoremote = 1
+    bind_local_only = 0
+
+    [REMOTE]
+    broadcastsearch = 0
+    serversearchinterval = 30
+
+    [TRUST]
+    trusted_ip = 0.0.0.0/0
+
+    [LOGPARAMETERS]
+    text = {timestamp} {clientaddr}:{clientport} {clientid} {method} {url} {function}({functionparams}) result({statuscode}) {newline}
