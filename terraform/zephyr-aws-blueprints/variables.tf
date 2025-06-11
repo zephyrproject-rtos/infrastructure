@@ -121,27 +121,3 @@ variable "kube_prometheus_stack_grafana_password" {
   type        = string
   sensitive   = true
 }
-
-variable "actions_runner_controller_v2_version" {
-  description = "Actions Runner Controller version"
-  type        = string
-  default     = "0.8.2"
-}
-
-variable "actions_runner_controller_v2_github_app_id" {
-  description = "GitHub app ID for Actions Runner Controller"
-  type        = string
-  sensitive   = true
-}
-
-variable "actions_runner_controller_v2_github_app_installation_id" {
-  description = "GitHub app installation ID for Actions Runner Controller"
-  type        = string
-  sensitive   = true
-}
-
-variable "actions_runner_controller_v2_github_app_private_key" {
-  description = "GitHub app private key for Actions Runner Controller"
-  type        = string
-  sensitive   = true
-}
