@@ -100,6 +100,54 @@ resource "kubectl_manifest" "keydb_cache_services_manifest" {
   depends_on = [kubernetes_namespace.keydb_cache]
 }
 
+# ECLAIR Sentinel License Server Installation
+## eclair-sentinel Namespace
+resource "kubernetes_namespace" "eclair_sentinel" {
+  metadata {
+    name = "eclair-sentinel"
+  }
+  lifecycle {
+    ignore_changes = [metadata]
+  }
+  depends_on = [helm_release.openebs]
+}
+
+## Configuration
+data "kubectl_path_documents" "eclair_sentinel_config_manifests" {
+  pattern = "../../kubernetes/zephyr-runner-v2/hzr/hzr-eclair-sentinel/config.yaml"
+}
+
+resource "kubectl_manifest" "eclair_sentinel_config_manifest" {
+  count      = length(data.kubectl_path_documents.eclair_sentinel_config_manifests.documents)
+  yaml_body  = element(data.kubectl_path_documents.eclair_sentinel_config_manifests.documents, count.index)
+  wait       = true
+  depends_on = [kubernetes_namespace.eclair_sentinel]
+}
+
+## Service
+data "kubectl_path_documents" "eclair_sentinel_services_manifests" {
+  pattern = "../../kubernetes/zephyr-runner-v2/hzr/hzr-eclair-sentinel/service.yaml"
+}
+
+resource "kubectl_manifest" "eclair_sentinel_services_manifest" {
+  count      = length(data.kubectl_path_documents.eclair_sentinel_services_manifests.documents)
+  yaml_body  = element(data.kubectl_path_documents.eclair_sentinel_services_manifests.documents, count.index)
+  wait       = true
+  depends_on = [kubernetes_namespace.eclair_sentinel]
+}
+
+## Sentinel Deployment
+data "kubectl_path_documents" "eclair_sentinel_deployment_manifests" {
+  pattern = "../../kubernetes/zephyr-runner-v2/hzr/hzr-eclair-sentinel/sentinel.yaml"
+}
+
+resource "kubectl_manifest" "eclair_sentinel_deployment_manifest" {
+  count      = length(data.kubectl_path_documents.eclair_sentinel_deployment_manifests.documents)
+  yaml_body  = element(data.kubectl_path_documents.eclair_sentinel_deployment_manifests.documents, count.index)
+  wait       = true
+  depends_on = [kubernetes_namespace.eclair_sentinel]
+}
+
 # Actions Runner Controller (ARC) Installation
 ## arc-runners Namespace
 resource "kubernetes_namespace" "arc_runners" {
