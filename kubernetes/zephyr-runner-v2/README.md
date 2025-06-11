@@ -23,6 +23,8 @@ Terraform manifest.
 
     * cnx-privileged: Centrinix Magnum Kubernetes cluster permissive pod security policy
     * cnx-openebs: Centrinix OpenEBS configurations
+    * cnx-openebs-rawfile-localpv: Centrinix OpenEBS LocalPV configurations
+    * cnx-keydb-cache: Centrinix KeyDB compilation cache configurations
     * cnx-runner-scale-set-controller: Centrinix Actions Runner Controller
       configurations
     * test-runner-scale-sets: Centrinix test runner scale set configurations
@@ -32,6 +34,8 @@ Terraform manifest.
 * hzr: Configurations for Hetzner zephyr-runner-v2 deployments
 
     * hzr-openebs: Hetzner OpenEBS configurations
+    * hzr-keydb-cache: Hetzner KeyDB compilation cache configurations
+    * hzr-eclair-sentinel: Hetzner Sentinel license server for ECLAIR
     * hzr-runner-scale-set-controller: Hetzner Actions Runner Controller configurations
     * test-runner-scale-sets: Hetzner test runner scale set configurations
     * zephyr-runner-scale-sets: Hetzner production runner scale set configurations
@@ -74,6 +78,50 @@ helm repo update
 helm install openebs openebs/openebs \
     --namespace openebs --create-namespace \
     -f aws/aws-openebs/values.yaml
+```
+
+### KeyDB Deployment
+
+KeyDB Redis server stores ccache compilation cache data.
+
+To deploy KeyDB, run the following commands:
+
+```
+kubectl apply -f hzr/hzr-keydb-cache/config.yaml
+kubectl apply -f hzr/hzr-keydb-cache/pvc.yaml
+kubectl apply -f hzr/hzr-keydb-cache/services.yaml
+kubectl apply -f hzr/hzr-keydb-cache/keydb.yaml
+```
+
+### ECLAIR Sentinel License Server Deployment
+
+ECLAIR Sentinel license server provides floating license for the CI workflows
+running ECLAIR static code analysis tool.
+
+Prior to deploying the ECLAIR Sentinel license server, a Docker registry secret
+for accessing the private `eclair-sentinel` Docker image must be created:
+
+```
+kubectl create secret docker-registry ghcr-eclair-sentinel \
+    --docker-server=ghcr.io \
+    --docker-username zephyrbot \
+    --docker-password ghp_GITHUB_TOKEN
+```
+
+To deploy the ECLAIR Sentinel license server, run the following commands:
+
+```
+kubectl apply -f hzr/hzr-eclair-sentinel/config.yaml
+kubectl apply -f hzr/hzr-eclair-sentinel/service.yaml
+kubectl apply -f hzr/hzr-eclair-sentinel/sentinel.yaml
+```
+
+The ECLAIR Sentinel Admin Control Center (ACC) can be accessed from a local
+machine as follows:
+
+```
+kubectl -n eclair-sentinel port-forward service/sentinel-server 20000:1947
+# go to http://localhost:20000
 ```
 
 ### runner-scale-set-controller Deployment
