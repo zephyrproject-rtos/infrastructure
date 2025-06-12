@@ -38,78 +38,6 @@ variable "mng_od_linux_x64_2xlarge_desired_size" {
   default     = 2
 }
 
-variable "mng_spot_linux_x64_xlarge_min_size" {
-  description = "Minimum number of nodes for Linux x86-64 xlarge spot instance managed node group"
-  type        = number
-  default     = 0
-}
-
-variable "mng_spot_linux_x64_xlarge_max_size" {
-  description = "Maximum number of nodes for Linux x86-64 xlarge spot instance managed node group"
-  type        = number
-  default     = 100
-}
-
-variable "mng_spot_linux_x64_xlarge_desired_size" {
-  description = "Desired number of nodes for Linux x86-64 xlarge spot instance managed node group"
-  type        = number
-  default     = 1
-}
-
-variable "mng_spot_linux_x64_4xlarge_min_size" {
-  description = "Minimum number of nodes for Linux x86-64 4xlarge spot instance managed node group"
-  type        = number
-  default     = 0
-}
-
-variable "mng_spot_linux_x64_4xlarge_max_size" {
-  description = "Maximum number of nodes for Linux x86-64 4xlarge spot instance managed node group"
-  type        = number
-  default     = 100
-}
-
-variable "mng_spot_linux_x64_4xlarge_desired_size" {
-  description = "Desired number of nodes for Linux x86-64 4xlarge spot instance managed node group"
-  type        = number
-  default     = 1
-}
-
-variable "mng_spot_linux_arm64_xlarge_min_size" {
-  description = "Minimum number of nodes for Linux ARM64 xlarge spot instance managed node group"
-  type        = number
-  default     = 0
-}
-
-variable "mng_spot_linux_arm64_xlarge_max_size" {
-  description = "Maximum number of nodes for Linux ARM64 xlarge spot instance managed node group"
-  type        = number
-  default     = 100
-}
-
-variable "mng_spot_linux_arm64_xlarge_desired_size" {
-  description = "Desired number of nodes for Linux ARM64 xlarge spot instance managed node group"
-  type        = number
-  default     = 1
-}
-
-variable "mng_spot_linux_arm64_4xlarge_min_size" {
-  description = "Minimum number of nodes for Linux ARM64 4xlarge spot instance managed node group"
-  type        = number
-  default     = 0
-}
-
-variable "mng_spot_linux_arm64_4xlarge_max_size" {
-  description = "Maximum number of nodes for Linux ARM64 4xlarge spot instance managed node group"
-  type        = number
-  default     = 100
-}
-
-variable "mng_spot_linux_arm64_4xlarge_desired_size" {
-  description = "Desired number of nodes for Linux ARM64 4xlarge spot instance managed node group"
-  type        = number
-  default     = 1
-}
-
 variable "github_organization" {
   description = "GitHub organization name"
   type        = string
@@ -118,30 +46,6 @@ variable "github_organization" {
 
 variable "kube_prometheus_stack_grafana_password" {
   description = "Grafana password for Kube Prometheus Stack"
-  type        = string
-  sensitive   = true
-}
-
-variable "actions_runner_controller_v2_version" {
-  description = "Actions Runner Controller version"
-  type        = string
-  default     = "0.8.2"
-}
-
-variable "actions_runner_controller_v2_github_app_id" {
-  description = "GitHub app ID for Actions Runner Controller"
-  type        = string
-  sensitive   = true
-}
-
-variable "actions_runner_controller_v2_github_app_installation_id" {
-  description = "GitHub app installation ID for Actions Runner Controller"
-  type        = string
-  sensitive   = true
-}
-
-variable "actions_runner_controller_v2_github_app_private_key" {
-  description = "GitHub app private key for Actions Runner Controller"
   type        = string
   sensitive   = true
 }
