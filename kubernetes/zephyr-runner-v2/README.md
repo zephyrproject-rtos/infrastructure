@@ -10,14 +10,13 @@ Terraform manifest.
 
 ## Directory Structure
 
-* aws: Configurations for AWS cloud zephyr-runner-v2 deployments
+> [!NOTE]
+> AWS-hosted Actions Runner Controller deployment has been phased out and
+> is no longer maintained.
+
+* aws: Configurations for AWS cloud zephyr-runner-v2 deployments (obsolete)
 
     * aws-openebs: AWS OpenEBS configurations
-    * aws-runner-scale-set-controller: AWS Actions Runner Controller
-      configurations
-    * test-runner-scale-sets: AWS test runner scale set configurations
-    * zephyr-runner-scale-sets: AWS production runner scale set
-      configurations
 
 * cnx: Configurations for Centrinix cloud zephyr-runner-v2 deployments
 
@@ -77,7 +76,7 @@ helm repo add openebs https://openebs.github.io/charts
 helm repo update
 helm install openebs openebs/openebs \
     --namespace openebs --create-namespace \
-    -f aws/aws-openebs/values.yaml
+    -f hzr/hzr-openebs/values.yaml
 ```
 
 ### KeyDB Deployment
@@ -132,7 +131,7 @@ following commands:
 ```
 helm install arc \
     --namespace arc-systems --create-namespace \
-    -f aws/aws-runner-scale-set-controller/values.yaml \
+    -f hzr/hzr-runner-scale-set-controller/values.yaml \
     oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set-controller
 ```
 
@@ -156,12 +155,12 @@ commands:
 
 ```
 # Create pod template
-kubectl apply -f aws/test-runner-scale-sets/test-runner-v2-pod-templates.yaml
+kubectl apply -f hzr/test-runner-scale-sets/test-runner-v2-pod-templates.yaml
 
 # Install runner scale set Helm chart
-helm install test-runner-v2-linux-x64-4xlarge-aws \
+helm install test-runner-v2-linux-x64-4xlarge-hzr \
     --namespace arc-runners --create-namespace \
-    -f aws/test-runner-scale-sets/test-runner-v2-linux-x64-4xlarge-aws/values.yaml \
+    -f hzr/test-runner-scale-sets/test-runner-v2-linux-x64-4xlarge-hzr/values.yaml \
     oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
 ```
 
