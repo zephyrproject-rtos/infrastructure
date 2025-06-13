@@ -392,14 +392,28 @@ resource "aws_iam_role" "managed_ng" {
   assume_role_policy    = data.aws_iam_policy_document.managed_ng_assume_role_policy.json
   path                  = "/"
   force_detach_policies = true
-  managed_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  ]
 
   tags = local.tags
+}
+
+resource "aws_iam_role_policy_attachment" "managed_ng_amazon_eks_worker_node_policy" {
+  role       = aws_iam_role.managed_ng.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "managed_ng_amazon_eks_cni_policy" {
+  role       = aws_iam_role.managed_ng.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
+resource "aws_iam_role_policy_attachment" "managed_ng_amazon_ec2_container_registry_readonly" {
+  role       = aws_iam_role.managed_ng.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+resource "aws_iam_role_policy_attachment" "managed_ng_amazon_ssm_managed_instance_core" {
+  role       = aws_iam_role.managed_ng.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 resource "aws_iam_instance_profile" "managed_ng" {
