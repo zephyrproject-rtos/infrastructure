@@ -31,12 +31,12 @@ data "aws_eks_cluster_auth" "this" {
   name = module.eks_blueprints.eks_cluster_id
 }
 
-data "aws_ami" "amazonlinux2eks" {
+data "aws_ami" "amazonlinux2023eks" {
   most_recent = true
 
   filter {
     name   = "name"
-    values = ["amazon-eks-node-${local.cluster_version}-*"]
+    values = ["amazon-eks-node-al2023-x86_64-standard-${local.cluster_version}-*"]
   }
 
   owners = ["amazon"]
@@ -45,7 +45,7 @@ data "aws_ami" "amazonlinux2eks" {
 data "aws_availability_zones" "available" {}
 
 locals {
-  cluster_version = "1.24"
+  cluster_version = "1.33"
 
   vpc_cidr = "10.0.0.0/16"
   azs      = slice(data.aws_availability_zones.available.names, 0, 3)
@@ -112,15 +112,15 @@ module "eks_blueprints" {
       # Node Group configuration
       node_group_name = "mng-od-linux-x64-2xlarge" # Max 40 characters for node group name
 
-      ami_type               = "AL2_x86_64"    # Available options -> AL2_x86_64, AL2_x86_64_GPU, AL2_ARM_64, CUSTOM
+      ami_type               = "AL2023_x86_64_STANDARD" # Available options -> AL2023_X86_64_STANDARD, AL2023_ARM_64_STANDARD, CUSTOM
       release_version        = ""              # Enter AMI release version to deploy the latest AMI released by AWS. Used only when you specify ami_type
       capacity_type          = "ON_DEMAND"     # ON_DEMAND or SPOT
       instance_types         = ["c6a.2xlarge"] # List of instances used only for SPOT type
       format_mount_nvme_disk = true            # format and mount NVMe disks ; default to false
 
       # Launch template configuration
-      create_launch_template = true              # false will use the default launch template
-      launch_template_os     = "amazonlinux2eks" # amazonlinux2eks or bottlerocket
+      create_launch_template = false           # false will use the default launch template
+      # launch_template_os     = "amazonlinux2eks" # amazonlinux2eks or bottlerocket
 
       enable_monitoring = true
       eni_delete        = true
@@ -205,6 +205,7 @@ module "eks_blueprints_kubernetes_addons" {
   }
 
   # Cluster Autoscaler Configurations
+  cluster_autoscaler_image_tag = "v1.32.1"
   cluster_autoscaler_helm_config = {
     version = "9.21.0"
 
@@ -273,13 +274,12 @@ module "eks_blueprints_kubernetes_addons" {
 
   # AWS EBS CSI Driver Configurations
   amazon_eks_aws_ebs_csi_driver_config = {
-    addon_version = "v1.13.0-eksbuild.2"
+    # NOTE: Let EKS blueprints choose an adequate version.
+    # addon_version = "v1.44.0-eksbuild.1"
   }
 
   # AWS EFS CSI Driver Configurations
   aws_efs_csi_driver_helm_config = {
-    version = "2.2.6"
-
     set = [
       {
         name = "controller.deleteAccessPointRootDir"
@@ -313,7 +313,7 @@ module "eks_blueprints_kubernetes_addons" {
 #---------------------------------------------------------------
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 3.0"
+  version = "~> 5.0"
 
   name = var.cluster_name
   cidr = local.vpc_cidr
@@ -392,14 +392,28 @@ resource "aws_iam_role" "managed_ng" {
   assume_role_policy    = data.aws_iam_policy_document.managed_ng_assume_role_policy.json
   path                  = "/"
   force_detach_policies = true
-  managed_policy_arns = [
-    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  ]
 
   tags = local.tags
+}
+
+resource "aws_iam_role_policy_attachment" "managed_ng_amazon_eks_worker_node_policy" {
+  role       = aws_iam_role.managed_ng.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "managed_ng_amazon_eks_cni_policy" {
+  role       = aws_iam_role.managed_ng.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
+resource "aws_iam_role_policy_attachment" "managed_ng_amazon_ec2_container_registry_readonly" {
+  role       = aws_iam_role.managed_ng.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+resource "aws_iam_role_policy_attachment" "managed_ng_amazon_ssm_managed_instance_core" {
+  role       = aws_iam_role.managed_ng.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 resource "aws_iam_instance_profile" "managed_ng" {
