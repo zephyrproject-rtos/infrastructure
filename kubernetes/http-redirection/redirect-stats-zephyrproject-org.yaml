@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: redirect-stats-zephyrproject-org
+  namespace: http-redirection
+  annotations:
+    nginx.ingress.kubernetes.io/permanent-redirect: https://kibana.zephyrproject.io/
+    cert-manager.io/cluster-issuer: cert-manager-letsencrypt-production
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: stats.zephyrproject.org
+  tls:
+  - hosts:
+    - stats.zephyrproject.org
+    secretName: redirect-stats-zephyrproject-org-tls

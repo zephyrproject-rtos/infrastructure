@@ -13,6 +13,10 @@ configuration files for the Zephyr infrastructure components.
 
     * Elastic stack deployment for testing
 
+* http-redirection
+
+    * Ingress deployments for redirecting various HTTP/HTTPS requests
+
 * zephyr-runner-v2
 
     * Next generation GitHub Actions self-hosted runner using GitHub runner
