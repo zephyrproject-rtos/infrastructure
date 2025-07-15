@@ -13,14 +13,9 @@ configuration files for the Zephyr infrastructure components.
 
     * Elastic stack deployment for testing
 
-* test-runner
+* http-redirection
 
-    * A sample auto-scaling GitHub Actions self-hosted runner for testing purposes.
-
-* zephyr-runner
-
-    * GitHub Actions self-hosted runner for production use.
-    * To be phased out in the near future.
+    * Ingress deployments for redirecting various HTTP/HTTPS requests
 
 * zephyr-runner-v2
 
