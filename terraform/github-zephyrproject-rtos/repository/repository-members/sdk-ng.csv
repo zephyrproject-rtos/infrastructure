@@ -1,0 +1,6 @@
+type,id,permission
+team,maintainers,triage
+team,release,triage
+team,sdk,push
+user,nashif,admin
+user,stephanosio,admin

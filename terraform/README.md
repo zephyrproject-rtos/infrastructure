@@ -32,3 +32,8 @@ configuration files for the Zephyr infrastructure components.
     * Production Kubernetes cluster for Zephyr infrastructure services.
     * Hosted on Hetzner Rancher Server.
     * Terraform plan and applies are locally executed with Terraform Cloud state backend.
+
+* github-zephyrproject-rtos
+
+    * Defines the GitHub `zephyrproject-rtos` organisation resources.
+    * Terraform plan and applies are remotely executed on the Terraform Cloud.
