@@ -1,0 +1,5 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,rlubos,maintain
+user,StefanHri,maintain

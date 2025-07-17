@@ -1,0 +1,6 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,stephanosio,maintain
+user,microbuilder,push
+user,povergoing,push

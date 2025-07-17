@@ -1,0 +1,6 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,anangl,maintain
+user,hubertmis,push
+user,nordic-krch,push

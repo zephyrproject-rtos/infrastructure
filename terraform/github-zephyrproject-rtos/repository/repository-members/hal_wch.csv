@@ -1,0 +1,6 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,nzmichaelh,maintain
+user,kholia,maintain
+user,VynDragon,push

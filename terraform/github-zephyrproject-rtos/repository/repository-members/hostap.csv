@@ -1,0 +1,6 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,krish2718,maintain
+user,jukkar,maintain
+user,MaochenWang1,push

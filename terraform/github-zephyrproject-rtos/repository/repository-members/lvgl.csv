@@ -1,0 +1,7 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,faxe1008,maintain
+user,brgl,push
+user,pdgendt,push
+user,uLipe,push

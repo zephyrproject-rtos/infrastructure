@@ -1,0 +1,10 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,erwango,maintain
+user,FRASTM,push
+user,gautierg-st,push
+user,marwaiehm-st,push
+user,asm5878,push
+user,HoZHel,push
+user,benothmn-st,push

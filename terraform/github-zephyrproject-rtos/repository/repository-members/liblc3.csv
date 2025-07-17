@@ -1,0 +1,7 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,Casper-Bonde-Bose,maintain
+user,MariuszSkamra,maintain
+user,thalley,push
+user,asbjornsabo,push

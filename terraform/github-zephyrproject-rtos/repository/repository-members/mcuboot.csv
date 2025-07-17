@@ -1,0 +1,6 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,d3zd3z,maintain
+user,de-nordic,push
+user,nordicjm,push

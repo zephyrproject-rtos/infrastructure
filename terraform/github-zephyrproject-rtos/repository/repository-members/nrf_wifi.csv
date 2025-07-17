@@ -1,0 +1,8 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,krish2718,maintain
+user,sachinthegreen,maintain
+user,udaynordic,push
+user,rajb9,push
+user,srkanordic,push

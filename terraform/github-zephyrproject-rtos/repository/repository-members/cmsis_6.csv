@@ -1,0 +1,6 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,wearyzen,maintain
+user,tomi-font,push
+user,ithinuel,push
