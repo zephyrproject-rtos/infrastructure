@@ -1,0 +1,6 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,jvasanth1,maintain
+user,VenkatKotakonda,push
+user,albertofloyd,push

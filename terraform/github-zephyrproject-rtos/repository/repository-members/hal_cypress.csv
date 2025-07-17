@@ -1,0 +1,7 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,ifyall,maintain
+user,nashif,push
+user,sreeramIfx,push
+user,mcatee-infineon,push

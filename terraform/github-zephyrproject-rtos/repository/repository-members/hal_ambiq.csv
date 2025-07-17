@@ -1,0 +1,6 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,aaronyegx,push
+user,AlessandroLuo,push
+user,RichardSWheatley,push

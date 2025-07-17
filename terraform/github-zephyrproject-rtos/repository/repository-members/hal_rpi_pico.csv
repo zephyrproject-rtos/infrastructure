@@ -1,0 +1,7 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,soburi,maintain
+user,yonsch,push
+user,threeeights,push
+user,ajf58,push

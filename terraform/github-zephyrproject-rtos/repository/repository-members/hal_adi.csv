@@ -1,0 +1,7 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,MaureenHelm,maintain
+user,ozersa,push
+user,ttmut,push
+user,yasinustunerg,push

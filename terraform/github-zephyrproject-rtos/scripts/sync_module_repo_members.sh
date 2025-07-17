@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+# This script generates a collaborator list for every module repository listed
+# as `West project` in the Zephyr MAINTAINERS.yml file.
+
+set -e
+
+usage()
+{
+  echo "Usage $(basename $0) maintainers_file manifest_path"
+}
+
+# Validate and prase arguments
+if [ "$1" == "" ]; then
+  usage
+  echo
+  echo "maintainers_file must be specified."
+  exit 1
+elif [ "$2" == "" ]; then
+  usage
+  echo
+	echo "manifest_path must be specified."
+  exit 1
+fi
+
+maintainers_file=$1
+manifest_path=$2
+
+if [ ! -f "${maintainers_file}" ]; then
+  echo "'${maintainers_file}' does not exist."
+  exit 2
+fi
+
+if [ ! -d "${manifest_path}" ]; then
+  echo "'${manifest_path}' is not a valid directory."
+fi
+
+# Read and validate maintainers file.
+maintainers_data=$(<${maintainers_file})
+
+echo "${maintainers_data}" | yq &> /dev/null || (
+  echo "'${maintainers_file}' is not a valid YAML file."
+  exit 10
+)
+
+# Get the maintainer data for modules (aka. west projects)
+readarray module_maintainer_entries < <(echo "${maintainers_data}" |
+  yq -r -o=j -I=0 'with_entries(select(.key == "West project: *")) | to_entries()[]')
+
+for module_maintainer_entry in "${module_maintainer_entries[@]}"; do
+  # Get entry data
+  name=$(echo "${module_maintainer_entry}" |
+    jq -r '.key | sub("West project: "; "")')
+  maintainers=$(echo "${module_maintainer_entry}" |
+    jq -r 'try .value.maintainers[]')
+  collaborators=$(echo "${module_maintainer_entry}" |
+    jq -r 'try .value.collaborators[]')
+
+  echo "Processing ${name}"
+
+  # Write repositoy member list
+  collab_list_file="${manifest_path}/repository/repository-members/${name}.csv"
+
+  ## Write CSV header
+  echo "type,id,permission" > ${collab_list_file}
+
+  ## Write team entries
+  echo "team,maintainers,triage" >> ${collab_list_file}
+  echo "team,release,push" >> ${collab_list_file}
+
+  ## Write maintainer entries
+  for maintainer in ${maintainers}; do
+    echo "user,${maintainer},maintain" >> ${collab_list_file}
+  done
+
+  ## Write collaborator entries
+  for collaborator in ${collaborators}; do
+    echo "user,${collaborator},push" >> ${collab_list_file}
+  done
+done

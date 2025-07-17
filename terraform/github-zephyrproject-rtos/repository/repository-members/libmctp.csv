@@ -1,0 +1,6 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,teburd,maintain
+user,nashif,push
+user,inteljiangwe1,push

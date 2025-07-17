@@ -1,0 +1,8 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,kv2019i,maintain
+user,andyross,push
+user,nashif,push
+user,lyakh,push
+user,lgirdwood,push

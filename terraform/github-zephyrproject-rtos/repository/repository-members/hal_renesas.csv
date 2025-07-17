@@ -1,0 +1,11 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,KhiemNguyenT,maintain
+user,ioannis-karachalios,maintain
+user,blauret,push
+user,andrzej-kaczmarek,push
+user,ydamigos,push
+user,soburi,push
+user,duynguyenxa,push
+user,thaoluonguw,push

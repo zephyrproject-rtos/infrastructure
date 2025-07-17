@@ -1,0 +1,6 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,sylvioalves,maintain
+user,LucasTambor,push
+user,marekmatej,push
