@@ -2,4 +2,4 @@ type,id,permission
 team,maintainers,triage
 team,release,push
 user,XenuIsWatching,maintain
-user,stephanosio,push
+user,stephanosio,admin
