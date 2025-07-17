@@ -48,6 +48,22 @@ global_admins=$(<${manifest_path}/global-admins.csv)
 global_admins=$(echo "${global_admins}" | tail -n +2)
 global_admins=(${global_admins})
 
+# Set skipped module list
+skipped_modules=(
+  bsim
+  babblesim_base
+  babblesim_ext_2G4_libPhyComv1
+  babblesim_ext_2G4_phy_v1
+  babblesim_ext_2G4_channel_NtNcable
+  babblesim_ext_2G4_channel_multiatt
+  babblesim_ext_2G4_modem_magic
+  babblesim_ext_2G4_modem_BLE_simple
+  babblesim_ext_2G4_device_burst_interferer
+  babblesim_ext_2G4_device_WLAN_actmod
+  babblesim_ext_2G4_device_playback
+  babblesim_ext_libCryptov1
+  )
+
 # Get the maintainer data for modules (aka. west projects)
 readarray module_maintainer_entries < <(echo "${maintainers_data}" |
   yq -r -o=j -I=0 'with_entries(select(.key == "West project: *")) | to_entries()[]')
@@ -61,9 +77,14 @@ for module_maintainer_entry in "${module_maintainer_entries[@]}"; do
   collaborators=$(echo "${module_maintainer_entry}" |
     jq -r 'try .value.collaborators[]')
 
-  echo "Processing ${name}"
+  # Check for skipped module
+  if [[ " ${skipped_modules[@]} " =~ " ${name} " ]]; then
+    echo "Skipped ${name}"
+    continue
+  fi
 
   # Write repositoy member list
+  echo "Processing ${name}"
   collab_list_file="${manifest_path}/repository/repository-members/${name}.csv"
 
   ## Write CSV header
