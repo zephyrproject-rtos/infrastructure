@@ -2,7 +2,7 @@ type,id,permission
 team,maintainers,triage
 team,release,push
 user,povergoing,maintain
-user,sgrrzhf,maintain
+user,SgrrZhf,maintain
 user,carlocaione,push
 user,wearyzen,push
 user,ithinuel,push
