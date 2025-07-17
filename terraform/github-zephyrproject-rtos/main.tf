@@ -1,8 +1,3 @@
-# HashiCorp Vault Secrets zephyr-secrets Vault
-data "hcp_vault_secrets_app" "zephyr_secrets" {
-  app_name = "zephyr-secrets"
-}
-
 # GitHub provider
 provider "github" {
   owner = "zephyrproject-rtos"
