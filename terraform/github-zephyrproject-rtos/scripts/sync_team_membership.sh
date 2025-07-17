@@ -5,6 +5,8 @@
 
 set -e
 
+get_canonical_username="$(dirname "${BASH_SOURCE[0]}")/get_canonical_username.sh"
+
 usage()
 {
 	echo "Usage: $(basename $0) maintainers_file manifest_path"
@@ -62,11 +64,13 @@ write_team_member_list()
   member_list="$2"
 
   echo "username,role" > "${output_file}"
-  for user in ${member_list}; do
-    if [[ " ${global_admins[@]} " =~ " ${user} " ]]; then
-      echo "${user},maintainer" >> ${output_file}
+  for username in ${member_list}; do
+    canonical_username=$(${get_canonical_username} ${username})
+
+    if [[ " ${global_admins[@]} " =~ " ${canonical_username} " ]]; then
+      echo "${canonical_username},maintainer" >> ${output_file}
     else
-      echo "${user},member" >> "${output_file}"
+      echo "${canonical_username},member" >> "${output_file}"
     fi
   done
 }
