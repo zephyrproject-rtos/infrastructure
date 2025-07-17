@@ -5,6 +5,8 @@
 
 set -e
 
+get_canonical_username="$(dirname "${BASH_SOURCE[0]}")/get_canonical_username.sh"
+
 usage()
 {
   echo "Usage $(basename $0) maintainers_file manifest_path"
@@ -96,19 +98,23 @@ for module_maintainer_entry in "${module_maintainer_entries[@]}"; do
 
   ## Write maintainer entries
   for maintainer in ${maintainers}; do
-    if [[ " ${global_admins[@]} " =~ " ${maintainer} " ]]; then
-      echo "user,${maintainer},admin" >> ${collab_list_file}
+    username=$(${get_canonical_username} ${maintainer})
+
+    if [[ " ${global_admins[@]} " =~ " ${username} " ]]; then
+      echo "user,${username},admin" >> ${collab_list_file}
     else
-      echo "user,${maintainer},maintain" >> ${collab_list_file}
+      echo "user,${username},maintain" >> ${collab_list_file}
     fi
   done
 
   ## Write collaborator entries
   for collaborator in ${collaborators}; do
-    if [[ " ${global_admins[@]} " =~ " ${collaborator} " ]]; then
-      echo "user,${collaborator},admin" >> ${collab_list_file}
+    username=$(${get_canonical_username} ${collaborator})
+
+    if [[ " ${global_admins[@]} " =~ " ${username} " ]]; then
+      echo "user,${username},admin" >> ${collab_list_file}
     else
-      echo "user,${collaborator},push" >> ${collab_list_file}
+      echo "user,${username},push" >> ${collab_list_file}
     fi
   done
 done
