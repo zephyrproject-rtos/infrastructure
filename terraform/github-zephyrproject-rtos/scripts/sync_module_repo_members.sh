@@ -43,6 +43,11 @@ echo "${maintainers_data}" | yq &> /dev/null || (
   exit 10
 )
 
+# Read global admin list
+global_admins=$(<${manifest_path}/global-admins.csv)
+global_admins=$(echo "${global_admins}" | tail -n +2)
+global_admins=(${global_admins})
+
 # Get the maintainer data for modules (aka. west projects)
 readarray module_maintainer_entries < <(echo "${maintainers_data}" |
   yq -r -o=j -I=0 'with_entries(select(.key == "West project: *")) | to_entries()[]')
@@ -70,11 +75,19 @@ for module_maintainer_entry in "${module_maintainer_entries[@]}"; do
 
   ## Write maintainer entries
   for maintainer in ${maintainers}; do
-    echo "user,${maintainer},maintain" >> ${collab_list_file}
+    if [[ " ${global_admins[@]} " =~ " ${maintainer} " ]]; then
+      echo "user,${maintainer},admin" >> ${collab_list_file}
+    else
+      echo "user,${maintainer},maintain" >> ${collab_list_file}
+    fi
   done
 
   ## Write collaborator entries
   for collaborator in ${collaborators}; do
-    echo "user,${collaborator},push" >> ${collab_list_file}
+    if [[ " ${global_admins[@]} " =~ " ${collaborator} " ]]; then
+      echo "user,${collaborator},admin" >> ${collab_list_file}
+    else
+      echo "user,${collaborator},push" >> ${collab_list_file}
+    fi
   done
 done
