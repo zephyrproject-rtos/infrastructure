@@ -47,11 +47,9 @@ echo "${maintainers_data}" | yq &> /dev/null || (
 
 # Get the list of all collaborators
 all_collaborators=$(echo "${maintainers_data}" | yq -r '.[].collaborators.[]')
-all_collaborators=$(echo "${all_collaborators}" | sort -f -u)
 
 # Get the list of all maintainers
 all_maintainers=$(echo "${maintainers_data}" | yq -r '.[].maintainers.[]')
-all_maintainers=$(echo "${all_maintainers}" | sort -f -u)
 
 # Read global admin list
 global_admins=$(<${manifest_path}/global-admins.csv)
@@ -79,7 +77,7 @@ write_team_member_list()
   done
 }
 
-write_team_member_list "${collaborators_csv}" "${all_collaborators}"
+write_team_member_list "${collaborators_csv}" "${all_collaborators} ${all_maintainers}"
 write_team_member_list "${maintainers_csv}" "${all_maintainers}"
 
 # Add all maintainers and collaborators to the contributors team member list
@@ -88,8 +86,19 @@ contributors_csv="${manifest_path}/team/team-members/contributors.csv"
 tail -n +2 "${maintainers_csv}" >> "${contributors_csv}"
 tail -n +2 "${collaborators_csv}" >> "${contributors_csv}"
 
-contributors_data=$(tail -n +2 "${contributors_csv}")
-contributors_data=$(echo "${contributors_data}" | sort -f | uniq -i)
+# Keep all team member list files sorted
+sort_csv()
+{
+  csv_file="$1"
 
-echo "username,role" > "${contributors_csv}"
-echo "${contributors_data}" >> "${contributors_csv}"
+  csv_header=$(head -n 1 "${csv_file}")
+  csv_data=$(tail -n +2 "${csv_file}")
+  csv_data=$(echo "${csv_data}" | sort -f | uniq -i)
+
+  echo "${csv_header}" > "${csv_file}"
+  echo "${csv_data}" >> "${csv_file}"
+}
+
+sort_csv "${contributors_csv}"
+sort_csv "${collaborators_csv}"
+sort_csv "${maintainers_csv}"
