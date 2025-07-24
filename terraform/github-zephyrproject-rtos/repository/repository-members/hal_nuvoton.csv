@@ -1,4 +1,6 @@
 type,id,permission
 team,maintainers,triage
 team,release,push
-user,ssekar15,maintain
+user,cyliangtw,maintain
+user,ccli8,maintain
+user,ssekar15,push
