@@ -52,6 +52,7 @@ global_admins=(${global_admins})
 
 # Set skipped module list
 skipped_modules=(
+  # BSIM repositories are hosted outside the zephyrproject-rtos organisation
   bsim
   babblesim_base
   babblesim_ext_2G4_libPhyComv1
@@ -64,6 +65,10 @@ skipped_modules=(
   babblesim_ext_2G4_device_WLAN_actmod
   babblesim_ext_2G4_device_playback
   babblesim_ext_libCryptov1
+  # edtt and nrf_hw_models require special handling due to how module
+  # synchronisation is done
+  edtt
+  nrf_hw_models
   )
 
 # Get the maintainer data for modules (aka. west projects)
