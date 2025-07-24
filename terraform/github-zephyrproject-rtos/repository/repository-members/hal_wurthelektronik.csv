@@ -2,3 +2,4 @@ type,id,permission
 team,maintainers,triage
 team,release,push
 user,mah-eiSmart,maintain
+user,wm-eisos,maintain
