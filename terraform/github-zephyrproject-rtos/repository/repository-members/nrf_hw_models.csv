@@ -1,6 +1,6 @@
 type,id,permission
 team,maintainers,triage
 team,release,push
-user,aescolar,maintain
+user,aescolar,admin
 user,wopu-ot,push
 user,thoh-ot,push
