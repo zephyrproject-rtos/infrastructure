@@ -1,8 +1,7 @@
 type,id,permission
 team,maintainers,triage
 team,release,push
-user,ifyall,maintain
+user,sreeramIfx,maintain
 user,parthitce,push
 user,talih0,push
-user,sreeramIfx,push
 user,mcatee-infineon,push
