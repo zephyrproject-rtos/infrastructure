@@ -5,28 +5,36 @@ locals {
 
 provider "kubernetes" {
   host                   = local.k8s_host
-  cluster_ca_certificate = base64decode(data.hcp_vault_secrets_app.zephyr_secrets.secrets["hzr_k8s_ca_certificate"])
-  token                  = data.hcp_vault_secrets_app.zephyr_secrets.secrets["hzr_k8s_token"]
+  cluster_ca_certificate = base64decode(local.zephyr_secrets.hzr_k8s_ca_certificate)
+  token                  = local.zephyr_secrets.hzr_k8s_token
 }
 
 provider "kubectl" {
   host                   = local.k8s_host
-  cluster_ca_certificate = base64decode(data.hcp_vault_secrets_app.zephyr_secrets.secrets["hzr_k8s_ca_certificate"])
-  token                  = data.hcp_vault_secrets_app.zephyr_secrets.secrets["hzr_k8s_token"]
+  cluster_ca_certificate = base64decode(local.zephyr_secrets.hzr_k8s_ca_certificate)
+  token                  = local.zephyr_secrets.hzr_k8s_token
   load_config_file       = false
 }
 
 provider "helm" {
   kubernetes {
     host                   = local.k8s_host
-    cluster_ca_certificate = base64decode(data.hcp_vault_secrets_app.zephyr_secrets.secrets["hzr_k8s_ca_certificate"])
-    token                  = data.hcp_vault_secrets_app.zephyr_secrets.secrets["hzr_k8s_token"]
+    cluster_ca_certificate = base64decode(local.zephyr_secrets.hzr_k8s_ca_certificate)
+    token                  = local.zephyr_secrets.hzr_k8s_token
   }
 }
 
-# HashiCorp Vault Secrets zephyr-secrets Vault
-data "hcp_vault_secrets_app" "zephyr_secrets" {
-  app_name = "zephyr-secrets"
+provider "aws" {
+  region = "us-east-1"
+}
+
+# AWS Secrets Manager terraform-zephyr-secrets Secret
+data "aws_secretsmanager_secret_version" "terraform-zephyr-secrets" {
+  secret_id = "terraform-zephyr-secrets"
+}
+
+locals {
+  zephyr_secrets = jsondecode(data.aws_secretsmanager_secret_version.terraform-zephyr-secrets.secret_string)
 }
 
 # OpenEBS Installation
@@ -167,9 +175,9 @@ resource "kubernetes_secret" "arc_github_app" {
     namespace = "arc-runners"
   }
   data = {
-    github_app_id = data.hcp_vault_secrets_app.zephyr_secrets.secrets["zephyr_runner_github_app_id"]
-    github_app_installation_id = data.hcp_vault_secrets_app.zephyr_secrets.secrets["zephyr_runner_github_app_installation_id"]
-    github_app_private_key = data.hcp_vault_secrets_app.zephyr_secrets.secrets["zephyr_runner_github_app_private_key"]
+    github_app_id = local.zephyr_secrets.zephyr_runner_github_app_id
+    github_app_installation_id = local.zephyr_secrets.zephyr_runner_github_app_installation_id
+    github_app_private_key = local.zephyr_secrets.zephyr_runner_github_app_private_key
   }
   depends_on = [kubernetes_namespace.arc_runners]
 }
