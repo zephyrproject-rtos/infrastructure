@@ -30,9 +30,17 @@ provider "helm" {
   }
 }
 
-# HashiCorp Vault Secrets zephyr-secrets Vault
-data "hcp_vault_secrets_app" "zephyr_secrets" {
-  app_name = "zephyr-secrets"
+provider "aws" {
+  region = "us-east-1"
+}
+
+# AWS Secrets Manager terraform-zephyr-secrets Secret
+data "aws_secretsmanager_secret_version" "terraform-zephyr-secrets" {
+  secret_id = "terraform-zephyr-secrets"
+}
+
+locals {
+  zephyr_secrets = jsondecode(data.aws_secretsmanager_secret_version.terraform-zephyr-secrets.secret_string)
 }
 
 # kubernetes-1.23-zephyr-test1 Magnum Kubernetes Cluster Template
@@ -176,9 +184,9 @@ resource "kubernetes_secret" "arc_github_app" {
     namespace = "arc-runners"
   }
   data = {
-    github_app_id = data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_id"]
-    github_app_installation_id = data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_installation_id"]
-    github_app_private_key = data.hcp_vault_secrets_app.zephyr_secrets.secrets["test_runner_github_app_private_key"]
+    github_app_id = data.hcp_local.zephyr_secrets.test_runner_github_app_id
+    github_app_installation_id = local.zephyr_secrets.test_runner_github_app_installation_id
+    github_app_private_key = local.zephyr_secrets.test_runner_github_app_private_key
   }
   depends_on = [kubernetes_namespace.arc_runners]
 }

@@ -13,9 +13,17 @@ provider "helm" {
   }
 }
 
-# HashiCorp Vault Secrets zephyr-secrets Vault
-data "hcp_vault_secrets_app" "zephyr_secrets" {
-  app_name = "zephyr-secrets"
+provider "aws" {
+  region = "us-east-1"
+}
+
+# AWS Secrets Manager terraform-zephyr-secrets Secret
+data "aws_secretsmanager_secret_version" "terraform-zephyr-secrets" {
+  secret_id = "terraform-zephyr-secrets"
+}
+
+locals {
+  zephyr_secrets = jsondecode(data.aws_secretsmanager_secret_version.terraform-zephyr-secrets.secret_string)
 }
 
 # Zephyr AWS Blueprints
@@ -44,5 +52,5 @@ module "zephyr_aws_blueprints" {
 
   github_organization = "zephyrproject-rtos"
 
-  kube_prometheus_stack_grafana_password = data.hcp_vault_secrets_app.zephyr_secrets.secrets["kube_prometheus_stack_grafana_password"]
+  kube_prometheus_stack_grafana_password = local.zephyr_secrets.kube_prometheus_stack_grafana_password
 }
