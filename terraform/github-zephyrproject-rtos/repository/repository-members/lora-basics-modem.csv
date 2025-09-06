@@ -1,4 +1,4 @@
 type,id,permission
 team,maintainers,triage
 team,release,push
-user,arnopo,push
+user,JordanYates,maintain
