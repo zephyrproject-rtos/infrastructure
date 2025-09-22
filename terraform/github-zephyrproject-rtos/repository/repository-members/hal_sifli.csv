@@ -1,4 +1,5 @@
 type,id,permission
 team,maintainers,triage
 team,release,push
-user,soburi,maintain
+user,gmarull,maintain
+user,cameled,push
