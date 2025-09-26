@@ -2,3 +2,4 @@ type,id,permission
 team,maintainers,triage
 team,release,push
 user,VynDragon,maintain
+user,josuah,push
