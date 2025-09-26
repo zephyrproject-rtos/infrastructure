@@ -4,6 +4,7 @@ team,release,push
 user,anangl,maintain
 user,nika-nordic,maintain
 user,masz-nordic,maintain
+user,carlescufi,admin
 user,nordic-krch,push
 user,kl-cruz,push
 user,magp-nordic,push
@@ -11,3 +12,4 @@ user,jaz1-nordic,push
 user,mif1-nordic,push
 user,adamkondraciuk,push
 user,lstnl,push
+user,rlubos,push
