@@ -88,220 +88,220 @@ jobs:
         .github/log.sh ERROR "aws: Cloud monitor job ${{ github.run_id }} failed.\n${jobUrl}"
 
   # Centrinix Cloud Monitor Job
-  cnx-monitor:
-    name: Centrinix Cloud Monitor
-    runs-on: ubuntu-22.04
+  #cnx-monitor:
+  #  name: Centrinix Cloud Monitor
+  #  runs-on: ubuntu-22.04
 
-    env:
-      DISCORD_INFRA_MONITOR_WEBHOOK: "${{ secrets.DISCORD_INFRA_MONITOR_WEBHOOK }}"
-      OS_AUTH_TYPE: "v3applicationcredential"
-      OS_AUTH_URL: "https://openstack.gumi.centrinix.cloud:5000"
-      OS_IDENTITY_API_VERSION: "3"
-      OS_REGION_NAME: "Gumi"
-      OS_INTERFACE: "public"
-      OS_APPLICATION_CREDENTIAL_ID: "${{ secrets.CNX_OS_APPLICATION_CREDENTIAL_ID }}"
-      OS_APPLICATION_CREDENTIAL_SECRET: "${{ secrets.CNX_OS_APPLICATION_CREDENTIAL_SECRET }}"
+  #  env:
+  #    DISCORD_INFRA_MONITOR_WEBHOOK: "${{ secrets.DISCORD_INFRA_MONITOR_WEBHOOK }}"
+  #    OS_AUTH_TYPE: "v3applicationcredential"
+  #    OS_AUTH_URL: "https://openstack.gumi.centrinix.cloud:5000"
+  #    OS_IDENTITY_API_VERSION: "3"
+  #    OS_REGION_NAME: "Gumi"
+  #    OS_INTERFACE: "public"
+  #    OS_APPLICATION_CREDENTIAL_ID: "${{ secrets.CNX_OS_APPLICATION_CREDENTIAL_ID }}"
+  #    OS_APPLICATION_CREDENTIAL_SECRET: "${{ secrets.CNX_OS_APPLICATION_CREDENTIAL_SECRET }}"
 
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+  #  steps:
+  #  - name: Checkout
+  #    uses: actions/checkout@v4
 
-    - name: Install OpenVPN client
-      run: |
-        sudo apt update
-        sudo apt install -y openvpn
+  #  - name: Install OpenVPN client
+  #    run: |
+  #      sudo apt update
+  #      sudo apt install -y openvpn
 
-    - name: Install OpenStack command line tools
-      run: |
-        pip install python-openstackclient
-        pip install python-magnumclient
+  #  - name: Install OpenStack command line tools
+  #    run: |
+  #      pip install python-openstackclient
+  #      pip install python-magnumclient
 
-    - name: Install Kubernetes command line tools
-      run: |
-        curl -LO https://dl.k8s.io/release/v1.23.0/bin/linux/amd64/kubectl
-        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+  #  - name: Install Kubernetes command line tools
+  #    run: |
+  #      curl -LO https://dl.k8s.io/release/v1.23.0/bin/linux/amd64/kubectl
+  #      sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
-    - name: Check environment
-      run: |
-        jq --version
-        openvpn --version
-        openstack --version
-        kubectl version --client=true
+  #  - name: Check environment
+  #    run: |
+  #      jq --version
+  #      openvpn --version
+  #      openstack --version
+  #      kubectl version --client=true
 
-    - name: Load SSH key
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.CNX_ZEPHYR_CI_SSH_KEY }}
+  #  - name: Load SSH key
+  #    uses: webfactory/ssh-agent@v0.9.0
+  #    with:
+  #      ssh-private-key: ${{ secrets.CNX_ZEPHYR_CI_SSH_KEY }}
 
-    - name: Connect to Centrinix CGN VPN
-      uses: kota65535/github-openvpn-connect-action@v3
-      with:
-        config_file: .github/cnx-cgn.ovpn
-        username: ${{ secrets.CNX_CGNVPN_USERNAME }}
-        password: ${{ secrets.CNX_CGNVPN_PASSWORD }}
+  #  - name: Connect to Centrinix CGN VPN
+  #    uses: kota65535/github-openvpn-connect-action@v3
+  #    with:
+  #      config_file: .github/cnx-cgn.ovpn
+  #      username: ${{ secrets.CNX_CGNVPN_USERNAME }}
+  #      password: ${{ secrets.CNX_CGNVPN_PASSWORD }}
 
-    - name: Check OpenStack server instances
-      if: always()
-      run: |
-        openstack server list
-        serverList=$(openstack server list -f json)
+  #  - name: Check OpenStack server instances
+  #    if: always()
+  #    run: |
+  #      openstack server list
+  #      serverList=$(openstack server list -f json)
 
-        nonActiveCount=$(echo "$serverList" | jq -r '
-          [
-            .[] |
-            select(.Status != "ACTIVE")
-          ] | length')
+  #      nonActiveCount=$(echo "$serverList" | jq -r '
+  #        [
+  #          .[] |
+  #          select(.Status != "ACTIVE")
+  #        ] | length')
 
-        #
-        # NOTE: OpenStack active server instance count check is disabled because
-        #       CNX is no longer the main hosting provider.
-        #
-        # if [ "$nonActiveCount" -gt "0" ]; then
-        #   .github/log.sh ERROR "cnx: Found ${nonActiveCount} server(s) with non-active status."
-        #   exit 911
-        # fi
+  #      #
+  #      # NOTE: OpenStack active server instance count check is disabled because
+  #      #       CNX is no longer the main hosting provider.
+  #      #
+  #      # if [ "$nonActiveCount" -gt "0" ]; then
+  #      #   .github/log.sh ERROR "cnx: Found ${nonActiveCount} server(s) with non-active status."
+  #      #   exit 911
+  #      # fi
 
-    - name: Check OpenStack COE cluster nodegroups
-      if: always()
-      run: |
-        openstack coe nodegroup list zephyr-ci
-        nodeGroupList=$(openstack coe nodegroup list zephyr-ci -f json)
+  #  - name: Check OpenStack COE cluster nodegroups
+  #    if: always()
+  #    run: |
+  #      openstack coe nodegroup list zephyr-ci
+  #      nodeGroupList=$(openstack coe nodegroup list zephyr-ci -f json)
 
-        incompleteCount=$(echo "$nodeGroupList" | jq -r '
-          [
-            .[] |
-            select(
-              .status != "CREATE_COMPLETE" and
-              .status != "UPDATE_COMPLETE")
-          ] | length')
+  #      incompleteCount=$(echo "$nodeGroupList" | jq -r '
+  #        [
+  #          .[] |
+  #          select(
+  #            .status != "CREATE_COMPLETE" and
+  #            .status != "UPDATE_COMPLETE")
+  #        ] | length')
 
-        #
-        # NOTE: OpenStack complete COE cluster nodegroup check is disabled
-        #       because CNX is no longer the main hosting provider.
-        #
-        # if [ "$incompleteCount" -gt "0" ]; then
-        #   .github/log.sh ERROR "cnx: zephyr-ci: Found ${incompleteCount} nodegroup(s) with incomplete status."
-        #   exit 911
-        # fi
+  #      #
+  #      # NOTE: OpenStack complete COE cluster nodegroup check is disabled
+  #      #       because CNX is no longer the main hosting provider.
+  #      #
+  #      # if [ "$incompleteCount" -gt "0" ]; then
+  #      #   .github/log.sh ERROR "cnx: zephyr-ci: Found ${incompleteCount} nodegroup(s) with incomplete status."
+  #      #   exit 911
+  #      # fi
 
-    - name: Get OpenStack COE cluster configuration
-      if: always()
-      run: |
-        for ((i=0; i<10; ++i)); do
-          openstack coe cluster config zephyr-ci || true
-          [ -f config ] && break
-        done
+  #  - name: Get OpenStack COE cluster configuration
+  #    if: always()
+  #    run: |
+  #      for ((i=0; i<10; ++i)); do
+  #        openstack coe cluster config zephyr-ci || true
+  #        [ -f config ] && break
+  #      done
 
-        echo "KUBECONFIG=${PWD}/config" >> $GITHUB_ENV
+  #      echo "KUBECONFIG=${PWD}/config" >> $GITHUB_ENV
 
-    - name: Check Kubernetes nodes
-      if: always()
-      run: |
-        kubectl get nodes
-        nodeList=$(kubectl get nodes -o json)
+  #  - name: Check Kubernetes nodes
+  #    if: always()
+  #    run: |
+  #      kubectl get nodes
+  #      nodeList=$(kubectl get nodes -o json)
 
-        notReadyCount=$(echo "$nodeList" | jq -r '
-          [
-            .items[] |
-            select(.spec.unschedulable == null) |
-            .status.conditions[] |
-            select(.type == "Ready") |
-            select(.status != "True")
-          ] | length')
+  #      notReadyCount=$(echo "$nodeList" | jq -r '
+  #        [
+  #          .items[] |
+  #          select(.spec.unschedulable == null) |
+  #          .status.conditions[] |
+  #          select(.type == "Ready") |
+  #          select(.status != "True")
+  #        ] | length')
 
-        # NOTE: Not-ready Kubernetes node count check threshold has been set to
-        #       80 because CNX is no longer the main hosting provider and is
-        #       operating at a reduced capacity.
-        if [ "$notReadyCount" -gt "80" ]; then
-          .github/log.sh ERROR "cnx: zephyr-ci: Found ${notReadyCount} node(s) with not-ready status."
-          exit 911
-        fi
+  #      # NOTE: Not-ready Kubernetes node count check threshold has been set to
+  #      #       80 because CNX is no longer the main hosting provider and is
+  #      #       operating at a reduced capacity.
+  #      if [ "$notReadyCount" -gt "80" ]; then
+  #        .github/log.sh ERROR "cnx: zephyr-ci: Found ${notReadyCount} node(s) with not-ready status."
+  #        exit 911
+  #      fi
 
-    #
-    # NOTE: KeyDB cache pod check is disabled because CNX is no longer the main
-    #       hosting provider and cache nodes are no longer active on it.
-    #
-    # - name: Check KeyDB cache pods
-    #   if: always()
-    #   run: |
-    #     kubectl -n keydb-cache get pods
-    #     podList=$(kubectl -n keydb-cache get pods -o json)
+  #  #
+  #  # NOTE: KeyDB cache pod check is disabled because CNX is no longer the main
+  #  #       hosting provider and cache nodes are no longer active on it.
+  #  #
+  #  # - name: Check KeyDB cache pods
+  #  #   if: always()
+  #  #   run: |
+  #  #     kubectl -n keydb-cache get pods
+  #  #     podList=$(kubectl -n keydb-cache get pods -o json)
 
-    #     readyCount=$(echo "$podList" | jq -r '
-    #       [
-    #         .items[].status.conditions[] |
-    #         select(.type == "Ready") |
-    #         select(.status == "True")
-    #       ] | length')
+  #  #     readyCount=$(echo "$podList" | jq -r '
+  #  #       [
+  #  #         .items[].status.conditions[] |
+  #  #         select(.type == "Ready") |
+  #  #         select(.status == "True")
+  #  #       ] | length')
 
-    #     if [ "$readyCount" -lt "3" ]; then
-    #       .github/log.sh ERROR "cnx: zephyr-ci: Found ${readyCount} KeyDB cache pod with ready status (expected 3)."
-    #       exit 911
-    #     fi
+  #  #     if [ "$readyCount" -lt "3" ]; then
+  #  #       .github/log.sh ERROR "cnx: zephyr-ci: Found ${readyCount} KeyDB cache pod with ready status (expected 3)."
+  #  #       exit 911
+  #  #     fi
 
-    - name: Check Actions Runner Controller pods
-      if: always()
-      run: |
-        kubectl -n arc-systems get pods
-        podList=$(kubectl -n arc-systems get pods -o json)
+  #  - name: Check Actions Runner Controller pods
+  #    if: always()
+  #    run: |
+  #      kubectl -n arc-systems get pods
+  #      podList=$(kubectl -n arc-systems get pods -o json)
 
-        notReadyCount=$(echo "$podList" | jq -r '
-          [
-            .items[].status.conditions[] |
-            select(.type == "Ready") |
-            select(.status != "True")
-          ] | length')
+  #      notReadyCount=$(echo "$podList" | jq -r '
+  #        [
+  #          .items[].status.conditions[] |
+  #          select(.type == "Ready") |
+  #          select(.status != "True")
+  #        ] | length')
 
-        if [ "$notReadyCount" -gt "0" ]; then
-          .github/log.sh ERROR "cnx: zephyr-ci: Found ${notReadyCount} ARC pods with not-ready status."
-          exit 911
-        fi
+  #      if [ "$notReadyCount" -gt "0" ]; then
+  #        .github/log.sh ERROR "cnx: zephyr-ci: Found ${notReadyCount} ARC pods with not-ready status."
+  #        exit 911
+  #      fi
 
-    - name: Clean up stuck PVs
-      if: always()
-      run: |
-        releasedPvList=$(kubectl get pv -o json | jq '
-          .items[] |
-          select(.status.phase == "Released")')
+  #  - name: Clean up stuck PVs
+  #    if: always()
+  #    run: |
+  #      releasedPvList=$(kubectl get pv -o json | jq '
+  #        .items[] |
+  #        select(.status.phase == "Released")')
 
-        for pvName in $(echo "$releasedPvList" | jq -r '.metadata.name'); do
-          pvEventList=$(kubectl -n default get events \
-            --field-selector involvedObject.name=$pvName -o json)
+  #      for pvName in $(echo "$releasedPvList" | jq -r '.metadata.name'); do
+  #        pvEventList=$(kubectl -n default get events \
+  #          --field-selector involvedObject.name=$pvName -o json)
 
-          pvFailedDeleteVolumeInUseCount=$(echo "$pvEventList" | jq -r '
-            [
-              .items[] |
-              select(.reason == "VolumeFailedDelete") |
-              select(.message | contains("Volume in use"))
-            ] | length')
+  #        pvFailedDeleteVolumeInUseCount=$(echo "$pvEventList" | jq -r '
+  #          [
+  #            .items[] |
+  #            select(.reason == "VolumeFailedDelete") |
+  #            select(.message | contains("Volume in use"))
+  #          ] | length')
 
-          if [ "$pvFailedDeleteVolumeInUseCount" -gt "0" ]; then
-            pvNodeName=$(echo "$releasedPvList" | jq -r '
-              select(.metadata.name == '\"$pvName\"') |
-              .spec.nodeAffinity.required.nodeSelectorTerms[].matchExpressions[] |
-              select(.key == "hostname") |
-              .values |
-              first
-              ')
+  #        if [ "$pvFailedDeleteVolumeInUseCount" -gt "0" ]; then
+  #          pvNodeName=$(echo "$releasedPvList" | jq -r '
+  #            select(.metadata.name == '\"$pvName\"') |
+  #            .spec.nodeAffinity.required.nodeSelectorTerms[].matchExpressions[] |
+  #            select(.key == "hostname") |
+  #            .values |
+  #            first
+  #            ')
 
-            pvNodeIp=$(kubectl get node $pvNodeName -o json | jq -r '
-              .status.addresses[] |
-              select(.type == "ExternalIP") |
-              .address')
+  #          pvNodeIp=$(kubectl get node $pvNodeName -o json | jq -r '
+  #            .status.addresses[] |
+  #            select(.type == "ExternalIP") |
+  #            .address')
 
-            ssh -T -o LogLevel=ERROR -o StrictHostKeyChecking=no \
-              core@$pvNodeIp \
-              -t 'sudo rm -fv /var/lib/containerd/openebs/rawfile/'\"$pvName\"'/disk.img'
+  #          ssh -T -o LogLevel=ERROR -o StrictHostKeyChecking=no \
+  #            core@$pvNodeIp \
+  #            -t 'sudo rm -fv /var/lib/containerd/openebs/rawfile/'\"$pvName\"'/disk.img'
 
-           .github/log.sh INFO "cnx: zephyr-ci: Cleaned up stuck PV '$pvName' on '$pvNodeName' ($pvNodeIp)"
-          fi
-        done
+  #         .github/log.sh INFO "cnx: zephyr-ci: Cleaned up stuck PV '$pvName' on '$pvNodeName' ($pvNodeIp)"
+  #        fi
+  #      done
 
-    - name: Report failure
-      if: failure()
-      run: |
-        jobUrl="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-        .github/log.sh ERROR "cnx: Cloud monitor job ${{ github.run_id }} failed.\n${jobUrl}"
+  #  - name: Report failure
+  #    if: failure()
+  #    run: |
+  #      jobUrl="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+  #      .github/log.sh ERROR "cnx: Cloud monitor job ${{ github.run_id }} failed.\n${jobUrl}"
 
   # Hetzner Cloud Monitor Job
   hzr-monitor:
