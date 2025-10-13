@@ -123,254 +123,254 @@ jobs:
         aws s3 cp . s3://statuspage-data/ --recursive --exclude '*' --include 'status.*.json'
 
   # Centrinix Cloud Status Publisher Job
-  cnx-status-publisher:
-    name: Centrinix Cloud Status Publisher
-    runs-on: ubuntu-22.04
+  # cnx-status-publisher:
+  #   name: Centrinix Cloud Status Publisher
+  #   runs-on: ubuntu-22.04
 
-    env:
-      AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
-      AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-      AWS_DEFAULT_REGION: "us-east-2"
-      OS_AUTH_TYPE: "v3applicationcredential"
-      OS_AUTH_URL: "https://openstack.gumi.centrinix.cloud:5000"
-      OS_IDENTITY_API_VERSION: "3"
-      OS_REGION_NAME: "Gumi"
-      OS_INTERFACE: "public"
-      OS_APPLICATION_CREDENTIAL_ID: "${{ secrets.CNX_OS_APPLICATION_CREDENTIAL_ID }}"
-      OS_APPLICATION_CREDENTIAL_SECRET: "${{ secrets.CNX_OS_APPLICATION_CREDENTIAL_SECRET }}"
+  #   env:
+  #     AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+  #     AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+  #     AWS_DEFAULT_REGION: "us-east-2"
+  #     OS_AUTH_TYPE: "v3applicationcredential"
+  #     OS_AUTH_URL: "https://openstack.gumi.centrinix.cloud:5000"
+  #     OS_IDENTITY_API_VERSION: "3"
+  #     OS_REGION_NAME: "Gumi"
+  #     OS_INTERFACE: "public"
+  #     OS_APPLICATION_CREDENTIAL_ID: "${{ secrets.CNX_OS_APPLICATION_CREDENTIAL_ID }}"
+  #     OS_APPLICATION_CREDENTIAL_SECRET: "${{ secrets.CNX_OS_APPLICATION_CREDENTIAL_SECRET }}"
 
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+  #   steps:
+  #   - name: Checkout
+  #     uses: actions/checkout@v4
 
-    - name: Install OpenVPN client
-      run: |
-        sudo apt update
-        sudo apt install -y openvpn
+  #   - name: Install OpenVPN client
+  #     run: |
+  #       sudo apt update
+  #       sudo apt install -y openvpn
 
-    - name: Install OpenStack command line tools
-      run: |
-        pip install python-openstackclient
-        pip install python-magnumclient
+  #   - name: Install OpenStack command line tools
+  #     run: |
+  #       pip install python-openstackclient
+  #       pip install python-magnumclient
 
-    - name: Install Kubernetes command line tools
-      run: |
-        curl -LO https://dl.k8s.io/release/v1.23.0/bin/linux/amd64/kubectl
-        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+  #   - name: Install Kubernetes command line tools
+  #     run: |
+  #       curl -LO https://dl.k8s.io/release/v1.23.0/bin/linux/amd64/kubectl
+  #       sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
-    - name: Check environment
-      run: |
-        jq --version
-        openvpn --version
-        openstack --version
-        kubectl version --client=true
+  #   - name: Check environment
+  #     run: |
+  #       jq --version
+  #       openvpn --version
+  #       openstack --version
+  #       kubectl version --client=true
 
-    - name: Load SSH key
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.CNX_ZEPHYR_CI_SSH_KEY }}
+  #   - name: Load SSH key
+  #     uses: webfactory/ssh-agent@v0.9.0
+  #     with:
+  #       ssh-private-key: ${{ secrets.CNX_ZEPHYR_CI_SSH_KEY }}
 
-    - name: Connect to Centrinix CGN VPN
-      uses: kota65535/github-openvpn-connect-action@v3
-      with:
-        config_file: .github/cnx-cgn.ovpn
-        username: ${{ secrets.CNX_CGNVPN_USERNAME }}
-        password: ${{ secrets.CNX_CGNVPN_PASSWORD }}
+  #   - name: Connect to Centrinix CGN VPN
+  #     uses: kota65535/github-openvpn-connect-action@v3
+  #     with:
+  #       config_file: .github/cnx-cgn.ovpn
+  #       username: ${{ secrets.CNX_CGNVPN_USERNAME }}
+  #       password: ${{ secrets.CNX_CGNVPN_PASSWORD }}
 
-    - name: Get OpenStack COE cluster configuration
-      if: always()
-      run: |
-        for ((i=0; i<10; ++i)); do
-          openstack coe cluster config zephyr-ci || true
-          [ -f config ] && break
-        done
+  #   - name: Get OpenStack COE cluster configuration
+  #     if: always()
+  #     run: |
+  #       for ((i=0; i<10; ++i)); do
+  #         openstack coe cluster config zephyr-ci || true
+  #         [ -f config ] && break
+  #       done
 
-        echo "KUBECONFIG=${PWD}/config" >> $GITHUB_ENV
+  #       echo "KUBECONFIG=${PWD}/config" >> $GITHUB_ENV
 
-    - name: Check Kubernetes Cluster status
-      if: always()
-      run: |
-        nodeList=$(kubectl get nodes -o json)
+  #   - name: Check Kubernetes Cluster status
+  #     if: always()
+  #     run: |
+  #       nodeList=$(kubectl get nodes -o json)
 
-        notReadyCount=$(echo "$nodeList" | jq -r '
-          [
-            .items[] |
-            select(.spec.unschedulable == null) |
-            .status.conditions[] |
-            select(.type == "Ready") |
-            select(.status != "True")
-          ] | length')
+  #       notReadyCount=$(echo "$nodeList" | jq -r '
+  #         [
+  #           .items[] |
+  #           select(.spec.unschedulable == null) |
+  #           .status.conditions[] |
+  #           select(.type == "Ready") |
+  #           select(.status != "True")
+  #         ] | length')
 
-        if [ "$notReadyCount" -gt "85" ]; then
-          status="majorOutage"
-        elif [ "$notReadyCount" -gt "82" ]; then
-          status="partialOutage"
-        elif [ "$notReadyCount" -gt "80" ]; then
-          status="degradedPerformance"
-        else
-          status="operational"
-        fi
+  #       if [ "$notReadyCount" -gt "85" ]; then
+  #         status="majorOutage"
+  #       elif [ "$notReadyCount" -gt "82" ]; then
+  #         status="partialOutage"
+  #       elif [ "$notReadyCount" -gt "80" ]; then
+  #         status="degradedPerformance"
+  #       else
+  #         status="operational"
+  #       fi
 
-        cat <<EOF > status.cnx_kubernetes_cluster.json
-        {
-          "status": "${status}",
-          "rawData": $(kubectl get nodes | jq -sR),
-          "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
-        }
-        EOF
+  #       cat <<EOF > status.cnx_kubernetes_cluster.json
+  #       {
+  #         "status": "${status}",
+  #         "rawData": $(kubectl get nodes | jq -sR),
+  #         "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+  #       }
+  #       EOF
 
-    - name: Check KeyDB Cache status
-      if: always()
-      run: |
-        podList=$(kubectl -n keydb-cache get pods -o json)
+  #   - name: Check KeyDB Cache status
+  #     if: always()
+  #     run: |
+  #       podList=$(kubectl -n keydb-cache get pods -o json)
 
-        readyCount=$(echo "$podList" | jq -r '
-          [
-            .items[].status.conditions[] |
-            select(.type == "Ready") |
-            select(.status == "True")
-          ] | length')
+  #       readyCount=$(echo "$podList" | jq -r '
+  #         [
+  #           .items[].status.conditions[] |
+  #           select(.type == "Ready") |
+  #           select(.status == "True")
+  #         ] | length')
 
-        if [ "$readyCount" -lt "1" ]; then
-          status="inactive"
-        elif [ "$readyCount" -lt "2" ]; then
-          status="majorOutage"
-        elif [ "$readyCount" -lt "3" ]; then
-          status="partialOutage"
-        else
-          status="operational"
-        fi
+  #       if [ "$readyCount" -lt "1" ]; then
+  #         status="inactive"
+  #       elif [ "$readyCount" -lt "2" ]; then
+  #         status="majorOutage"
+  #       elif [ "$readyCount" -lt "3" ]; then
+  #         status="partialOutage"
+  #       else
+  #         status="operational"
+  #       fi
 
-        cat <<EOF > status.cnx_keydb_cache.json
-        {
-          "status": "${status}",
-          "rawData": $(kubectl -n keydb-cache get pods | jq -sR),
-          "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
-        }
-        EOF
+  #       cat <<EOF > status.cnx_keydb_cache.json
+  #       {
+  #         "status": "${status}",
+  #         "rawData": $(kubectl -n keydb-cache get pods | jq -sR),
+  #         "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+  #       }
+  #       EOF
 
-    - name: Check Actions Runner Controller status
-      if: always()
-      run: |
-        podList=$(kubectl -n arc-systems get pods -o json)
+  #   - name: Check Actions Runner Controller status
+  #     if: always()
+  #     run: |
+  #       podList=$(kubectl -n arc-systems get pods -o json)
 
-        notReadyCount=$(echo "$podList" | jq -r '
-          [
-            .items[].status.conditions[] |
-            select(.type == "Ready") |
-            select(.status != "True")
-          ] | length')
+  #       notReadyCount=$(echo "$podList" | jq -r '
+  #         [
+  #           .items[].status.conditions[] |
+  #           select(.type == "Ready") |
+  #           select(.status != "True")
+  #         ] | length')
 
-        if [ "$notReadyCount" -gt "0" ]; then
-          status="majorOutage"
-        else
-          status="operational"
-        fi
+  #       if [ "$notReadyCount" -gt "0" ]; then
+  #         status="majorOutage"
+  #       else
+  #         status="operational"
+  #       fi
 
-        cat <<EOF > status.cnx_actions_runner_controller.json
-        {
-          "status": "${status}",
-          "rawData": $(kubectl -n arc-systems get pods | jq -sR),
-          "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
-        }
-        EOF
+  #       cat <<EOF > status.cnx_actions_runner_controller.json
+  #       {
+  #         "status": "${status}",
+  #         "rawData": $(kubectl -n arc-systems get pods | jq -sR),
+  #         "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+  #       }
+  #       EOF
 
-    - name: Check Runner Scaling Set linux-arm64-4xlarge status
-      if: always()
-      run: |
-        podList=$(kubectl -n arc-systems get pods -o json)
-        podName=$(echo "$podList" | jq -r '
-          .items[] |
-          select(.metadata.name | startswith("zrv2-linux-arm64-4xlarge-cnx")) |
-          .metadata.name')
+  #   - name: Check Runner Scaling Set linux-arm64-4xlarge status
+  #     if: always()
+  #     run: |
+  #       podList=$(kubectl -n arc-systems get pods -o json)
+  #       podName=$(echo "$podList" | jq -r '
+  #         .items[] |
+  #         select(.metadata.name | startswith("zrv2-linux-arm64-4xlarge-cnx")) |
+  #         .metadata.name')
 
-        if [ "$podName" != "" ]; then
-          podData=$(kubectl -n arc-systems get pods ${podName} -o json)
-          podStatus=$(echo "$podData" | jq -r '
-            .status.conditions[] |
-            select(.type == "Ready") |
-            .status
-            ')
+  #       if [ "$podName" != "" ]; then
+  #         podData=$(kubectl -n arc-systems get pods ${podName} -o json)
+  #         podStatus=$(echo "$podData" | jq -r '
+  #           .status.conditions[] |
+  #           select(.type == "Ready") |
+  #           .status
+  #           ')
 
-          if [ "$podStatus" != "True" ]; then
-            status="majorOutage"
-          else
-            status="operational"
-          fi
+  #         if [ "$podStatus" != "True" ]; then
+  #           status="majorOutage"
+  #         else
+  #           status="operational"
+  #         fi
 
-          runnerData="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-arm64-4xlarge-cnx -o json)"
-          runningRunnerCount=$(echo "$runnerData" | jq -r '.status.runningEphemeralRunners')
-          pendingRunnerCount=$(echo "$runnerData" | jq -r '.status.pendingEphemeralRunners')
+  #         runnerData="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-arm64-4xlarge-cnx -o json)"
+  #         runningRunnerCount=$(echo "$runnerData" | jq -r '.status.runningEphemeralRunners')
+  #         pendingRunnerCount=$(echo "$runnerData" | jq -r '.status.pendingEphemeralRunners')
 
-          rawData="$(kubectl -n arc-systems get pods ${podName})"$'\n\n'
-          rawData+="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-arm64-4xlarge-cnx)"
-        else
-          status="inactive"
-          runningRunnerCount=0
-          pendingRunnerCount=0
-          rawData="$(kubectl -n arc-systems get pods)"
-        fi
+  #         rawData="$(kubectl -n arc-systems get pods ${podName})"$'\n\n'
+  #         rawData+="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-arm64-4xlarge-cnx)"
+  #       else
+  #         status="inactive"
+  #         runningRunnerCount=0
+  #         pendingRunnerCount=0
+  #         rawData="$(kubectl -n arc-systems get pods)"
+  #       fi
 
-        cat <<EOF > status.cnx_runner_scale_set-linux_arm64_4xlarge.json
-        {
-          "status": "${status}",
-          "runningRunnerCount": ${runningRunnerCount},
-          "pendingRunnerCount": ${pendingRunnerCount},
-          "rawData": $(echo "${rawData}" | jq -sR),
-          "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
-        }
-        EOF
+  #       cat <<EOF > status.cnx_runner_scale_set-linux_arm64_4xlarge.json
+  #       {
+  #         "status": "${status}",
+  #         "runningRunnerCount": ${runningRunnerCount},
+  #         "pendingRunnerCount": ${pendingRunnerCount},
+  #         "rawData": $(echo "${rawData}" | jq -sR),
+  #         "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+  #       }
+  #       EOF
 
-    - name: Check Runner Scaling Set linux-x64-4xlarge status
-      if: always()
-      run: |
-        podList=$(kubectl -n arc-systems get pods -o json)
-        podName=$(echo "$podList" | jq -r '
-          .items[] |
-          select(.metadata.name | startswith("zrv2-linux-x64-4xlarge-cnx")) |
-          .metadata.name')
+  #   - name: Check Runner Scaling Set linux-x64-4xlarge status
+  #     if: always()
+  #     run: |
+  #       podList=$(kubectl -n arc-systems get pods -o json)
+  #       podName=$(echo "$podList" | jq -r '
+  #         .items[] |
+  #         select(.metadata.name | startswith("zrv2-linux-x64-4xlarge-cnx")) |
+  #         .metadata.name')
 
-        if [ "$podName" != "" ]; then
-          podData=$(kubectl -n arc-systems get pods ${podName} -o json)
-          podStatus=$(echo "$podData" | jq -r '
-            .status.conditions[] |
-            select(.type == "Ready") |
-            .status
-            ')
+  #       if [ "$podName" != "" ]; then
+  #         podData=$(kubectl -n arc-systems get pods ${podName} -o json)
+  #         podStatus=$(echo "$podData" | jq -r '
+  #           .status.conditions[] |
+  #           select(.type == "Ready") |
+  #           .status
+  #           ')
 
-          if [ "$podStatus" != "True" ]; then
-            status="majorOutage"
-          else
-            status="operational"
-          fi
+  #         if [ "$podStatus" != "True" ]; then
+  #           status="majorOutage"
+  #         else
+  #           status="operational"
+  #         fi
 
-          runnerData="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-x64-4xlarge-cnx -o json)"
-          runningRunnerCount=$(echo "$runnerData" | jq -r '.status.runningEphemeralRunners')
-          pendingRunnerCount=$(echo "$runnerData" | jq -r '.status.pendingEphemeralRunners')
+  #         runnerData="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-x64-4xlarge-cnx -o json)"
+  #         runningRunnerCount=$(echo "$runnerData" | jq -r '.status.runningEphemeralRunners')
+  #         pendingRunnerCount=$(echo "$runnerData" | jq -r '.status.pendingEphemeralRunners')
 
-          rawData="$(kubectl -n arc-systems get pods ${podName})"$'\n\n'
-          rawData+="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-x64-4xlarge-cnx)"
-        else
-          status="inactive"
-          runningRunnerCount=0
-          pendingRunnerCount=0
-          rawData="$(kubectl -n arc-systems get pods)"
-        fi
+  #         rawData="$(kubectl -n arc-systems get pods ${podName})"$'\n\n'
+  #         rawData+="$(kubectl -n arc-runners get autoscalingrunnersets zrv2-linux-x64-4xlarge-cnx)"
+  #       else
+  #         status="inactive"
+  #         runningRunnerCount=0
+  #         pendingRunnerCount=0
+  #         rawData="$(kubectl -n arc-systems get pods)"
+  #       fi
 
-        cat <<EOF > status.cnx_runner_scale_set-linux_x64_4xlarge.json
-        {
-          "status": "${status}",
-          "runningRunnerCount": ${runningRunnerCount},
-          "pendingRunnerCount": ${pendingRunnerCount},
-          "rawData": $(echo "${rawData}" | jq -sR),
-          "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
-        }
-        EOF
+  #       cat <<EOF > status.cnx_runner_scale_set-linux_x64_4xlarge.json
+  #       {
+  #         "status": "${status}",
+  #         "runningRunnerCount": ${runningRunnerCount},
+  #         "pendingRunnerCount": ${pendingRunnerCount},
+  #         "rawData": $(echo "${rawData}" | jq -sR),
+  #         "updatedAt": "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+  #       }
+  #       EOF
 
-    - name: Upload status data to S3 bucket
-      if: always()
-      run: |
-        aws s3 cp . s3://statuspage-data/ --recursive --exclude '*' --include 'status.*.json'
+  #   - name: Upload status data to S3 bucket
+  #     if: always()
+  #     run: |
+  #       aws s3 cp . s3://statuspage-data/ --recursive --exclude '*' --include 'status.*.json'
 
   # Hetzner Cloud Status Publisher Job
   hzr-status-publisher:
