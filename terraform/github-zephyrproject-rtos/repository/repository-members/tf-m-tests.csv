@@ -2,8 +2,8 @@ type,id,permission
 team,maintainers,triage
 team,release,push
 user,d3zd3z,maintain
+user,tomi-font,maintain
 user,Vge0rge,push
 user,wearyzen,push
 user,valeriosetti,push
-user,tomi-font,push
 user,ithinuel,push

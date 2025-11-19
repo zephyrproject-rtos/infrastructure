@@ -1,5 +1,6 @@
 type,id,permission
 team,maintainers,triage
 team,release,push
+user,arnopo,maintain
+user,iuliana-prodan,maintain
 user,uLipe,push
-user,iuliana-prodan,push

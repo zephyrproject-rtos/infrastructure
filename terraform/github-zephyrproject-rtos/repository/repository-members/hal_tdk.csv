@@ -2,6 +2,6 @@ type,id,permission
 team,maintainers,triage
 team,release,push
 user,afontaine-invn,maintain
-user,rbuisson-invn,push
-user,gjabouley-invn,push
+user,rbuisson-invn,maintain
+user,gjabouley-invn,maintain
 user,sriccardi-invn,push
