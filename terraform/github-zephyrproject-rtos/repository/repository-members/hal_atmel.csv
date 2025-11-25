@@ -2,4 +2,3 @@ type,id,permission
 team,maintainers,triage
 team,release,push
 user,nandojve,maintain
-user,pdgendt,push
