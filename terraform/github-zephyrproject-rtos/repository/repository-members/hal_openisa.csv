@@ -2,3 +2,4 @@ type,id,permission
 team,maintainers,triage
 team,release,push
 user,dleach02,push
+user,zejiang0jason,push
