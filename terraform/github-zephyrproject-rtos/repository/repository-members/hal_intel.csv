@@ -2,5 +2,4 @@ type,id,permission
 team,maintainers,triage
 team,release,push
 user,kwd-doodling,maintain
-user,teburd,push
 user,likongintel,push

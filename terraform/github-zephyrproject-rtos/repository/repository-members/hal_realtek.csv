@@ -1,4 +1,5 @@
 type,id,permission
 team,maintainers,triage
 team,release,push
-user,stephanosio,admin
+user,zjian-zhang,maintain
+user,Derek-RTK,maintain
