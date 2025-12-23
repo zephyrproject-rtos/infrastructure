@@ -1,0 +1,4 @@
+type,id,permission
+team,release,push
+user,fabiobaltieri,admin
+user,kartben,admin
