@@ -2,6 +2,7 @@ type,id,permission
 team,maintainers,triage
 team,release,push
 user,sreeramIfx,maintain
+user,teburd,maintain
 user,parthitce,push
 user,talih0,push
 user,mcatee-infineon,push

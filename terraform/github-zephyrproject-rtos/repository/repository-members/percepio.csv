@@ -2,4 +2,3 @@ type,id,permission
 team,maintainers,triage
 team,release,push
 user,eriktamlin,maintain
-user,aronlander-pe,maintain
