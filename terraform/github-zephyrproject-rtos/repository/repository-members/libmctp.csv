@@ -2,6 +2,6 @@ type,id,permission
 team,maintainers,triage
 team,release,push
 user,teburd,maintain
+user,edersondisouza,maintain
 user,nashif,admin
 user,dkalowsk,push
-user,edersondisouza,push
