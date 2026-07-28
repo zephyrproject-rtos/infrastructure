@@ -1,0 +1,7 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,firscity,maintain
+user,lorc,push
+user,luca-fancellu,push
+user,soburi,push
