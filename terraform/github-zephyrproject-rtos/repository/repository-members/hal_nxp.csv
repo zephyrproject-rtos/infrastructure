@@ -1,14 +1,13 @@
 type,id,permission
 team,maintainers,triage
 team,release,push
-user,ZhaoxiangJin,maintain
 user,mmahadevan108,maintain
+user,zejiang0jason,maintain
 user,manuargue,push
 user,PetervdPerk-NXP,push
 user,bperseghetti,push
 user,JiafeiPan,push
 user,MaochenWang1,push
 user,axelnxp,push
-user,zejiang0jason,push
 user,Holt-Sun,push
 user,lucien-nxp,push
