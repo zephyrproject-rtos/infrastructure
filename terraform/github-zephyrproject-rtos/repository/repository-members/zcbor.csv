@@ -1,4 +1,5 @@
 type,id,permission
 team,maintainers,triage
 team,release,push
-user,de-nordic,maintain
+user,oyvindronningstad,maintain
+user,de-nordic,push
