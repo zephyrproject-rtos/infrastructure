@@ -1,0 +1,9 @@
+type,id,permission
+team,maintainers,triage
+team,release,push
+user,npitre,maintain
+user,tomi-font,maintain
+user,Vge0rge,push
+user,valeriosetti,push
+user,JordanYates,push
+user,tpambor,push
