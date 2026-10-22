@@ -1,5 +1,6 @@
 type,id,permission
-team,maintainers,triage
+team,maintainers,push
+team,collaborators,push
 team,release,push
 user,tobiaskaestner,maintain
 user,parphane,maintain
