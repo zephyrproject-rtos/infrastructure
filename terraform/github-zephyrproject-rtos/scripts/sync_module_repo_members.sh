@@ -71,6 +71,8 @@ skipped_modules=(
   nrf_hw_models
   # mbedtls-3.6 module is the mbedtls repository with different ref.
   mbedtls-3.6
+  # reqmgmt module team access is manually controlled.
+  reqmgmt
   )
 
 # Get the maintainer data for modules (aka. west projects)
