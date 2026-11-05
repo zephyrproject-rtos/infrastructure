@@ -136,7 +136,7 @@ resource "kubernetes_secret" "arc_github_app" {
 
 ## Runner Scale Set Controller Deployment
 locals {
-  arc_version = "0.11.0"
+  arc_version = "0.14.2"
 }
 
 resource "helm_release" "arc" {
