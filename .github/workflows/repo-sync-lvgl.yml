@@ -1,0 +1,18 @@
+name: Sync Upstream LVGL
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  sync-lvgl:
+    uses: ./.github/workflows/repo-sync.yml
+    with:
+      module_name: "lvgl"
+      upstream_repository: "https://github.com/lvgl/lvgl"
+      upstream_branch: "master"
+      target_repository: "zephyrproject-rtos/lvgl"
+      target_branch: "master"
+    secrets:
+      PAT_TOKEN: ${{ secrets.ZB_REPO_SYNC_GITHUB_TOKEN }}
