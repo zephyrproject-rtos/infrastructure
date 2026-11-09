@@ -46,8 +46,9 @@ echo "${maintainers_data}" | yq &> /dev/null || (
   exit 10
 )
 
-# Get the list of all collaborators
-all_collaborators=$(echo "${maintainers_data}" | yq -r '.[].collaborators.[]')
+# Get the list of all collaborators, including those listed under file-groups
+all_collaborators=$(echo "${maintainers_data}" | \
+  yq -r '.[] | (.collaborators[]?, ."file-groups"[]?.collaborators[]?)')
 
 # Get the list of all maintainers
 all_maintainers=$(echo "${maintainers_data}" | yq -r '.[].maintainers.[]')
