@@ -1,0 +1,59 @@
+name: Reusable Sync Upstream
+
+on:
+  workflow_call:
+    inputs:
+      module_name:
+        description: "Module name"
+        required: true
+        type: string
+      upstream_repository:
+        description: "Upstream repository URL"
+        required: true
+        type: string
+      upstream_branch:
+        description: "Upstream branch to sync from"
+        required: true
+        type: string
+      target_repository:
+        description: "Target repository URL"
+        required: true
+        type: string
+      target_branch:
+        description: "Target branch in the target repository"
+        required: true
+        type: string
+    secrets:
+      PAT_TOKEN:
+        description: "GitHub Personal Access Token"
+        required: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: ${{ inputs.target_repository }}
+          ref: ${{ inputs.target_branch }}
+          token: ${{ secrets.PAT_TOKEN }}
+          path: repo-${{ inputs.module_name }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge Upstream Changes (Fast-Forward)
+        working-directory: repo-${{ inputs.module_name }}
+        run: |
+          git remote add upstream ${{ inputs.upstream_repository }}
+          git fetch upstream ${{ inputs.upstream_branch }}
+          git merge --ff-only upstream/${{ inputs.upstream_branch }} || (echo "Merge conflict detected. Please resolve manually." && exit 1)
+
+      - name: Push Changes to Target Repository
+        working-directory: repo-${{ inputs.module_name }}
+        run: |
+          git push https://oauth2:${{ secrets.PAT_TOKEN }}@github.com/${{ inputs.target_repository }} HEAD:${{ inputs.target_branch }}
